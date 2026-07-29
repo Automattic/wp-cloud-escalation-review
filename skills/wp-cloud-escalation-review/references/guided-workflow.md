@@ -9,12 +9,16 @@ Check earlier gates without narrating phases:
 
 1. **Safety and selection:** sanitize, handle containment/change safety, and
    separate independent issues.
-2. **First decision-bearing check:** for a broad claim with a known site and
+2. **First decision-bearing check:** choose the check most likely to prevent,
+   resolve, or narrow the escalation. For a broad claim with a known site and
    period, ask for the nearest useful summary in the dashboards and logs
-   available to that reporter. Otherwise establish whether the issue still
-   happens and what WP Cloud still owns.
-3. **Currentness and ownership:** settle anything the first check did not
-   answer before requesting event-level proof.
+   available to that reporter. If a reporter-owned fix is known or likely,
+   first ask whether the issue still happens and what WP Cloud still needs to
+   answer.
+3. **Cause and ownership:** distinguish the visible consequence from what
+   happened immediately before it. Follow one useful clue into evidence the
+   reporter can inspect, then settle currentness and ownership before
+   requesting event-level proof.
 4. **Exact receiver lookup:** request an event tuple only when WP Cloud must
    match receiver-side data and reporter-visible checks are complete.
 5. **Documentation and technical reference:** load them only while WP Cloud
@@ -62,23 +66,45 @@ progress.
 
 ## Ask the next useful question
 
-Choose the question with the most decision value. When a broad impact claim
-already has a site and period, ask the reporter to use the dashboards and logs
-available for that client. Depending on access, that may be a host or Grafana
-dashboard, a company or developer panel, nginx or PHP logs, or metrics from the
-WP Cloud Atomic API. Ask for affected count, paths or request class, and direct
-routing/error reason first. Name a specific tool only when its availability is
-known. Otherwise ask whether the problem still happens and what WP Cloud still
-needs to answer or do. If one is already known, ask only for the other.
+Choose the action or question with the most decision value. When a broad impact
+claim already has a site and period, ask the reporter to use the dashboards and
+logs available for that client. Depending on access, that may be a host or
+Grafana dashboard, a company or developer panel, nginx or PHP logs, or metrics
+from the WP Cloud Atomic API. Use concrete wording: “How many requests failed,
+out of how many, and which URL and HTTP method were affected?” Name a specific
+tool only when its availability is known. Do not build a disputed audience,
+scope, or cause into the question. For example, test “every authenticated
+request failed” by asking about all matching failures, not by assuming the
+affected requests were authenticated.
 
-Then ask one question changing route, ownership, validation, readiness, safety,
-or decision. Up to three related fields may describe one evidence check or
-event; do not mix evidence, impact, troubleshooting, and solution preference.
+Next, distinguish cause from consequence. Ask why the affected request reached
+another server or what error happened immediately before the visible symptom.
+Follow the evidence one useful step into the reporter's reach, such as a PHP
+fatal, plugin error, memory error, or malformed response. Do not demand a full
+log chain merely to strengthen an already useful explanation.
+
+For warnings about cron, queues, retries, or background work, do not start with
+callback or platform attribution. Ask what expected work actually failed and
+how the reporter observed that result. If no workload failure is known, validate
+one representative outcome before continuing. When several hooks are listed,
+give a concrete example such as a sync that did not arrive, an entry that was
+not purged, or a recurring event that was not created.
+
+If a likely reporter-owned cause or fix appears, ask whether the problem still
+happens and what WP Cloud still needs to answer or do. If one is already known,
+ask only for the other. Remove contradicted scope, timing, audience, and causal
+claims instead of asking the reporter to reconcile every conflict.
 
 Keep nonterminal prose under 120 words. Use ordinary language, say briefly why
-the check matters, and avoid blame. If new reporter work is needed, state the
-action and observable result. If an existing artifact is missing, ask for it
-directly. Never ask for recorded facts again.
+the check matters, and avoid blame. State what the latest answer changed so the
+reporter can see progress. If new reporter work is needed, state the action and
+observable result. If an existing artifact is missing, ask for it directly.
+Never ask for recorded facts again or continue filling fields after the answer
+can no longer change the route.
+
+Keep a supplied bounded window when it is enough. Convert time zones quietly
+when possible. Ask for an exact event time only when WP Cloud must locate that
+event and no request, trace, or job ID can identify it.
 
 Do not ask for a perfect multi-log chain merely to confirm a likely cause when
 the issue has stopped and no WP Cloud work remains. State the uncertainty and
@@ -119,8 +145,13 @@ resumes there. Stop a candidate when:
 - user declines or cannot perform required reporter work.
 
 Stopping one candidate does not stop requested parked work. When a check is
-unavailable, offer only honest choices: leave claim unverified, obtain source
-evidence, convert to guidance/analysis, select another candidate, or stop.
+unavailable, offer only honest choices: leave the claim unverified, obtain
+source evidence, convert to guidance/analysis, select another candidate, stop,
+or prepare a narrow last-resort escalation. Permit that escalation only after
+the reporter has tried the relevant tools, documentation, and available help.
+Include what was checked, remove unsupported claims, and ask only the question
+that requires WP Cloud access. Do not treat exhausted access as proof of a
+platform cause.
 
 A missing destination is a routing choice, not evidence. `Belongs elsewhere`
 requires a known destination. Do not draft an incident for a resolved

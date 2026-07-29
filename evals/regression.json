@@ -65,7 +65,7 @@
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["Metrics"],
+          "include": ["dashboards and logs"],
           "exclude": ["Copy/paste"],
           "max_questions": 1
         },
@@ -83,7 +83,7 @@
         "outcome": "ready_with_caveat",
         "draft": "required",
         "messages": {
-          "include": ["receiver"],
+          "include": ["platform logs"],
           "exclude": ["Reporter action required"],
           "max_questions": 2
         },
@@ -165,11 +165,74 @@
         "messages": {
           "include": ["?"],
           "exclude": ["Copy/paste"],
-          "max_questions": 1
+          "max_questions": 2
         },
         "references": {
           "required": ["references/style-guide.md", "references/guided-workflow.md"],
           "forbidden": ["references/challenge.md"]
+        }
+      }
+    },
+    {
+      "id": "guided-progress-from-scope-to-cause",
+      "entry": "Guided",
+      "input": "Continue this review. The reporter originally claimed every authenticated request failed. The dashboards and logs available to them instead show that 25 of 100 homepage GET requests, apparently from logged-out visitors, received the read-only database error during the supplied bounded window. One affected request ID is available. The next useful step is to determine why an affected request reached the read-only secondary, not to collect another timestamp or reconcile the customer report.",
+      "expect": {
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["25", "secondary"],
+          "exclude": ["request class", "exact timestamp", "confirm they were authenticated", "what exact HTTP status"],
+          "max_questions": 1
+        },
+        "references": {
+          "required": ["references/style-guide.md", "references/guided-workflow.md"],
+          "forbidden": ["references/http-and-automation.md", "references/challenge.md"]
+        }
+      }
+    },
+    {
+      "id": "guided-cron-warning-before-attribution",
+      "entry": "Guided",
+      "input": "Continue this possible escalation. Current logs contain schedule_event_false and could_not_set warnings for several unrelated scheduled hooks. A pasted line adds the reporter's annotation that a failed unschedule left a stale event, but the raw log does not say that. A large historical failed-action count is also present. Nobody has shown that an expected sync, purge, recurring event, or queued action was missed, late, duplicated, or otherwise wrong. The draft calls the warnings false positives and asks WP Cloud which callback returned false. No diagnostic command has been run.",
+      "expect": {
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["scheduled"],
+          "exclude": ["Copy/paste", "which callback returned false", "wp eval"],
+          "max_questions": 1
+        },
+        "references": {
+          "required": ["references/style-guide.md", "references/guided-workflow.md"],
+          "forbidden": [
+            "references/documentation-routing.md",
+            "references/api-and-managed-operations.md",
+            "references/challenge.md"
+          ]
+        }
+      }
+    },
+    {
+      "id": "direct-cron-warning-with-healthy-work",
+      "entry": "Direct",
+      "input": "Review this possible escalation in one pass. Current logs repeatedly contain schedule_event_false and could_not_set warnings. Jetpack status and sync health are clean. The expected purge completed, the recurring event was created, and the queued action ran on time. Historical Action Scheduler failures were investigated and found unrelated. No missed work, broken workload, or remaining WP Cloud decision has been demonstrated.",
+      "expect": {
+        "outcome": "no_post",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["nothing left"],
+          "exclude": ["Copy/paste", "callback returned", "false positive", "platform incident"],
+          "max_questions": 0
+        },
+        "references": {
+          "required": ["references/style-guide.md"],
+          "forbidden": [
+            "references/documentation-routing.md",
+            "references/api-and-managed-operations.md",
+            "references/challenge.md",
+            "references/guided-workflow.md"
+          ]
         }
       }
     },
@@ -199,7 +262,7 @@
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["available", "logs"],
+          "include": ["logs"],
           "exclude": ["single-site dashboard", "migration activity", "host move or another managed operation"],
           "max_questions": 1
         },
@@ -217,7 +280,7 @@
         "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
-          "include": ["nothing left for WP Cloud"],
+          "include": ["nothing left"],
           "exclude": ["matching log", "three matching", "confirmed root cause"],
           "max_questions": 0
         },
@@ -239,7 +302,7 @@
         "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
-          "include": ["nothing left for WP Cloud"],
+          "include": ["nothing left"],
           "exclude": ["automatic failover"],
           "max_questions": 0
         },

@@ -6,7 +6,7 @@
     {
       "id": "direct-ready-evidence",
       "entry": "Direct",
-      "input": "Review this possible escalation in one pass. On synthetic site label demo-site-a, three POST requests to /wp-json/example/v1/callback returned HTTP 500 from 10:00 to 10:05 UTC on <eval-date>. The matching WP Cloud managed-operation records identify stage example-finalize and error example-operation-failed for all three attempts. The reporter repeated the documented workflow, and the current public WP Cloud managed-operations page says this accepted operation should complete successfully. The failures block the test deployment. Ask WP Cloud to inspect the verified managed-operation failure while preserving unrelated operations.",
+      "input": "Review this possible escalation in one pass. On synthetic site label demo-site-a, three POST requests to /wp-json/example/v1/callback returned HTTP 500 from 10:00 to 10:05 UTC on <eval-date>. The matching WP Cloud managed-operation records identify stage example-finalize and error example-operation-failed for job labels demo-job-a, demo-job-b, and demo-job-c. The reporter repeated the documented workflow, and the current public WP Cloud managed-operations page says this accepted operation should complete successfully. The failures block the test deployment. Ask WP Cloud to inspect the verified managed-operation failure while preserving unrelated operations.",
       "expect": {
         "outcome": "ready",
         "draft": "required",
@@ -29,8 +29,8 @@
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["dashboards and logs", "request count"],
-          "exclude": ["single-site dashboard", "migration", "host move", "representative event"],
+          "include": ["dashboards and logs", "out of", "URL"],
+          "exclude": ["single-site dashboard", "migration", "host move", "representative event", "request class", "exact timestamp", "authenticated requests failed"],
           "max_questions": 1
         },
         "references": {
@@ -49,7 +49,7 @@
         "messages": {
           "include": ["still", "WP Cloud"],
           "exclude": ["three matching", "complete causal chain"],
-          "max_questions": 1
+          "max_questions": 2
         },
         "references": {
           "required": ["references/style-guide.md", "references/guided-workflow.md"],
@@ -60,7 +60,7 @@
     {
       "id": "guided-resolved-no-post",
       "entry": "Guided",
-      "input": "Continue this review. Reporter-visible evidence now narrows the affected population, directly explains why a small request class reached a read-only secondary, and shows no user action put the database into read-only mode. The likely site-code trigger was fixed, the affected workflow now passes, and no WP Cloud decision or action remains.",
+      "input": "Continue this review. The available evidence now narrows the affected population, directly explains why a small set of requests reached a read-only secondary, and shows no user action put the database into read-only mode. The likely site-code trigger was fixed, the affected workflow now passes, and no WP Cloud decision or action remains.",
       "expect": {
         "outcome": "no_post",
         "draft": "forbidden",
@@ -80,20 +80,20 @@
       }
     },
     {
-      "id": "direct-independent-split",
-      "entry": "Direct",
-      "input": "Review this in one pass. One candidate concerns slow managed requests and needs WP Cloud capacity review. A separate candidate concerns an unrelated extension setting controlled by the reporter. They have different owners and outcomes.",
+      "id": "guided-exhausted-access-narrow-escalation",
+      "entry": "Guided",
+      "input": "Continue this review. The reporter checked the dashboards and logs available for this synthetic site and bounded period, followed the visible application error as far as their access allows, reviewed the relevant public documentation, and asked an available teammate for help. They still cannot determine why five identified requests reached a read-only secondary. The issue is no longer occurring, unsupported scope and causal claims have been removed, but preventing recurrence still requires WP Cloud to explain those identified requests. No more detailed platform data is available to the reporter.",
       "expect": {
-        "outcome": "split",
-        "draft": "forbidden",
+        "outcome": "ready_with_caveat",
+        "draft": "required",
         "messages": {
-          "include": ["split"],
-          "exclude": ["Copy/paste"],
-          "max_questions": 1
+          "include": ["Copy/paste", "five"],
+          "exclude": ["more evidence", "exact timestamp", "request class", "receiver-side", "reporter-visible evidence"],
+          "max_questions": 2
         },
         "references": {
-          "required": ["references/style-guide.md"],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "required": ["references/style-guide.md", "references/guided-workflow.md"],
+          "forbidden": []
         }
       }
     },

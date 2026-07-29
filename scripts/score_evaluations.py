@@ -47,6 +47,10 @@ WORKFLOW_JARGON = (
     "direct path",
     "i’m using the staged",
     "i'm using the staged",
+    "request class",
+    "receiver-only",
+    "receiver-side",
+    "reporter-visible evidence",
 )
 INTERNAL_LABEL = re.compile(r"(?im)^(?:Blocking|Challenged|Checked):")
 
@@ -100,12 +104,33 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "need to check",
             "please verify",
             "please retest",
+            "check the dashboards",
+            "report how many",
             "retry once",
             "retry with",
+            "revoke or rotate",
+            "rotate it",
+            "rotate the exposed",
+            "not ready to escalate",
+            "do not share the draft until",
             "blocked until",
         )
     ):
         return "needs_reporter_check"
+    if (
+        (
+            "do not escalate" in lowered
+            or "do not support an escalation" in lowered
+        )
+        and (
+            "nothing left for wp cloud" in lowered
+            or (
+                "remaining question for wp cloud" in lowered
+                and "no demonstrated" in lowered
+            )
+        )
+    ):
+        return "no_post"
     if any(
         phrase in lowered
         for phrase in (
@@ -116,6 +141,7 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "no need to post",
             "close the wp cloud escalation",
             "close this escalation",
+            "close this without escalating",
             "resolved during validation",
             "no escalation draft is needed",
             "the review can stop here",
@@ -133,6 +159,7 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "belongs elsewhere",
             "another owner",
             "reporter-controlled",
+            "reporter owns",
             "reporter should",
         )
     ):

@@ -37,11 +37,31 @@ find an equivalent.
 
 Prefer “match this request with the platform logs” or “these happened around
 the same time” over the abstract noun “correlation” when either is accurate.
-Keep technical terminology only when the HE or receiver needs it.
+Ask “which URL and HTTP method failed?” instead of “what request class was
+affected?” Say “information only WP Cloud can access” instead of
+“receiver-side visibility.” Keep technical terminology only when the HE or
+receiver needs it. Do not use “request class,” “receiver-side,”
+“receiver-only,” or “reporter-visible evidence” in any user-facing response.
+
+Treat time as a lookup aid, not a ritual. Keep an adequate bounded window.
+Quietly normalize a known time zone. Ask for a more exact time only when no
+existing request, trace, or job ID can identify the event WP Cloud must find.
 
 Once ownership and action are settled, remove unneeded proof requests from the
 response. Do not explain that extra logs would increase confidence when the
 reader does not need to collect them.
+
+Show progress between questions. State the useful conclusion from the latest
+answer, then ask only for the next check that could change the decision. Do not
+turn missing fields or conflicting customer reports into an interrogation.
+Test a disputed claim without repeating it as though it were true.
+
+Describe warnings as warnings until an observable failure is established.
+Prefer “What scheduled work did not happen?” over questions about which
+callback returned a value. Do not call warnings “damage,” “false positives,” or
+“broken recurring work” without a mapped failed result. Challenge the exact
+claims “false positive,” “breaking recurring cron,” and “real-world damage”
+when no failed outcome supports them.
 
 ## Draft from the record
 

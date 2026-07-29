@@ -72,9 +72,17 @@ For WP-Cron or scheduled work, include:
 - The observable missed, late, duplicate, or otherwise incorrect work.
 - Runtime context: CLI, HTTP request, cron spawn, worker, or another executor.
 
+Start with the work result, not callback attribution. Validate one expected
+execution and its observable result: a sync that did not arrive, an entry that
+was not purged, a recurring event that was not created, or another missed,
+late, duplicate, or incorrect outcome. A warning without failed work is not a
+platform incident.
+
 Keep warnings, persistence, retry, duplicate prevention, missed work, and
 impact separate. Retain an asserted sequence as linked claims and prove each
 transition. A combined hook list does not map every hook to every error.
+Treat arrows, causal labels, and explanations added beside log lines as
+reporter analysis, not raw log output.
 
 For a capability gap, include workflow, workaround, missing primitive, desired
 scope, and interface limit. Separate control from observability.
@@ -101,6 +109,18 @@ troubleshooting to make it look substantial.
 Using WP Cloud primitives does not make an integrator-built workflow WP
 Cloud-owned.
 
+Inspect available logs, PHP or MU-plugin code, cron state, and application
+outcomes before asking WP Cloud to interpret ordinary WordPress behavior.
+Callback registration proves only that a callback was registered in the
+inspected runtime. It does not prove which callback returned a value during
+another execution or that the result was incorrect.
+
+Treat `wp eval` as arbitrary PHP execution that bootstraps WordPress, not as a
+harmless read command. Prefer existing logs, purpose-built WP-CLI commands, and
+code inspection. If an exact diagnostic command is necessary, follow the
+command-safety rules in `SKILL.md` and avoid dumping whole callback or runtime
+objects.
+
 ## When access is limited
 
 Record unavailable documentation or tooling honestly. Ask only for the
@@ -125,6 +145,7 @@ Challenge claims that:
 - Historical behavior overrides the current contract.
 - Similar environments have matching configuration and orchestration.
 - A cron warning proves the scheduled work was missed.
+- A registered callback proves it returned false or behaved incorrectly.
 - Several hooks or plugins prove one shared cause.
 - A historical failed-job count belongs to the suspected filter or write
   failure without event-level correlation.
