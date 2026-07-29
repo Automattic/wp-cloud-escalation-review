@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "wp-cloud-escalation-review",
-      "source": "./claude-plugin",
+      "source": "./",
       "description": "Review WP Cloud escalation evidence, ownership, readiness, and final copy before sending.",
       "version": "1.0.0",
       "author": {

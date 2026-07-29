@@ -14,11 +14,11 @@ from run_evaluations import RUNTIME_MANIFEST, SKILL_NAME
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CODEX_MANIFEST = ROOT / ".codex-plugin" / "plugin.json"
 CODEX_MARKETPLACE = ROOT / ".agents" / "plugins" / "marketplace.json"
 CODEX_MARKETPLACE_PLUGIN = ROOT / "plugins" / SKILL_NAME
-CLAUDE_MANIFEST = ROOT / "claude-plugin" / ".claude-plugin" / "plugin.json"
+CODEX_MANIFEST = CODEX_MARKETPLACE_PLUGIN / ".codex-plugin" / "plugin.json"
 CLAUDE_MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
+CLAUDE_MANIFEST = ROOT / ".claude-plugin" / "plugin.json"
 SKILL_ROOT = ROOT / "skills" / SKILL_NAME
 DIST = ROOT / "dist"
 SEMVER = re.compile(
@@ -146,14 +146,11 @@ def validate_source(expect_version: str | None = None) -> str:
         "authentication": "ON_INSTALL",
     }:
         raise PluginBuildError("Codex marketplace policy is invalid")
-    wrapper_manifest = CODEX_MARKETPLACE_PLUGIN / ".codex-plugin" / "plugin.json"
     wrapper_skills = CODEX_MARKETPLACE_PLUGIN / "skills"
-    if wrapper_manifest.resolve() != CODEX_MANIFEST.resolve():
-        raise PluginBuildError("Codex wrapper must use the canonical manifest")
     if wrapper_skills.resolve() != (ROOT / "skills").resolve():
         raise PluginBuildError("Codex wrapper must use the canonical skills")
-    if marketplace_plugin.get("source") != "./claude-plugin":
-        raise PluginBuildError("Claude marketplace must load ./claude-plugin")
+    if marketplace_plugin.get("source") != "./":
+        raise PluginBuildError("Claude marketplace must load the repository root")
 
     for relative in RUNTIME_MANIFEST:
         source = SKILL_ROOT / relative
