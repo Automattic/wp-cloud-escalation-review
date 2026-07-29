@@ -1,4 +1,4 @@
-# WP Cloud Escalation Review
+# WP Cloud Escalation Review Skill
 
 WP Cloud Escalation Review is an Agent Skill for checking whether a possible
 WP Cloud escalation is ready to send and for improving the final draft. It
