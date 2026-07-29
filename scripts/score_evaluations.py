@@ -108,6 +108,10 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "report how many",
             "retry once",
             "retry with",
+            "retry the operation",
+            "before escalating",
+            "before resubmitting",
+            "cannot proceed while",
             "revoke or rotate",
             "rotate it",
             "rotate the exposed",
@@ -159,6 +163,7 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "belongs elsewhere",
             "another owner",
             "reporter-controlled",
+            "reporter controls",
             "reporter owns",
             "reporter should",
         )

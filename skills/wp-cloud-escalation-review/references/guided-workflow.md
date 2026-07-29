@@ -7,8 +7,9 @@ router owns record and readiness; this file owns turn progression.
 
 Check earlier gates without narrating phases:
 
-1. **Safety and selection:** sanitize, handle containment/change safety, and
-   separate independent issues.
+1. **Safety and selection:** remove actual authentication material, handle
+   containment/change safety, and separate independent issues. Keep ordinary
+   traffic evidence.
 2. **First decision-bearing check:** choose the check most likely to prevent,
    resolve, or narrow the escalation. For a broad claim with a known site and
    period, ask for the nearest useful summary in the dashboards and logs
@@ -50,7 +51,8 @@ Candidate state: `unselected|active|blocked|ready|resolved|routed_elsewhere|decl
 
 Each turn:
 
-- sanitize before recording;
+- remove actual authentication material before recording; do not ask for
+  generic sanitization of traffic details;
 - update only affected claims/fields;
 - replace contradicted, stale, or superseded values;
 - retain unaffected facts, parked candidates, and linked claims;

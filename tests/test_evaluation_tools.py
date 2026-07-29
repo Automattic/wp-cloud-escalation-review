@@ -263,6 +263,59 @@ class ScoringTests(unittest.TestCase):
         self.assertIn("Every result uses exactly one readiness state", skill)
         self.assertIn("readiness stays internal", skill)
 
+    def test_plain_language_blockers_do_not_require_a_readiness_label(self) -> None:
+        case = {
+            "id": "plain-blocker",
+            "entry": "Direct",
+            "input": "Review this.",
+            "expect": self.expectation(
+                "needs_reporter_check",
+                draft="forbidden",
+            ),
+        }
+
+        for output in (
+            "The draft cannot proceed while the exposed credential remains active. "
+            "Rotate it before resubmitting.",
+            "Retry with the documented field before escalating.",
+            "Retry the operation with the documented field before escalating.",
+        ):
+            with self.subTest(output=output):
+                score = self.scorer.score_case(
+                    case,
+                    {
+                        "status": "completed",
+                        "output": output,
+                        "messages": [{"phase": "final", "text": output}],
+                        "references": [],
+                    },
+                )
+                self.assertTrue(score["passed"], score["failures"])
+
+    def test_plain_language_alternate_owner_needs_no_readiness_label(self) -> None:
+        case = {
+            "id": "plain-alternate-owner",
+            "entry": "Direct",
+            "input": "Review this.",
+            "expect": self.expectation("alternate_owner", draft="forbidden"),
+        }
+        output = (
+            "Handle this through the extension settings. The reporter controls "
+            "the correction, and there is nothing for WP Cloud to change."
+        )
+
+        score = self.scorer.score_case(
+            case,
+            {
+                "status": "completed",
+                "output": output,
+                "messages": [{"phase": "final", "text": output}],
+                "references": [],
+            },
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
     def test_skill_uses_client_available_evidence_sources(self) -> None:
         skill = (
             ROOT / "skills" / "wp-cloud-escalation-review" / "SKILL.md"
@@ -287,6 +340,30 @@ class ScoringTests(unittest.TestCase):
         self.assertIn("permit a narrow escalation", skill)
         self.assertIn("State what the latest answer changed", guided)
         self.assertIn("narrow last-resort escalation", guided)
+
+    def test_skill_preserves_shareable_log_links_without_generic_sanitization(self) -> None:
+        package = ROOT / "skills" / "wp-cloud-escalation-review"
+        skill = (package / "SKILL.md").read_text(encoding="utf-8")
+        http = (package / "references" / "http-and-automation.md").read_text(
+            encoding="utf-8"
+        )
+        style = (package / "references" / "style-guide.md").read_text(
+            encoding="utf-8"
+        )
+        guided = (package / "references" / "guided-workflow.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("Always keep a supplied, shareable link", skill)
+        self.assertIn("count, percentage, or rate", skill)
+        self.assertIn("log, saved-search, dashboard, or evidence link", skill)
+        self.assertIn("never block only because there is no link", skill)
+        self.assertIn("Do not ask the reporter to sanitize ordinary traffic", skill)
+        self.assertIn("Always carry it into the handoff", http)
+        self.assertIn("absolute bounded interval and denominator", http)
+        self.assertIn("Always include a supplied, shareable link", style)
+        self.assertIn("do not rely on a drifting", style)
+        self.assertIn("do not ask for\n  generic sanitization of traffic", guided)
 
     def test_skill_requires_failed_work_and_safe_diagnostics(self) -> None:
         package = ROOT / "skills" / "wp-cloud-escalation-review"
