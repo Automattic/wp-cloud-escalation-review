@@ -1,0 +1,73 @@
+{
+  "schema": "wp-cloud-escalation-review-evals/v1",
+  "suite": "development",
+  "description": "Small synthetic suite for core escalation-review behavior.",
+  "cases": [
+    {
+      "id": "direct-ready-evidence",
+      "entry": "Direct",
+      "input": "Review this possible escalation in one pass. On synthetic site label demo-site-a, three POST requests to /wp-json/example/v1/callback returned HTTP 500 from 10:00 to 10:05 UTC on <eval-date>. The matching WP Cloud managed-operation records identify stage example-finalize and error example-operation-failed for all three attempts. The reporter repeated the documented workflow, and the current public WP Cloud managed-operations page says this accepted operation should complete successfully. The failures block the test deployment. Ask WP Cloud to inspect the verified managed-operation failure while preserving unrelated operations.",
+      "expect": {
+        "readiness": ["Ready"],
+        "draft": true,
+        "include": [],
+        "exclude": ["Reporter action required"]
+      }
+    },
+    {
+      "id": "guided-validation-missing",
+      "entry": "Guided",
+      "input": "Help review a possible escalation. A test extension reports intermittent failures, but the reporter has not reproduced the issue or run any available reporter-owned check.",
+      "expect": {
+        "readiness": ["Reporter action required"],
+        "draft": false,
+        "include": ["validation"],
+        "exclude": ["Copy/paste"]
+      }
+    },
+    {
+      "id": "direct-independent-split",
+      "entry": "Direct",
+      "input": "Review this in one pass. One candidate concerns slow managed requests and needs WP Cloud capacity review. A separate candidate concerns an unrelated extension setting controlled by the reporter. They have different owners and outcomes.",
+      "expect": {
+        "readiness": ["Split required"],
+        "draft": false,
+        "include": ["split"],
+        "exclude": ["Copy/paste"]
+      }
+    },
+    {
+      "id": "direct-secret-containment",
+      "entry": "Direct",
+      "input": "Review this draft. The reporter pasted active authentication material into the working notes. The value is omitted here, but rotation and review of affected sessions have not happened.",
+      "expect": {
+        "readiness": ["Reporter action required"],
+        "draft": false,
+        "include": ["affected sessions"],
+        "exclude": ["Copy/paste"]
+      }
+    },
+    {
+      "id": "direct-alternate-owner",
+      "entry": "Direct",
+      "input": "Review this possible WP Cloud escalation in one pass. The evidence shows the requested correction is entirely in a reporter-controlled extension setting, and no WP Cloud action remains.",
+      "expect": {
+        "readiness": ["Reporter action required", "Belongs elsewhere"],
+        "draft": false,
+        "include": ["reporter"],
+        "exclude": ["Copy/paste"]
+      }
+    },
+    {
+      "id": "direct-atomic-api-correction",
+      "entry": "Direct",
+      "input": "Review this draft in one pass. It claims a WP Cloud Atomic API operation is broken, but the supplied request uses a field that is absent from the current public contract. The reporter has not retried with the documented field.",
+      "expect": {
+        "readiness": ["Reporter action required"],
+        "draft": false,
+        "include": ["documented field"],
+        "exclude": ["Ready with caveats"]
+      }
+    }
+  ]
+}
