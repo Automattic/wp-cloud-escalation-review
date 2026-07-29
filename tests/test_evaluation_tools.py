@@ -197,7 +197,7 @@ class PluginPackageTests(unittest.TestCase):
         self.assertEqual(
             {
                 "source": "local",
-                "path": "./plugins/wp-cloud-escalation-review",
+                "path": "./",
             },
             marketplace["plugins"][0]["source"],
         )
