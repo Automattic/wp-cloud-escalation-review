@@ -142,6 +142,17 @@ enough detail that the receiver need not reopen them to understand the claim.
 Precision is not relevance. Remove unrelated hashes, counts, classifier fields,
 comparison sites, and history.
 
+Always include a supplied, shareable link to the relevant logs, dashboard view,
+or saved query. For traffic and rate-limit claims, link the exact view or query
+that supports the count or protection reason and say what it shows. A count,
+percentage, or “per day” claim must name its absolute bounded interval and
+denominator. Preserve the same fixed interval in whatever log, saved-search,
+dashboard, or evidence link is available; do not rely on a drifting “last 24
+hours” view. If the reporter cannot share a link, keep a short excerpt or
+lookup details instead; the missing link is not a blocker. Do not ask the
+reporter to sanitize ordinary traffic details. Remove only actual
+authentication material or a specific sensitive personal or financial value.
+
 For scheduled work, prefer one mapped hook/error example plus runtime limit.
 Remove diagnostic installation history, raw filter inventories, and extra
 hooks unless they change action.

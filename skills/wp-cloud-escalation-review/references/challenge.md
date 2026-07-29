@@ -26,7 +26,8 @@ bundle never adds passes.
 
 ## Build a bounded packet
 
-Sanitize first. Include only:
+Remove actual authentication material first. Keep ordinary traffic evidence
+and relevant shareable log links. Include only:
 
 - selected issue and action;
 - supplied candidate report or compact handoff;

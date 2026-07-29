@@ -33,6 +33,12 @@ Collect fields that change the decision:
   class, verified impact, and direct platform signal.
 - For automation: normal and peak rate, concurrency, burst shape, retry and
   backoff behavior, duplicate work, cacheability, and request cost.
+- A shareable link to the exact log view, dashboard view, or saved query when
+  one exists. Always carry it into the handoff and state which count, request,
+  or protection reason it supports. For counts, percentages, and rates, keep
+  the absolute bounded interval and denominator in the handoff and preserve
+  the same fixed interval in the link when possible. Do not block when the
+  reporter has no shareable link.
 
 Keep identity, authorization, legitimacy, risk, and cost separate.
 

@@ -58,6 +58,42 @@
       }
     },
     {
+      "id": "direct-rate-limit-log-link",
+      "entry": "Direct",
+      "input": "Review this request in one pass. On synthetic site label demo-site-g, 18 of 240 POST requests to /wp-json/example/v1/order returned HTTP 429 from 16:00 to 16:10 UTC on <eval-date>: 7.5% for that fixed interval. The traffic logs record example-protection-result for those 18 requests, and failed test-order updates demonstrate the impact. The reporter supplied a shareable saved traffic-log link with the same absolute interval: <shareable-log-link>. Ask WP Cloud to review the recorded protection result while preserving protection for unrelated traffic. The link contains ordinary traffic details and no authentication material or sensitive payload values.",
+      "expect": {
+        "outcome": "ready",
+        "draft": "required",
+        "messages": {
+          "include": ["<shareable-log-link>", "18 of 240", "7.5%", "16:00", "16:10"],
+          "exclude": ["sanitize", "redact", "remove the traffic", "share the link"],
+          "max_questions": 1
+        },
+        "references": {
+          "required": ["references/style-guide.md", "references/http-and-automation.md"],
+          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+        }
+      }
+    },
+    {
+      "id": "direct-rate-limit-no-shareable-link",
+      "entry": "Direct",
+      "input": "Review this request in one pass. On synthetic site label demo-site-h, 12 of 300 GET requests to /example-path returned HTTP 429 from 17:00 to 17:10 UTC on <eval-date>. A copied traffic-log excerpt records example-protection-result for those requests, and a test workflow failed. The reporter cannot create a shareable log link, but the site, bounded window, method, path, counts, reason, and impact are recorded. Ask WP Cloud to review the recorded protection result while preserving protection for unrelated traffic.",
+      "expect": {
+        "outcome": "ready",
+        "draft": "required",
+        "messages": {
+          "include": ["12 of 300"],
+          "exclude": ["need a link", "shareable link", "send the link", "sanitize"],
+          "max_questions": 1
+        },
+        "references": {
+          "required": ["references/style-guide.md", "references/http-and-automation.md"],
+          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+        }
+      }
+    },
+    {
       "id": "direct-performance-attribution-gap",
       "entry": "Direct",
       "input": "Review this in one pass. Users report slowness, but no Metrics, APM, logs, controlled comparison, request class, or workflow impact has been checked. The draft assumes platform capacity is the cause.",

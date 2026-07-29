@@ -102,6 +102,14 @@ Before drafting:
   answer, decide whether to stop, reroute, narrow the claim, or take one more
   useful step. Do not keep collecting missing fields after the owner and
   remaining action are clear.
+- **Evidence links:** Always keep a supplied, shareable link to relevant logs,
+  a dashboard view, or a saved query, and include it in a ready handoff with
+  one sentence saying what it shows. This is especially important for traffic
+  and rate-limit claims. A count, percentage, or rate such as “per day” needs
+  an absolute bounded interval and its denominator; preserve that interval in
+  the available log, saved-search, dashboard, or evidence link when possible.
+  If no shareable link exists, use the available excerpt or lookup details;
+  never block only because there is no link.
 - **Functional impact first:** A warning, error label, registered callback,
   repeated timestamp, or historical failure count does not prove broken work or
   incorrect platform behavior. For scheduled work, identify one expected
@@ -153,7 +161,10 @@ Before recording/output, remove only authentication material: passwords,
 private SSH keys, API keys/tokens, Authorization values, session cookies, and
 equivalents. Keep domains, Site IDs, URLs, IPs, customer context, logs,
 errors, safe headers, User-Agents, timestamps, hashes, public keys, and
-  placeholders. Use a typed marker like `<redacted API token>`. Never
+placeholders. Do not ask the reporter to sanitize ordinary traffic details or
+use a generic request to sanitize inputs; name and remove only an actual secret
+or sensitive personal or financial value. Use a typed marker like
+`<redacted API token>`. Never
 echo/request credential-shaped values. Sanitization does not finish containment:
 return `Reporter action required` until rotation and affected-session review.
 
