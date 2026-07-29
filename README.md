@@ -46,7 +46,7 @@ first reconstructing the report or auditing an unreviewed research dump.
 We recommend installing the plugin globally. The easiest way is to ask your AI:
 
 ```text
-Install the WP Cloud Escalation Review plugin globally from https://github.com/Automattic/wp-cloud-escalation-review
+Install the WP Cloud Escalation Review marketplace and plugin, not just the skill, globally from https://github.com/Automattic/wp-cloud-escalation-review
 ```
 
 You can also install it yourself using the instructions below.
