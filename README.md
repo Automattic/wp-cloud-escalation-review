@@ -12,8 +12,12 @@ include private support history or internal Automattic access.
 
 ## Install and use
 
-Copy or link `skills/wp-cloud-escalation-review/` into your agent's skills
-directory. The package is self-contained.
+Ask Codex, Claude, or another AI assistant that supports Agent Skills to
+install the skill from this repository:
+
+```text
+Install the WP Cloud Escalation Review skill from https://github.com/Automattic/wp-cloud-escalation-review
+```
 
 Invoke `wp-cloud-escalation-review` with the escalation material you want
 reviewed. Include the facts and evidence that are safe and necessary for the
