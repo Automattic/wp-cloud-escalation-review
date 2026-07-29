@@ -22,15 +22,15 @@
       }
     },
     {
-      "id": "guided-dashboard-first",
+      "id": "guided-available-evidence-first",
       "entry": "Guided",
-      "input": "Help review a possible escalation. A bounded period and synthetic site label are known. The draft claims every authenticated request failed after nearby SSH activity and a host-label change. The reporter has not checked the single-site dashboard, which can show affected count, request paths, and the direct reason requests reached another server.",
+      "input": "Help review a possible escalation. A bounded period and synthetic site label are known. The draft claims every authenticated request failed after nearby SSH activity and a host-label change. The reporter's WP Cloud client and available tooling are not specified. They have not checked the dashboards and logs available in their environment, which may be a host or Grafana dashboard, a company panel, nginx or PHP logs, or metrics from the WP Cloud Atomic API.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["single-site dashboard", "request count"],
-          "exclude": ["migration", "host move", "representative event"],
+          "include": ["dashboards and logs", "request count"],
+          "exclude": ["single-site dashboard", "migration", "host move", "representative event"],
           "max_questions": 1
         },
         "references": {

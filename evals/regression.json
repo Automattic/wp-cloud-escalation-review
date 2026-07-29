@@ -194,13 +194,13 @@
     {
       "id": "guided-host-fact-not-theory",
       "entry": "Guided",
-      "input": "Review this possible escalation. A host label changed near an SSH command and a later application error. The draft calls this a migration and asks whether the failure coincided with the host move or another managed operation. No direct evidence connects those facts. The site label, affected period, and an unchecked single-site dashboard are available.",
+      "input": "Review this possible escalation. A host label changed near an SSH command and a later application error. The draft calls this a migration and asks whether the failure coincided with the host move or another managed operation. No direct evidence connects those facts. The site label and affected period are known, but the reporter's WP Cloud client and available tooling are not. They may have a host or Grafana dashboard, a company panel, nginx or PHP logs, or metrics from the WP Cloud Atomic API.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["dashboard"],
-          "exclude": ["migration activity", "host move or another managed operation"],
+          "include": ["available", "logs"],
+          "exclude": ["single-site dashboard", "migration activity", "host move or another managed operation"],
           "max_questions": 1
         },
         "references": {

@@ -99,10 +99,13 @@ Before drafting:
   scope, ownership, risk, or action. Direct evidence waives generic checks, not
   lookup keys. `Needs evidence` retrieves existing artifacts.
 - **Broad impact first:** When site and time are known and the disputed claim is
-  broad scope or routing, check the single-site dashboard or equivalent
-  reporter-visible summary first. Ask for affected count, denominator or
-  request class, paths, and the direct routing/error reason. Request an exact
-  event only when receiver-side matching remains the needed WP Cloud action.
+  broad scope or routing, check the dashboards and logs available to the
+  reporter for that client first. These may be a host or Grafana dashboard, a
+  company or developer panel, nginx or PHP logs, or metrics from the WP Cloud
+  Atomic API. Name a specific tool only when access is known. Ask for affected
+  count, denominator or request class, paths, and the direct routing/error
+  reason. Request an exact event only when receiver-side matching remains the
+  needed WP Cloud action.
 - **Attribution:** Separate symptom, layer, mechanism, and cause. Validate
   identifiers, denominators, controls, and precedents. Precision, repetition,
   nearby activity, host changes, vendor prose, and code reading do not confirm
