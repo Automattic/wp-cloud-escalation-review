@@ -6,6 +6,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -133,6 +134,73 @@ class RuntimeIsolationTests(unittest.TestCase):
 
             with self.assertRaises(self.runner.EvaluationError):
                 self.runner.verify_runtime_manifest(package)
+
+
+class PluginPackageTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.builder = load_script("build_plugin")
+
+    def test_dual_plugin_metadata_is_valid_and_versioned_together(self) -> None:
+        version = self.builder.validate_source()
+
+        self.assertRegex(version, self.builder.SEMVER)
+        self.assertEqual(
+            version,
+            self.builder.load_json(self.builder.CODEX_MANIFEST)["version"],
+        )
+        self.assertEqual(
+            version,
+            self.builder.load_json(self.builder.CLAUDE_MANIFEST)["version"],
+        )
+
+    def test_release_version_must_match_the_manifests(self) -> None:
+        version = self.builder.validate_source()
+        different_version = "0.0.1" if version == "0.0.0" else "0.0.0"
+
+        with self.assertRaises(self.builder.PluginBuildError):
+            self.builder.validate_source(different_version)
+
+    def test_built_archive_contains_exact_canonical_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            dist = Path(directory)
+            with mock.patch.object(self.builder, "DIST", dist):
+                version = self.builder.validate_source()
+                plugin_root, archive = self.builder.build_plugin(version)
+                self.builder.validate_build(plugin_root, archive)
+
+                self.assertTrue(archive.is_file())
+                packaged_skill = (
+                    plugin_root
+                    / "skills"
+                    / "wp-cloud-escalation-review"
+                    / "SKILL.md"
+                )
+                canonical_skill = (
+                    ROOT
+                    / "skills"
+                    / "wp-cloud-escalation-review"
+                    / "SKILL.md"
+                )
+                self.assertEqual(
+                    canonical_skill.read_bytes(),
+                    packaged_skill.read_bytes(),
+                )
+
+    def test_claude_marketplace_uses_the_repository_plugin(self) -> None:
+        marketplace = self.builder.load_json(self.builder.CLAUDE_MARKETPLACE)
+
+        self.assertEqual("./claude-plugin", marketplace["plugins"][0]["source"])
+
+    def test_codex_marketplace_uses_the_repository_plugin(self) -> None:
+        marketplace = self.builder.load_json(self.builder.CODEX_MARKETPLACE)
+
+        self.assertEqual(
+            {
+                "source": "local",
+                "path": "./plugins/wp-cloud-escalation-review",
+            },
+            marketplace["plugins"][0]["source"],
+        )
 
 
 class ScoringTests(unittest.TestCase):
@@ -346,6 +414,17 @@ class PublicSafetyTests(unittest.TestCase):
 
         self.assertGreaterEqual(len(errors), 6)
 
+    def test_scanner_ignores_github_expression_context_names(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            workflow = root / "workflow.yml"
+            workflow.write_text(
+                "env:\n  GH_TOKEN: ${{ github.token }}\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual([], self.validate.scan_public_files(root))
+
     def test_scanner_rejects_existing_and_dangling_symlinks(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -359,6 +438,18 @@ class PublicSafetyTests(unittest.TestCase):
                 external.unlink()
 
         self.assertEqual(2, sum("symlink" in error for error in errors))
+
+    def test_scanner_allows_an_internal_marketplace_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill = root / "skills" / "sample"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("sample\n", encoding="utf-8")
+            plugin_skills = root / "plugin" / "skills"
+            plugin_skills.mkdir(parents=True)
+            (plugin_skills / "sample").symlink_to(skill)
+
+            self.assertEqual([], self.validate.scan_public_files(root))
 
     def test_tracked_evaluation_results_are_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

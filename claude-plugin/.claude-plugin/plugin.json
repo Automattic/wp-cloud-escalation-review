@@ -1,0 +1,20 @@
+{
+  "name": "wp-cloud-escalation-review",
+  "displayName": "WP Cloud Escalation Review",
+  "version": "1.0.0",
+  "description": "Review WP Cloud escalation evidence, ownership, readiness, and final copy before sending.",
+  "author": {
+    "name": "Automattic",
+    "url": "https://github.com/Automattic"
+  },
+  "homepage": "https://github.com/Automattic/wp-cloud-escalation-review",
+  "repository": "https://github.com/Automattic/wp-cloud-escalation-review",
+  "license": "GPL-2.0-or-later",
+  "keywords": [
+    "wp-cloud",
+    "escalation",
+    "review",
+    "support"
+  ],
+  "skills": "./skills/"
+}

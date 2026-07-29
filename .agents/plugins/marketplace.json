@@ -1,0 +1,20 @@
+{
+  "name": "wp-cloud-escalation-review",
+  "interface": {
+    "displayName": "WP Cloud Escalation Review"
+  },
+  "plugins": [
+    {
+      "name": "wp-cloud-escalation-review",
+      "source": {
+        "source": "local",
+        "path": "./plugins/wp-cloud-escalation-review"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -13,6 +13,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
+import build_plugin as plugin_package
 from run_evaluations import RUNTIME_MANIFEST, SKILL_NAME, runtime_files
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,7 +34,7 @@ PUBLIC_TEXT_SUFFIXES = {".md", ".json", ".py", ".yaml", ".yml", ".txt"}
 FILELIKE_SUFFIXES = {
     "json", "md", "py", "toml", "txt", "yaml", "yml",
 }
-ALLOWED_PUBLIC_DOMAINS = {"github.com", "wp.cloud"}
+ALLOWED_PUBLIC_DOMAINS = {"code.claude.com", "github.com", "wp.cloud"}
 DOMAIN_SHAPE = re.compile(
     r"(?<![\w./-])(?:[a-z0-9-]+\.)+"
     r"[a-z]{2,63}(?![\w-])",
@@ -85,6 +86,7 @@ PRIVATE_KEY_BOUNDARY = re.compile(
     r"-----BEGIN (?:RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----"
 )
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+GITHUB_EXPRESSION = re.compile(r"\$\{\{.*?\}\}", re.DOTALL)
 
 
 class ValidationError(ValueError):
@@ -279,12 +281,17 @@ def _scan_text(path: Path, text: str) -> list[str]:
         if marker in lowered:
             errors.append(f"{path}: private/internal marker: {marker}")
     if path.name != "LICENSE":
-        domain_values = [match.group(1) for match in URL_HOST_SHAPE.finditer(text)]
+        domain_source = GITHUB_EXPRESSION.sub("", text)
+        domain_values = [
+            match.group(1) for match in URL_HOST_SHAPE.finditer(domain_source)
+        ]
         domain_values.extend(
-            match.group(1) for match in QUOTED_DOMAIN_SHAPE.finditer(text)
+            match.group(1) for match in QUOTED_DOMAIN_SHAPE.finditer(domain_source)
         )
         if path.suffix.lower() != ".py":
-            domain_values.extend(match.group(0) for match in DOMAIN_SHAPE.finditer(text))
+            domain_values.extend(
+                match.group(0) for match in DOMAIN_SHAPE.finditer(domain_source)
+            )
         for candidate in domain_values:
             value = candidate.lower()
             suffix = value.rsplit(".", 1)[-1]
@@ -317,10 +324,17 @@ def _scan_text(path: Path, text: str) -> list[str]:
 
 def scan_public_files(root: Path) -> list[str]:
     errors: list[str] = []
+    resolved_root = root.resolve()
     for path in sorted(root.rglob("*")):
         relative = path.relative_to(root)
         if path.is_symlink():
-            errors.append(f"{relative}: symlink is not allowed")
+            if not path.exists():
+                errors.append(f"{relative}: dangling symlink is not allowed")
+                continue
+            try:
+                path.resolve().relative_to(resolved_root)
+            except ValueError:
+                errors.append(f"{relative}: external symlink is not allowed")
             continue
         if not path.is_file():
             continue
@@ -356,6 +370,10 @@ def tracked_result_errors(root: Path) -> list[str]:
 
 def validate_repository(root: Path = ROOT) -> list[str]:
     errors = validate_skill(root / "skills" / SKILL_NAME)
+    try:
+        plugin_package.validate_source()
+    except plugin_package.PluginBuildError as error:
+        errors.append(f"invalid plugin package: {error}")
     fixtures: list[dict[str, Any]] = []
     for suite in ("development", "regression"):
         path = root / "evals" / f"{suite}.json"
