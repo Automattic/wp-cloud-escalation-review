@@ -125,8 +125,8 @@ not carry separate review rules.
 
 - `skills/wp-cloud-escalation-review/` contains the installable skill and its
   public references.
-- `.codex-plugin/`, `.agents/plugins/`, `.claude-plugin/`, `plugins/`, and
-  `claude-plugin/` contain client-specific plugin and marketplace metadata.
+- `.agents/plugins/`, `.claude-plugin/`, and `plugins/` contain
+  client-specific plugin and marketplace metadata.
 - `evals/` contains synthetic development and regression cases.
 - `scripts/` contains plugin packaging, repository validation, and opt-in
   behavior-evaluation tools.
@@ -178,8 +178,8 @@ committed.
 
 Update the matching version in:
 
-- `.codex-plugin/plugin.json`;
-- `claude-plugin/.claude-plugin/plugin.json`;
+- `plugins/wp-cloud-escalation-review/.codex-plugin/plugin.json`;
+- `.claude-plugin/plugin.json`;
 - `.claude-plugin/marketplace.json`.
 
 Then merge the change and push a matching `v<version>` tag. The plugin workflow

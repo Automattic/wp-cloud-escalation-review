@@ -189,7 +189,7 @@ class PluginPackageTests(unittest.TestCase):
     def test_claude_marketplace_uses_the_repository_plugin(self) -> None:
         marketplace = self.builder.load_json(self.builder.CLAUDE_MARKETPLACE)
 
-        self.assertEqual("./claude-plugin", marketplace["plugins"][0]["source"])
+        self.assertEqual("./", marketplace["plugins"][0]["source"])
 
     def test_codex_marketplace_uses_the_repository_plugin(self) -> None:
         marketplace = self.builder.load_json(self.builder.CODEX_MARKETPLACE)
