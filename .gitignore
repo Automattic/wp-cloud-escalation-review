@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Generated evaluation artifacts
+evals/results/
+
+# Local environments and tools
+.venv/
+venv/
+.env
+.env.*
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~

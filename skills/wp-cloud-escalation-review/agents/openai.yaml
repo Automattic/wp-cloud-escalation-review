@@ -1,0 +1,4 @@
+interface:
+  display_name: "WP Cloud Escalation Review"
+  short_description: "Review and sharpen WP Cloud escalations"
+  default_prompt: "Use $wp-cloud-escalation-review to review this WP Cloud escalation before I send it."
