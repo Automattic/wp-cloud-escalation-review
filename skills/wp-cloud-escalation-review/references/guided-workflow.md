@@ -3,22 +3,26 @@
 Use for raw, investigative, incomplete, or explicitly step-by-step work. The
 router owns record and readiness; this file owns turn progression.
 
-## Start at the first unmet gate
+## Start with the decision that remains
 
 Check earlier gates without narrating phases:
 
-1. **Route:** goal, candidates, document type, destination when material,
-   required owner, channel, durability. Identify independent issues first.
-   When no ask exists, include `analysis_or_review_note`.
-2. **Define:** selected issue, current condition/decision, blocked goal, scope,
-   requested action.
-3. **Validate:** claim ledger, provenance, currentness, reporter work,
-   documentation, zero/one technical reference.
-4. **Challenge:** only after one selected issue clears earlier gates; use
+1. **Safety and selection:** sanitize, handle containment/change safety, and
+   separate independent issues.
+2. **First decision-bearing check:** for a broad claim with a known site,
+   period, and unchecked dashboard, ask for that summary first. Otherwise
+   establish whether the issue still happens and what WP Cloud still owns.
+3. **Currentness and ownership:** settle anything the first check did not
+   answer before requesting event-level proof.
+4. **Exact receiver lookup:** request an event tuple only when WP Cloud must
+   match receiver-side data and reporter-visible checks are complete.
+5. **Documentation and technical reference:** load them only while WP Cloud
+   work still remains.
+6. **Challenge:** only after one selected issue clears earlier gates; use
    [the challenge contract](challenge.md).
-5. **Readiness and draft:** resolve objections, recompute readiness, draft only
+7. **Readiness and draft:** resolve objections, recompute readiness, draft only
    when allowed.
-6. **Final check:** compare draft with record for strength, completeness,
+8. **Final check:** compare draft with record for strength, completeness,
    relevance, safety, secrets, and writing.
 
 Raw notes usually enter Define. A strong draft may enter Challenge only after
@@ -49,7 +53,7 @@ Each turn:
 - retain challenge status (`not_reached|completed`), inline route, objections,
   and resolutions; never rerun a completed pass;
 - recompute from the earliest affected gate;
-- show only changed fields, controlling readiness, and next question.
+- keep the compact record and readiness private.
 
 Preserve desired outcome. Ask before changing outcome, owner, or risk boundary.
 Repeated facts, full records, checklists, and unanswered questions are not
@@ -57,18 +61,24 @@ progress.
 
 ## Ask the next useful question
 
-Ask one question changing route, ownership, validation, readiness, safety, or
-decision. Up to three related fields may identify one event/decision; do not
-mix evidence, impact, troubleshooting, and solution preference.
+Choose the question with the most decision value. When a broad impact claim
+already has a site, period, and available single-site dashboard, ask for the
+dashboard's affected count, paths or request class, and direct routing/error
+reason first. Otherwise ask whether the problem still happens and what WP Cloud
+still needs to answer or do. If one is already known, ask only for the other.
 
-Keep nonterminal prose under 120 words. If new reporter work is needed, state
-the action and observable result. If an existing artifact is missing, ask for
-it directly. Never ask for recorded facts again.
+Then ask one question changing route, ownership, validation, readiness, safety,
+or decision. Up to three related fields may describe one dashboard check or
+event; do not mix evidence, impact, troubleshooting, and solution preference.
 
-For technical events, prefer site/domain, absolute UTC, workflow,
-operation/request, observed/expected result, and direct signal when available.
-Do not request external identity research when a supplied event already scopes
-the decision.
+Keep nonterminal prose under 120 words. Use ordinary language, say briefly why
+the check matters, and avoid blame. If new reporter work is needed, state the
+action and observable result. If an existing artifact is missing, ask for it
+directly. Never ask for recorded facts again.
+
+Do not ask for a perfect multi-log chain merely to confirm a likely cause when
+the issue has stopped and no WP Cloud work remains. State the uncertainty and
+stop. Do not mention the unused log or proof request in the closing response.
 
 ## Split before selection
 
@@ -100,8 +110,8 @@ A nonterminal turn stops after the smallest blocker and next question, then
 resumes there. Stop a candidate when:
 
 - ready and final check passes;
-- resolved during validation;
-- another known owner/process/destination controls action;
+- no active issue and no WP Cloud decision or action remains;
+- another known owner/process/destination controls all remaining action;
 - user declines or cannot perform required reporter work.
 
 Stopping one candidate does not stop requested parked work. When a check is

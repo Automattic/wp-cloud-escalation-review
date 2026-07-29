@@ -54,6 +54,7 @@ def chunks(cases: list[dict[str, Any]], size: int = 8):
 def run_suite(
     fixture: dict[str, Any],
     *,
+    provider: str,
     model: str | None,
     effort: str,
     timeout_seconds: float,
@@ -63,6 +64,8 @@ def run_suite(
         "schema": runner.RESULT_SCHEMA,
         "suite": fixture["suite"],
         "source_digest": runner.source_digest(fixture["cases"]),
+        "provider": provider,
+        "adapter_version": runner.ADAPTER_VERSION,
         "model": model or "configured-default",
         "effort": effort,
         "cases": [],
@@ -72,6 +75,7 @@ def run_suite(
         result = runner.run_projection(
             package,
             projection,
+            provider=provider,
             model=model,
             effort=effort,
             timeout_seconds=timeout_seconds,
@@ -84,6 +88,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("suite", choices=("development", "regression"))
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--provider", choices=runner.PROVIDERS, default="codex")
     parser.add_argument("--model")
     parser.add_argument("--effort", choices=("low", "medium", "high"), default="medium")
     parser.add_argument("--timeout-seconds", type=float, default=300)
@@ -107,20 +112,28 @@ def main() -> int:
 
         results = run_suite(
             fixture,
+            provider=args.provider,
             model=args.model,
             effort=args.effort,
             timeout_seconds=args.timeout_seconds,
         )
         scores = scorer.score_suite(fixture, results)
         output_dir = ROOT / "evals" / "results"
-        runner.write_json(output_dir / f"{args.suite}-latest.json", results)
-        runner.write_json(output_dir / f"{args.suite}-scores-latest.json", scores)
+        runner.write_json(
+            output_dir / f"{args.suite}-{args.provider}-latest.json",
+            results,
+        )
+        runner.write_json(
+            output_dir / f"{args.suite}-{args.provider}-scores-latest.json",
+            scores,
+        )
     except (OSError, validate.ValidationError, runner.EvaluationError) as error:
         print(f"error: {runner.sanitize_text(str(error))}", file=sys.stderr)
         return 1
 
     print(
-        f"{args.suite}: {scores['passed']}/{scores['total']} cases passed; "
+        f"{args.suite} ({args.provider}): "
+        f"{scores['passed']}/{scores['total']} cases passed; "
         f"results: {output_dir}"
     )
     for case in scores["cases"]:

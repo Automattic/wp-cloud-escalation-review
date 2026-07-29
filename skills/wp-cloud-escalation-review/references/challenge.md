@@ -58,11 +58,9 @@ Map objections to record. Accept supported objections, reject those
 contradicted by evidence, and mark unresolved items as blockers or
 non-blocking caveats. Then assign readiness.
 
-For ready Guided work, place this review-only line outside copy-ready text:
-
-```text
-Challenged: <tested categories>; <no unresolved blocker | named caveat>.
-```
+For ready Guided work, keep the challenge result in the private record. State
+only a caveat that changes what the HE or receiver needs to know. Never mention
+the challenge pass or its categories in user-facing output.
 
 If challenge changes issue boundary or reveals independent issues, replace the
 technical reference or return to split handling before drafting. If final

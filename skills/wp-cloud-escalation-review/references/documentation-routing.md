@@ -4,6 +4,13 @@ Check current reporter-available documentation before calling a symptom
 undocumented. Record `checked`, `unavailable`, or `not_applicable`; never imply
 inaccessible material was reviewed.
 
+Do not research documentation until currentness and the remaining WP Cloud
+decision or action are known. If no WP Cloud work remains, use
+`not_applicable` and stop. General documentation can explain a published
+mechanism, but it cannot prove that a specific request followed that mechanism.
+Do not use a general failover page to replace direct event evidence or to
+relabel an event-specific retry.
+
 ## Public documentation
 
 Use the [public WP Cloud documentation repository](https://github.com/Automattic/wp-cloud-docs)
@@ -39,9 +46,9 @@ Glossary term: <term or none>
 Finding: <answer, correction, narrowing, or limitation>
 ```
 
-Every selected technical case gets this applicability check. If relevant
-documentation is unavailable, say so and ask for the smallest current source
-that could change scope, ownership, or action.
+Every selected technical case with remaining WP Cloud work gets this
+applicability check. If relevant documentation is unavailable, say so and ask
+for the smallest current source that could change scope, ownership, or action.
 
 ## WP Cloud Atomic API documentation
 

@@ -139,66 +139,53 @@ class ScoringTests(unittest.TestCase):
     def setUp(self) -> None:
         self.scorer = load_script("score_evaluations")
 
+    def expectation(
+        self,
+        outcome: str,
+        *,
+        draft: str = "forbidden",
+        include: list[str] | None = None,
+        exclude: list[str] | None = None,
+    ) -> dict:
+        return {
+            "outcome": outcome,
+            "draft": draft,
+            "messages": {
+                "include": include or [],
+                "exclude": exclude or [],
+                "max_questions": 2,
+            },
+            "references": {"required": [], "forbidden": []},
+        }
+
     def test_ready_draft_and_text_expectations_are_scored(self) -> None:
         case = {
             "id": "ready-check",
             "entry": "Direct",
             "input": "Review this.",
-            "expect": {
-                "readiness": ["Ready"],
-                "draft": True,
-                "include": ["verified outcome"],
-                "exclude": ["unsupported cause"],
-            },
+            "expect": self.expectation(
+                "ready",
+                draft="required",
+                include=["verified outcome"],
+                exclude=["unsupported cause"],
+            ),
         }
         output = (
-            "### Review\nReadiness: Ready\n\n### Copy/paste\n"
+            "This is ready to send.\n\n### Copy/paste\n"
             "```markdown\nVerified outcome with complete context.\n```"
         )
-        score = self.scorer.score_case(case, {"status": "completed", "output": output})
-
-        self.assertTrue(score["passed"])
-        self.assertEqual([], score["failures"])
-
-    def test_blocked_result_must_not_contain_a_draft(self) -> None:
-        case = {
-            "id": "blocked-check",
-            "entry": "Direct",
-            "input": "Review this.",
-            "expect": {
-                "readiness": ["Reporter action required"],
-                "draft": False,
-                "include": ["next action"],
-                "exclude": [],
+        score = self.scorer.score_case(
+            case,
+            {
+                "status": "completed",
+                "output": output,
+                "messages": [{"phase": "final", "text": output}],
+                "references": [],
             },
-        }
-        output = (
-            "Readiness: Reporter action required\n"
-            "Blocking: validation is missing\n"
-            "Next action: perform the reporter-owned check."
         )
-        score = self.scorer.score_case(case, {"status": "completed", "output": output})
 
-        self.assertTrue(score["passed"])
-
-    def test_markdown_emphasis_does_not_change_readiness(self) -> None:
-        case = {
-            "id": "formatted-readiness",
-            "entry": "Guided",
-            "input": "Review this.",
-            "expect": {
-                "readiness": ["Reporter action required"],
-                "draft": False,
-                "include": [],
-                "exclude": [],
-            },
-        }
-        output = "Readiness: **Reporter action required**\nBlocking: validation is missing."
-
-        score = self.scorer.score_case(case, {"status": "completed", "output": output})
-
-        self.assertTrue(score["passed"])
-        self.assertEqual("Reporter action required", score["readiness"])
+        self.assertTrue(score["passed"], score["failures"])
+        self.assertEqual([], score["failures"])
 
     def test_skill_requires_a_canonical_readiness_state(self) -> None:
         skill = (
@@ -206,19 +193,14 @@ class ScoringTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         self.assertIn("Every result uses exactly one readiness state", skill)
-        self.assertIn("`Blocked at routing`", skill)
+        self.assertIn("readiness stays internal", skill)
 
     def test_multiple_readiness_lines_are_rejected(self) -> None:
         case = {
             "id": "contradictory-readiness",
             "entry": "Direct",
             "input": "Review this.",
-            "expect": {
-                "readiness": ["Ready"],
-                "draft": True,
-                "include": [],
-                "exclude": [],
-            },
+            "expect": self.expectation("ready", draft="required"),
         }
         output = (
             "Readiness: Ready\nReadiness: Ready with caveats\n"
@@ -228,19 +210,14 @@ class ScoringTests(unittest.TestCase):
         score = self.scorer.score_case(case, {"status": "completed", "output": output})
 
         self.assertFalse(score["passed"])
-        self.assertIn("exactly one readiness", " ".join(score["failures"]))
+        self.assertIn("at most one readiness", " ".join(score["failures"]))
 
     def test_ready_draft_must_be_substantive(self) -> None:
         case = {
             "id": "short-draft",
             "entry": "Direct",
             "input": "Review this.",
-            "expect": {
-                "readiness": ["Ready"],
-                "draft": True,
-                "include": [],
-                "exclude": [],
-            },
+            "expect": self.expectation("ready", draft="required"),
         }
         output = "Readiness: Ready\n### Copy/paste\n```markdown\nx\n```"
 
@@ -249,38 +226,12 @@ class ScoringTests(unittest.TestCase):
         self.assertFalse(score["passed"])
         self.assertIn("substantive", " ".join(score["failures"]))
 
-    def test_ready_text_expectations_use_the_draft_body(self) -> None:
-        case = {
-            "id": "draft-scope",
-            "entry": "Direct",
-            "input": "Review this.",
-            "expect": {
-                "readiness": ["Ready"],
-                "draft": True,
-                "include": ["documentation owner"],
-                "exclude": [],
-            },
-        }
-        output = (
-            "Readiness: Ready\nChecked: documentation\n"
-            "### Copy/paste\n```markdown\nA complete escalation draft.\n```"
-        )
-
-        score = self.scorer.score_case(case, {"status": "completed", "output": output})
-
-        self.assertFalse(score["passed"])
-
     def test_blocked_result_rejects_a_misheaded_markdown_draft(self) -> None:
         case = {
             "id": "misheaded-draft",
             "entry": "Direct",
             "input": "Review this.",
-            "expect": {
-                "readiness": ["Reporter action required"],
-                "draft": False,
-                "include": [],
-                "exclude": [],
-            },
+            "expect": self.expectation("needs_reporter_check"),
         }
         output = (
             "Readiness: Reporter action required\n"
@@ -299,12 +250,7 @@ class ScoringTests(unittest.TestCase):
                     "id": "envelope-check",
                     "entry": "Direct",
                     "input": "Review this.",
-                    "expect": {
-                        "readiness": ["Reporter action required"],
-                        "draft": False,
-                        "include": [],
-                        "exclude": [],
-                    },
+                    "expect": self.expectation("needs_reporter_check"),
                 }
             ],
         }
@@ -321,16 +267,31 @@ class ScoringTests(unittest.TestCase):
         digest = self.scorer.source_digest(fixture["cases"])
         completed_case = {
             "id": "envelope-check",
+            "provider": "codex",
             "status": "completed",
-            "output": "Readiness: Reporter action required",
+            "output": "Please check the current state.",
+            "messages": [
+                {"phase": "final", "text": "Please check the current state."}
+            ],
+            "references": [],
         }
         valid_results = {
             "schema": self.scorer.RESULT_SCHEMA,
             "suite": "development",
             "source_digest": digest,
+            "provider": "codex",
+            "adapter_version": "wp-cloud-escalation-review-adapter/v1",
             "cases": [completed_case],
         }
         self.assertTrue(self.scorer.score_suite(fixture, valid_results)["success"])
+
+        invalid_provider = dict(valid_results, provider="unknown")
+        with self.assertRaises(self.scorer.ScoringError):
+            self.scorer.score_suite(fixture, invalid_provider)
+
+        invalid_adapter = dict(valid_results, adapter_version="old-adapter")
+        with self.assertRaises(self.scorer.ScoringError):
+            self.scorer.score_suite(fixture, invalid_adapter)
         valid_results["cases"].append(completed_case)
         with self.assertRaises(self.scorer.ScoringError):
             self.scorer.score_suite(fixture, valid_results)

@@ -4,6 +4,38 @@ Write the shortest self-contained handoff that lets the receiver act without
 reconstructing reporter work. Keep evidence, impact, controls, constraints,
 uncertainty, and requested decision. The router owns readiness and safety.
 
+## Use this style for every response
+
+Apply this guide to commentary, questions, blockers, outcomes, and review notes,
+not only the final escalation draft.
+
+Lead with what the HE should do or decide. Use direct verbs and familiar words.
+Describe an evidence gap without blaming the reporter, explain why the check
+matters, ask one focused question, and stop.
+
+Keep routing, readiness, challenge status, reason codes, evidence classes, and
+reference selection private. Do not announce skill loading, Direct or Guided
+paths, documentation research, reference reads, or challenge work. If
+compatibility requires a `Readiness:` line, use one short line and immediately
+state the practical decision. Do not print `Blocking:`, `Challenged:`,
+`Checked:`, phase names, or a review checklist.
+
+Translate internal analysis into ordinary language. Avoid phrases such as
+“active causal investigation,” “smallest reporter-owned evidence,” “bounded
+incident window,” “coherent causal hypothesis,” “clears the earlier
+attribution blocker,” “HTTP-routing review and challenge pass,” “reported
+platform behavior,” and “No further WP Cloud decision appears outstanding.”
+Prefer “check the dashboard for this period,” “this is a likely cause, but it
+is not confirmed,” and “there is nothing left for WP Cloud to answer.”
+
+Prefer “match this request with the platform logs” or “these happened around
+the same time” over the abstract noun “correlation” when either is accurate.
+Keep technical terminology only when the HE or receiver needs it.
+
+Once ownership and action are settled, remove unneeded proof requests from the
+response. Do not explain that extra logs would increase confidence when the
+reader does not need to collect them.
+
 ## Draft from the record
 
 Inventory the selected issue before editing:

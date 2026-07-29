@@ -10,6 +10,37 @@ checks, including checks against the WP Cloud Atomic API. It is not a general
 WP Cloud support, troubleshooting, or issue-resolution tool, and it does not
 include private support history or internal Automattic access.
 
+## Why this skill exists
+
+AI can produce a long, technical-looking explanation quickly. If a reporter
+forwards that material without validating and editing it, the receiving team
+inherits extra work. It must identify the concrete problem, separate supplied
+claims from verified facts, repeat reporter-owned troubleshooting, and remove
+irrelevant detail.
+
+This avoidable transfer of work is the cognitive AI tax.
+
+Do not impose a cognitive AI tax on others. Eliminate it or pay it yourself.
+
+Four principles guide the review:
+
+1. Treat confidence as presentation, not evidence. Verify factual claims
+   against the source, logs, dashboards, or tools. Mark an unverified claim as
+   reported or suspected, or remove it.
+2. Make every detail earn its reading cost. Dense, nested analysis is harder
+   to audit and gives unchecked claims more places to hide. Keep details that
+   change validation, scope, routing, risk, or the requested action.
+3. Own everything you send. Do not send a draft you have not read. You should
+   be able to explain its claims and answer follow-up questions. AI can produce
+   a first pass, but the sender remains responsible for the result.
+4. Write for the next person to act. Lead with the request, then summarize the
+   verified work and the remaining blocker. Correct errors as soon as you
+   discover them.
+
+The receiving team may still need to investigate the unresolved platform
+problem. That investigation should start at the WP Cloud boundary, without
+first reconstructing the report or auditing an unreviewed research dump.
+
 ## Install and use
 
 Ask Codex, Claude, or another AI assistant that supports Agent Skills to
@@ -19,9 +50,12 @@ install the skill from this repository:
 Install the WP Cloud Escalation Review skill from https://github.com/Automattic/wp-cloud-escalation-review
 ```
 
-Invoke `wp-cloud-escalation-review` with the escalation material you want
+Invoke `$wp-cloud-escalation-review` in Codex or
+`/wp-cloud-escalation-review` in Claude with the escalation material you want
 reviewed. Include the facts and evidence that are safe and necessary for the
-review, but do not include authentication material.
+review, but do not include authentication material. The behavior is defined in
+the shared `SKILL.md` and references; provider-specific metadata does not carry
+separate review rules.
 
 ## Repository contents
 
@@ -49,24 +83,29 @@ For a substantial change to core skill behavior, first inspect the projected
 development cases without invoking a model:
 
 ```bash
-python3 scripts/evaluate.py development --dry-run
+python3 scripts/evaluate.py development --dry-run --provider codex
 ```
 
-Then run the opt-in development evaluation:
+Then run the opt-in development evaluation through either supported client:
 
 ```bash
-python3 scripts/evaluate.py development
+python3 scripts/evaluate.py development --provider codex
+python3 scripts/evaluate.py development --provider claude
 ```
 
 Run the broader opt-in regression evaluation before a release or after a
 wide-ranging behavior change:
 
 ```bash
-python3 scripts/evaluate.py regression
+python3 scripts/evaluate.py regression --provider codex
+python3 scripts/evaluate.py regression --provider claude
 ```
 
-Model evaluations use the locally configured Codex CLI, may incur cost, and do
-not run in CI. Generated results are local artifacts and are not committed.
+Model evaluations use the selected locally configured CLI, may incur cost, and
+do not run in CI. Event capture and result files exist only in this opt-in test
+harness; normal skill use adds no telemetry. Both adapters normalize into the
+same scoring contract. Generated results are local artifacts and are not
+committed.
 
 ## License
 

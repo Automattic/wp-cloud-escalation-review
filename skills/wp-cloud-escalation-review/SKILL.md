@@ -10,6 +10,12 @@ request, or draft. It checks whether the handoff is ready and improves the
 copy. It may point to public documentation or reporter-owned checks, but it is
 not a general WP Cloud troubleshooting or issue-resolution tool.
 
+Before any user-visible response, open and apply
+[the escalation writing style](references/style-guide.md). It governs
+commentary, questions, blockers, outcomes, and copy-ready drafts.
+Apply the skill path, internal record, and reference reads silently. Never
+announce that a path, phase, reference, or challenge is being used.
+
 ## Choose the path
 
 Default to **Guided** for raw/incomplete work or investigation.
@@ -52,10 +58,11 @@ authorization, decision, or outcome persists.
 
 ## Load only what decides
 
-Only after selecting a routed technical issue, apply
+Only after safety, issue selection, currentness, and the remaining WP Cloud
+decision or action are settled, apply
 [documentation routing](references/documentation-routing.md). Check the exact
 endpoint contract for direct API work. Record `checked`, `unavailable`, or
-  `not_applicable`; do not imply inaccessible material was reviewed.
+`not_applicable`; do not imply inaccessible material was reviewed.
 
 A routed technical issue loads exactly one matching reference:
 
@@ -74,28 +81,36 @@ Use none for nontechnical, resolved, alternate-owner, or unknown-boundary work.
 Before selection, unperformed reporter validation of a forwarded causal/layer
 claim means `validation_not_performed` and `reference=none`. Reported mechanism
 alone does not select a boundary. Replace references when boundaries change;
-never stack them. Drafts load
-[writing style](references/style-guide.md) after gates pass.
+never stack them. If no WP Cloud decision or action remains, stop before
+documentation, a technical reference, challenge, or drafting.
 
 ## Apply hard gates
 
 Before drafting:
 
-- **Current:** Verify decision-bearing currentness; log search is not
-  reproduction. Bounded events with durable platform signals can support
+- **Current and needed:** Ask whether the issue still happens and what WP Cloud
+  still needs to answer or do. A resolved symptom may still need platform
+  follow-up; stop only when no WP Cloud decision or action remains. Log search
+  is not reproduction. Recent events with durable platform signals can support
   receiver-only review.
 - **Owned work:** Require the smallest available reporter check in accessible
   docs, logs, Metrics, APM, API/application tools, proxies, DNS, or telemetry.
 - **Adaptive evidence:** Ask only for facts changing attribution,
   scope, ownership, risk, or action. Direct evidence waives generic checks, not
   lookup keys. `Needs evidence` retrieves existing artifacts.
-- **Event floor:** Technical correlation needs one example and absolute UTC
-  time/range. An aggregate may replace events only with UTC bounds,
-  denominator, one request class, verified workflow impact, and direct signal.
-  Keep sample and population distinct.
+- **Broad impact first:** When site and time are known and the disputed claim is
+  broad scope or routing, check the single-site dashboard or equivalent
+  reporter-visible summary first. Ask for affected count, denominator or
+  request class, paths, and the direct routing/error reason. Request an exact
+  event only when receiver-side matching remains the needed WP Cloud action.
 - **Attribution:** Separate symptom, layer, mechanism, and cause. Validate
   identifiers, denominators, controls, and precedents. Precision, repetition,
-  vendor prose, and code reading do not confirm a claim.
+  nearby activity, host changes, vendor prose, and code reading do not confirm
+  a claim. Never turn timing into migration, failover, or cause.
+- **Enough evidence:** Do not demand a complete end-to-end proof chain when it
+  would only increase certainty after ownership and action are settled. Keep a
+  plausible cause qualified and route or stop. Do not mention a discarded
+  proof request in the user-facing response.
 - **Ask:** Request only work beyond the reporter boundary. Business value sets
   priority, not technical proof.
 - **Writing:** Keep the shortest evidence-to-impact chain. Remove templates,
@@ -129,8 +144,10 @@ Authentication material wins first: `Reporter action required` until rotation
 and affected-session review. Otherwise apply this order:
 
 1. `Split required`: independent candidates remain.
-2. `Resolved during validation`: no active issue or decision remains.
-3. `Belongs elsewhere`: a known owner/process controls the next action.
+2. `Resolved during validation`: no active issue and no WP Cloud decision or
+   action remains.
+3. `Belongs elsewhere`: a known owner/process controls the next action and no
+   WP Cloud work remains.
 4. `Reporter action required`: reporter must choose, investigate, correct,
    test, remove a secret, or verify. Reporter investigation routes
    `reporter_investigation` / `non_escalation` / `conditional`.
@@ -149,19 +166,18 @@ Use `Ready` when direct platform evidence decides the issue. A ready caveat's
 reason names its operational limit.
 Unperformed reproduction/validation uses `Reporter action required` with
 `validation_not_performed`, not `Needs evidence`.
-Every result uses exactly one readiness state from this list. Do not replace
-readiness with a phase label such as `Blocked at routing`; describe the phase
-in `Blocking` instead.
+Every result uses exactly one readiness state from this list; readiness stays internal
+unless a caller or compatibility contract requires one concise
+`Readiness: <state>` line. Never expose phase names, challenge state, evidence
+classes, reason codes, or internal checks.
 
 ## Return the result
 
 Ready result:
 
 ````text
-### Review
-Readiness: Ready | Ready with caveats
-Challenged: <Guided only>
-Checked: route, evidence, documentation, reporter work, safety, relevance, final copy
+<optional Readiness: Ready | Ready with caveats>
+<one short practical decision>
 
 ### Copy/paste
 ```markdown
@@ -170,13 +186,13 @@ Caveats: <only when present>
 ```
 ````
 
-Only the fenced `Copy/paste` block is pasteable. Keep `Readiness`,
-`Challenged`, and `Checked` in `Review`.
+Only the fenced `Copy/paste` block is pasteable. Keep review machinery outside
+the response.
 
-Blocked Direct returns `Readiness`, one `Blocking` reason, and the smallest
-`Next action` or `Next question`, without a draft. Otherwise name the split,
-resolution, or alternate route. Guided blockers include the smallest way to
-confirm, disprove, or reroute them.
+Blocked Direct explains one concrete problem and gives the smallest action or
+question, without a draft or field labels. Otherwise state the split,
+resolution, or alternate route plainly. Guided blockers ask the smallest
+friendly question that can confirm, disprove, or reroute the issue.
 
 Compare final text with the record. Withdraw a stronger, broader, stale,
 unsafe, incomplete, or irrelevant draft. Preserve desired outcome, owner, and
