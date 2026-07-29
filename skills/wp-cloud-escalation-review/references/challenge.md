@@ -15,6 +15,8 @@ Give extra scrutiny when:
 
 - material causality rests on indirect, conflicting, or narrow evidence;
 - one example expands to wider scope;
+- warnings are called a “false positive,” “breaking recurring cron,” or
+  “real-world damage” without a mapped failed outcome;
 - sensitive security or availability risk exists;
 - a requested change could weaken protection, isolation, reliability, or
   rollback safety.

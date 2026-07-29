@@ -274,6 +274,43 @@ class ScoringTests(unittest.TestCase):
         self.assertIn("metrics from the WP Cloud", skill)
         self.assertNotIn("single-site dashboard", skill)
 
+    def test_skill_advances_investigation_without_timestamp_or_access_dead_ends(self) -> None:
+        package = ROOT / "skills" / "wp-cloud-escalation-review"
+        skill = (package / "SKILL.md").read_text(encoding="utf-8")
+        guided = (package / "references" / "guided-workflow.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("which URL and HTTP method", skill)
+        self.assertIn("PHP fatal", skill)
+        self.assertIn("Do not ask the reporter to\n  restate an adequate window", skill)
+        self.assertIn("permit a narrow escalation", skill)
+        self.assertIn("State what the latest answer changed", guided)
+        self.assertIn("narrow last-resort escalation", guided)
+
+    def test_skill_requires_failed_work_and_safe_diagnostics(self) -> None:
+        package = ROOT / "skills" / "wp-cloud-escalation-review"
+        skill = (package / "SKILL.md").read_text(encoding="utf-8")
+        managed = (
+            package / "references" / "api-and-managed-operations.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Functional impact first", skill)
+        self.assertIn("execution and its observable result", skill)
+        self.assertIn("warnings without failed work", skill)
+        self.assertIn("Never make the warning ready", skill)
+        self.assertIn("Treat diagnostic commands by what they execute", skill)
+        self.assertIn("ordinary WordPress, PHP, plugin", skill)
+        self.assertIn("Start with the work result, not callback attribution", managed)
+        self.assertIn("Treat `wp eval` as arbitrary PHP execution", managed)
+        self.assertIn("reporter analysis, not raw log output", managed)
+
+        challenge = (package / "references" / "challenge.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("breaking recurring cron", challenge)
+        self.assertIn("real-world damage", challenge)
+
     def test_multiple_readiness_lines_are_rejected(self) -> None:
         case = {
             "id": "contradictory-readiness",

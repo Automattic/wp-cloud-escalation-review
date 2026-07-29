@@ -261,12 +261,78 @@ class SemanticScoringTests(unittest.TestCase):
 
         self.assertTrue(score["passed"], score["failures"])
 
+    def test_close_this_without_escalating_maps_to_no_post(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["nothing left"]),
+            output=(
+                "Close this without escalating. WP Cloud has nothing left "
+                "to answer or do."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_do_not_escalate_with_nothing_left_maps_to_no_post(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["do not escalate"]),
+            output=(
+                "There is nothing left for WP Cloud to answer or act on. "
+                "Do not escalate."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_do_not_escalate_with_no_remaining_question_maps_to_no_post(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["do not escalate"]),
+            output=(
+                "Do not escalate. There is no demonstrated broken workload "
+                "or remaining question for WP Cloud."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_warning_does_not_support_escalation_maps_to_no_post(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["nothing left"]),
+            output=(
+                "The warnings do not support an escalation. There is nothing "
+                "left for WP Cloud to answer or act on."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
     def test_request_for_existing_time_window_maps_to_needs_evidence(self) -> None:
         score = self.score(
             expectation("needs_existing_evidence", include=["existing UTC"]),
             output=(
                 "Add the existing UTC start and end time so WP Cloud can match "
                 "the failed operation in platform logs."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_plain_imperative_maps_to_reporter_action(self) -> None:
+        score = self.score(
+            expectation("needs_reporter_check", include=["dashboards"]),
+            output=(
+                "Check the dashboards available to you and report how many "
+                "matching requests failed."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_plain_owner_wording_maps_to_alternate_owner(self) -> None:
+        score = self.score(
+            expectation("alternate_owner", include=["reporter owns"]),
+            output=(
+                "Do not escalate this to WP Cloud. The reporter owns the "
+                "required setting change."
             ),
         )
 
@@ -287,6 +353,21 @@ class SemanticScoringTests(unittest.TestCase):
 
         self.assertFalse(score["passed"])
         self.assertIn("workflow jargon", " ".join(score["failures"]))
+
+    def test_reporter_facing_internal_terms_fail(self) -> None:
+        score = self.score(
+            expectation("needs_reporter_check", include=["URL"]),
+            output=(
+                "Which URL and request class failed? We need receiver-side "
+                "visibility based on reporter-visible evidence before continuing."
+            ),
+        )
+
+        self.assertFalse(score["passed"])
+        failures = " ".join(score["failures"])
+        self.assertIn("request class", failures)
+        self.assertIn("receiver-side", failures)
+        self.assertIn("reporter-visible evidence", failures)
 
     def test_question_and_reference_limits_cover_the_whole_interaction(self) -> None:
         score = self.score(

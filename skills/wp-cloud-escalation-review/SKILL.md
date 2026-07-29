@@ -26,9 +26,9 @@ Edit/draft/rewrite selects Direct unless Guided is requested.
 Direct uses `next=ask` only for an existing fact/selection; new validation and
 `validation_not_performed` use `next=stop`.
 
-When Guided is selected, open `references/guided-workflow.md`. Ask one question
-of up to three fields, never a checklist. Do not create or delegate to a
-subagent, call another model, or claim independent review.
+When Guided is selected, open `references/guided-workflow.md`. Give one focused
+action or question, never a field-completion checklist. Do not create or
+delegate to a subagent, call another model, or claim independent review.
 
 ## Build one active issue
 
@@ -95,27 +95,54 @@ Before drafting:
   receiver-only review.
 - **Owned work:** Require the smallest available reporter check in accessible
   docs, logs, Metrics, APM, API/application tools, proxies, DNS, or telemetry.
+  Help the reporter validate, solve, or reroute the issue before escalating.
 - **Adaptive evidence:** Ask only for facts changing attribution,
   scope, ownership, risk, or action. Direct evidence waives generic checks, not
-  lookup keys. `Needs evidence` retrieves existing artifacts.
+  lookup keys. `Needs evidence` retrieves existing artifacts. After every
+  answer, decide whether to stop, reroute, narrow the claim, or take one more
+  useful step. Do not keep collecting missing fields after the owner and
+  remaining action are clear.
+- **Functional impact first:** A warning, error label, registered callback,
+  repeated timestamp, or historical failure count does not prove broken work or
+  incorrect platform behavior. For scheduled work, identify one expected
+  execution and its observable result before investigating attribution. If the
+  work completes, do not describe the warning as broken work; if nobody has
+  checked, ask the reporter to validate it first.
 - **Broad impact first:** When site and time are known and the disputed claim is
   broad scope or routing, check the dashboards and logs available to the
   reporter for that client first. These may be a host or Grafana dashboard, a
   company or developer panel, nginx or PHP logs, or metrics from the WP Cloud
-  Atomic API. Name a specific tool only when access is known. Ask for affected
-  count, denominator or request class, paths, and the direct routing/error
-  reason. Request an exact event only when receiver-side matching remains the
-  needed WP Cloud action.
+  Atomic API. Name a specific tool only when access is known. Ask how many
+  requests failed out of how many, and which URL and HTTP method were affected.
+  If the draft claims every authenticated request failed, do not ask how many
+  authenticated requests failed; ask about all matching failures so the result
+  can test that claim. Then follow one useful clue toward ownership: why a
+  request reached another server, or whether a PHP fatal, plugin error, memory
+  error, or malformed response came first.
 - **Attribution:** Separate symptom, layer, mechanism, and cause. Validate
   identifiers, denominators, controls, and precedents. Precision, repetition,
   nearby activity, host changes, vendor prose, and code reading do not confirm
-  a claim. Never turn timing into migration, failover, or cause.
+  a claim. Never turn timing into migration, failover, or cause. Remove claims
+  from the review and draft when validation contradicts them.
 - **Enough evidence:** Do not demand a complete end-to-end proof chain when it
   would only increase certainty after ownership and action are settled. Keep a
   plausible cause qualified and route or stop. Do not mention a discarded
   proof request in the user-facing response.
-- **Ask:** Request only work beyond the reporter boundary. Business value sets
-  priority, not technical proof.
+- **Time:** Preserve a useful UTC timestamp or bounded window. Quietly convert
+  a supplied local time when its zone is known. Do not ask the reporter to
+  restate an adequate window in UTC. Ask for an exact event time only when WP
+  Cloud must locate that event and no request, trace, or job ID already does so.
+- **Last resort:** Do not make unavailable access a permanent block. If the
+  reporter has tried the relevant tools, documentation, and available help but
+  cannot obtain or interpret the decisive evidence, permit a narrow escalation.
+  State what they checked, which claims remain unverified, and the exact
+  platform-only question. Lack of effort is not the same as lack of access.
+- **Ask:** Keep ordinary WordPress, PHP, plugin, and application troubleshooting
+  with the reporter when available commands, logs, code, or standard tools can
+  answer it. Ask WP Cloud only for a demonstrated issue or decision requiring
+  platform state, control, WP Cloud Atomic API access, or another WP Cloud-owned
+  product or documentation decision. Business value sets priority, not
+  technical proof.
 - **Writing:** Keep the shortest evidence-to-impact chain. Remove templates,
   repetition, irrelevant precision, unsupported diagnoses, inflation, and
   remedy menus.
@@ -141,10 +168,22 @@ protected. Do not invent WP Cloud implementation controls. Emergencies may
 bypass unavailable docs, never secrets, current state, authority, containment,
 ownership, or change safety.
 
+Treat diagnostic commands by what they execute, not by the intended output.
+Prefer existing logs and standard tools already used by the reporter. A command
+that bootstraps an application, executes code, triggers hooks, or dumps runtime
+state may have production side effects even when it only intends to read. Give
+an exact command only when its result is necessary; confirm target and
+environment, explain material risk, minimize output, and avoid secrets or broad
+object dumps. Mutation still requires the full change controls above.
+
 ## Choose readiness
 
 Authentication material wins first: `Reporter action required` until rotation
-and affected-session review. Otherwise apply this order:
+and affected-session review. For warnings without failed work, use `Reporter
+action required` when a representative outcome has not been checked. Use
+`Resolved during validation` when the work completes and no WP Cloud decision
+remains. Never make the warning ready as a broken-work incident. Otherwise
+apply this order:
 
 1. `Split required`: independent candidates remain.
 2. `Resolved during validation`: no active issue and no WP Cloud decision or
@@ -160,7 +199,9 @@ and affected-session review. Otherwise apply this order:
    limit remains. `receiver_only_correlation` means established boundary plus
    exact-event matching. `receiver_only_visibility` means receiver data must
    establish layer, population, legitimacy, or scope; exact events do not
-   override it.
+   override it. Exhausted reporter access may support this state only after the
+   attempted checks, remaining uncertainty, and narrow WP Cloud question are
+   clear.
 7. `Ready`: all gates pass without such limitation.
 
 Ready states permit drafts. Caveats cannot hide unsupported attribution,
