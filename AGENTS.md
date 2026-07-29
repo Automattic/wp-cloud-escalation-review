@@ -13,7 +13,7 @@ Keep this repository public-safe and focused on escalation review.
   generated evaluation results.
 - Keep the installable package self-contained and lightweight.
 - Keep the Codex manifest, Claude manifest, and Claude marketplace versions in
-  sync. Keep both marketplace entries pointed at their checked-in wrappers.
+  sync. Keep both marketplace entries pointed at the repository root.
 - Keep `skills/wp-cloud-escalation-review/` canonical. Generated plugin
   archives must copy it exactly rather than introducing a second source.
 - Update `skills/wp-cloud-escalation-review/agents/openai.yaml` when the

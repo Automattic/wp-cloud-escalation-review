@@ -8,7 +8,7 @@
       "name": "wp-cloud-escalation-review",
       "source": {
         "source": "local",
-        "path": "./plugins/wp-cloud-escalation-review"
+        "path": "./"
       },
       "policy": {
         "installation": "AVAILABLE",
