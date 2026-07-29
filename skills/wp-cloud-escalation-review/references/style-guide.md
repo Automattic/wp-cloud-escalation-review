@@ -25,8 +25,15 @@ Translate internal analysis into ordinary language. Avoid phrases such as
 incident window,” “coherent causal hypothesis,” “clears the earlier
 attribution blocker,” “HTTP-routing review and challenge pass,” “reported
 platform behavior,” and “No further WP Cloud decision appears outstanding.”
-Prefer “check the dashboard for this period,” “this is a likely cause, but it
-is not confirmed,” and “there is nothing left for WP Cloud to answer.”
+Prefer “check the dashboards and logs you can access for this period,” “this is
+a likely cause, but it is not confirmed,” and “there is nothing left for WP
+Cloud to answer.”
+
+Do not name an internal dashboard unless the reporter is known to have access.
+When access is unknown, refer to “the dashboards and logs available to you.”
+Offer examples such as a host or Grafana dashboard, company panel, nginx or PHP
+logs, or metrics from the WP Cloud Atomic API only when they help the reader
+find an equivalent.
 
 Prefer “match this request with the platform logs” or “these happened around
 the same time” over the abstract noun “correlation” when either is accurate.

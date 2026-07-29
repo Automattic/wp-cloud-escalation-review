@@ -1,7 +1,7 @@
 {
   "name": "wp-cloud-escalation-review",
   "displayName": "WP Cloud Escalation Review",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Review WP Cloud escalation evidence, ownership, readiness, and final copy before sending.",
   "author": {
     "name": "Automattic",

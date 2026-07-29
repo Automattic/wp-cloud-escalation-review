@@ -263,6 +263,17 @@ class ScoringTests(unittest.TestCase):
         self.assertIn("Every result uses exactly one readiness state", skill)
         self.assertIn("readiness stays internal", skill)
 
+    def test_skill_uses_client_available_evidence_sources(self) -> None:
+        skill = (
+            ROOT / "skills" / "wp-cloud-escalation-review" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("dashboards and logs available", skill)
+        self.assertIn("Grafana dashboard", skill)
+        self.assertIn("nginx or PHP logs", skill)
+        self.assertIn("metrics from the WP Cloud", skill)
+        self.assertNotIn("single-site dashboard", skill)
+
     def test_multiple_readiness_lines_are_rejected(self) -> None:
         case = {
             "id": "contradictory-readiness",

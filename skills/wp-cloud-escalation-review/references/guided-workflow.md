@@ -9,9 +9,10 @@ Check earlier gates without narrating phases:
 
 1. **Safety and selection:** sanitize, handle containment/change safety, and
    separate independent issues.
-2. **First decision-bearing check:** for a broad claim with a known site,
-   period, and unchecked dashboard, ask for that summary first. Otherwise
-   establish whether the issue still happens and what WP Cloud still owns.
+2. **First decision-bearing check:** for a broad claim with a known site and
+   period, ask for the nearest useful summary in the dashboards and logs
+   available to that reporter. Otherwise establish whether the issue still
+   happens and what WP Cloud still owns.
 3. **Currentness and ownership:** settle anything the first check did not
    answer before requesting event-level proof.
 4. **Exact receiver lookup:** request an event tuple only when WP Cloud must
@@ -62,13 +63,16 @@ progress.
 ## Ask the next useful question
 
 Choose the question with the most decision value. When a broad impact claim
-already has a site, period, and available single-site dashboard, ask for the
-dashboard's affected count, paths or request class, and direct routing/error
-reason first. Otherwise ask whether the problem still happens and what WP Cloud
-still needs to answer or do. If one is already known, ask only for the other.
+already has a site and period, ask the reporter to use the dashboards and logs
+available for that client. Depending on access, that may be a host or Grafana
+dashboard, a company or developer panel, nginx or PHP logs, or metrics from the
+WP Cloud Atomic API. Ask for affected count, paths or request class, and direct
+routing/error reason first. Name a specific tool only when its availability is
+known. Otherwise ask whether the problem still happens and what WP Cloud still
+needs to answer or do. If one is already known, ask only for the other.
 
 Then ask one question changing route, ownership, validation, readiness, safety,
-or decision. Up to three related fields may describe one dashboard check or
+or decision. Up to three related fields may describe one evidence check or
 event; do not mix evidence, impact, troubleshooting, and solution preference.
 
 Keep nonterminal prose under 120 words. Use ordinary language, say briefly why
