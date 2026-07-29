@@ -12,6 +12,10 @@ Keep this repository public-safe and focused on escalation review.
 - Never add authentication material, secrets, private transcripts, or
   generated evaluation results.
 - Keep the installable package self-contained and lightweight.
+- Keep the Codex manifest, Claude manifest, and Claude marketplace versions in
+  sync. Keep both marketplace entries pointed at their checked-in wrappers.
+- Keep `skills/wp-cloud-escalation-review/` canonical. Generated plugin
+  archives must copy it exactly rather than introducing a second source.
 - Update `skills/wp-cloud-escalation-review/agents/openai.yaml` when the
   skill's name, description, or invocation identity changes.
 
@@ -20,6 +24,7 @@ After changes, run:
 ```bash
 python3 scripts/validate.py
 python3 -m unittest discover -s tests
+python3 scripts/build_plugin.py --check
 ```
 
 For substantial core-skill changes, also run:

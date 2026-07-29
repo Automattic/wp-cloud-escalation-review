@@ -43,27 +43,93 @@ first reconstructing the report or auditing an unreviewed research dump.
 
 ## Install and use
 
-Ask Codex, Claude, or another AI assistant that supports Agent Skills to
-install the skill from this repository:
+We recommend installing the plugin globally. The easiest way is to ask your AI:
+
+```text
+Install the WP Cloud Escalation Review plugin globally from https://github.com/Automattic/wp-cloud-escalation-review
+```
+
+You can also install it yourself using the instructions below.
+
+Tagged releases contain one validated plugin ZIP for both Codex and Claude.
+The archive contains separate client manifests and one exact copy of the
+canonical skill.
+
+### Codex
+
+Add this repository as a marketplace and install the plugin:
+
+```bash
+codex plugin marketplace add Automattic/wp-cloud-escalation-review
+codex plugin add wp-cloud-escalation-review@wp-cloud-escalation-review
+```
+
+Start a new task, then paste:
+
+```text
+Use $wp-cloud-escalation-review:wp-cloud-escalation-review to review this escalation:
+
+[paste the escalation here]
+```
+
+If you only want the skill, ask Codex to install it directly:
 
 ```text
 Install the WP Cloud Escalation Review skill from https://github.com/Automattic/wp-cloud-escalation-review
 ```
 
-Invoke `$wp-cloud-escalation-review` in Codex or
-`/wp-cloud-escalation-review` in Claude with the escalation material you want
-reviewed. Include the facts and evidence that are safe and necessary for the
-review, but do not include authentication material. The behavior is defined in
-the shared `SKILL.md` and references; provider-specific metadata does not carry
-separate review rules.
+Then invoke the standalone skill as `$wp-cloud-escalation-review`.
+
+You can also download the latest plugin ZIP from GitHub Releases and install it
+manually. For marketplace installs, refresh the repository and reinstall the
+plugin when a new version is released:
+
+```bash
+codex plugin marketplace upgrade wp-cloud-escalation-review
+codex plugin add wp-cloud-escalation-review@wp-cloud-escalation-review
+```
+
+Start a new task after installing or updating so Codex loads the current
+plugin.
+
+### Claude Code
+
+Add this repository as a marketplace and install the plugin:
+
+```text
+/plugin marketplace add Automattic/wp-cloud-escalation-review
+/plugin install wp-cloud-escalation-review@wp-cloud-escalation-review
+/reload-plugins
+```
+
+Invoke the installed Claude plugin as:
+
+```text
+/wp-cloud-escalation-review:wp-cloud-escalation-review
+```
+
+Claude refreshes Git marketplaces in the background. Because this plugin uses
+an explicit semantic version, releases must bump the version before installed
+copies update. Users can also run:
+
+```text
+/plugin update wp-cloud-escalation-review@wp-cloud-escalation-review
+```
+
+With either client, include the facts and evidence that are safe and necessary
+for the review, but do not include authentication material. The behavior is
+defined in the shared `SKILL.md` and references; client-specific metadata does
+not carry separate review rules.
 
 ## Repository contents
 
 - `skills/wp-cloud-escalation-review/` contains the installable skill and its
   public references.
+- `.codex-plugin/`, `.agents/plugins/`, `.claude-plugin/`, `plugins/`, and
+  `claude-plugin/` contain client-specific plugin and marketplace metadata.
 - `evals/` contains synthetic development and regression cases.
-- `scripts/` contains repository validation and opt-in behavior-evaluation
-  tools.
+- `scripts/` contains plugin packaging, repository validation, and opt-in
+  behavior-evaluation tools.
 - `tests/` verifies the public package and evaluation workflow.
 
 The repository intentionally excludes real customer cases, client names,
@@ -77,6 +143,7 @@ sources, then run the deterministic checks:
 ```bash
 python3 scripts/validate.py
 python3 -m unittest discover -s tests
+python3 scripts/build_plugin.py --check
 ```
 
 For a substantial change to core skill behavior, first inspect the projected
@@ -106,6 +173,18 @@ do not run in CI. Event capture and result files exist only in this opt-in test
 harness; normal skill use adds no telemetry. Both adapters normalize into the
 same scoring contract. Generated results are local artifacts and are not
 committed.
+
+## Release a plugin version
+
+Update the matching version in:
+
+- `.codex-plugin/plugin.json`;
+- `claude-plugin/.claude-plugin/plugin.json`;
+- `.claude-plugin/marketplace.json`.
+
+Then merge the change and push a matching `v<version>` tag. The plugin workflow
+validates the tag against all three manifests, builds the dual-client ZIP, and
+attaches it to a GitHub release.
 
 ## License
 
