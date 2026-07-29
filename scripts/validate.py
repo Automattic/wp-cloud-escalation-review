@@ -16,15 +16,18 @@ if str(SCRIPT_DIR) not in sys.path:
 from run_evaluations import RUNTIME_MANIFEST, SKILL_NAME, runtime_files
 
 ROOT = Path(__file__).resolve().parents[1]
-FIXTURE_SCHEMA = "wp-cloud-escalation-review-evals/v1"
-READINESS = {
-    "Ready",
-    "Ready with caveats",
-    "Reporter action required",
-    "Resolved during validation",
-    "Belongs elsewhere",
-    "Needs evidence",
-    "Split required",
+FIXTURE_SCHEMA = "wp-cloud-escalation-review-evals/v2"
+OUTCOMES = {
+    "ready",
+    "ready_with_caveat",
+    "needs_reporter_check",
+    "needs_existing_evidence",
+    "split",
+    "alternate_owner",
+    "no_post",
+}
+CONDITIONAL_REFERENCES = {
+    path for path in RUNTIME_MANIFEST if path.startswith("references/")
 }
 PUBLIC_TEXT_SUFFIXES = {".md", ".json", ".py", ".yaml", ".yml", ".txt"}
 FILELIKE_SUFFIXES = {
@@ -153,26 +156,67 @@ def _expectation_errors(expect: Any, label: str) -> list[str]:
     if not isinstance(expect, dict):
         return [f"{label}.expect must be an object"]
     errors: list[str] = []
-    if set(expect) != {"readiness", "draft", "include", "exclude"}:
+    if set(expect) != {"outcome", "draft", "messages", "references"}:
         errors.append(
-            f"{label}.expect must contain readiness, draft, include, and exclude"
+            f"{label}.expect must contain outcome, draft, messages, and references"
         )
-    readiness = expect.get("readiness")
-    if (
-        not isinstance(readiness, list)
-        or not readiness
-        or any(value not in READINESS for value in readiness)
-    ):
-        errors.append(f"{label}.expect.readiness contains an invalid state")
-    if not isinstance(expect.get("draft"), bool):
-        errors.append(f"{label}.expect.draft must be boolean")
+    if expect.get("outcome") not in OUTCOMES:
+        errors.append(f"{label}.expect.outcome contains an invalid value")
+    if expect.get("draft") not in {"required", "forbidden"}:
+        errors.append(f"{label}.expect.draft must be required or forbidden")
+
+    messages = expect.get("messages")
+    if not isinstance(messages, dict) or set(messages) != {
+        "include",
+        "exclude",
+        "max_questions",
+    }:
+        errors.append(
+            f"{label}.expect.messages must contain include, exclude, and max_questions"
+        )
+        messages = {}
     for key in ("include", "exclude"):
-        values = expect.get(key)
+        values = messages.get(key)
         if (
             not isinstance(values, list)
             or any(not isinstance(value, str) or not value.strip() for value in values)
         ):
-            errors.append(f"{label}.expect.{key} must be a string list")
+            errors.append(f"{label}.expect.messages.{key} must be a string list")
+    max_questions = messages.get("max_questions")
+    if not isinstance(max_questions, int) or not 0 <= max_questions <= 3:
+        errors.append(
+            f"{label}.expect.messages.max_questions must be between zero and three"
+        )
+
+    references = expect.get("references")
+    if not isinstance(references, dict) or set(references) != {
+        "required",
+        "forbidden",
+    }:
+        errors.append(
+            f"{label}.expect.references must contain required and forbidden"
+        )
+        references = {}
+    reference_sets: dict[str, set[str]] = {}
+    for key in ("required", "forbidden"):
+        values = references.get(key)
+        if (
+            not isinstance(values, list)
+            or any(value not in CONDITIONAL_REFERENCES for value in values)
+        ):
+            errors.append(
+                f"{label}.expect.references.{key} contains an invalid reference"
+            )
+            reference_sets[key] = set()
+        else:
+            reference_sets[key] = set(values)
+    overlap = reference_sets.get("required", set()) & reference_sets.get(
+        "forbidden", set()
+    )
+    if overlap:
+        errors.append(
+            f"{label}.expect.references requires and forbids {sorted(overlap)}"
+        )
     return errors
 
 

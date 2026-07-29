@@ -48,11 +48,16 @@ scope. Do not require registry or vendor-list research when the event suffices.
 
 ## Reporter-owned checks
 
+- For a broad failure or routing claim with a known site and time window, check
+  the single-site dashboard or equivalent summary first. Quantify affected
+  requests, paths or request class, denominator, and the direct reason any
+  request reached another server before narrowing to one raw event.
 - Reproduce safely when reproducibility controls the decision. Never label a
   log search as reproduction. Do not demand a fresh reproduction when a recent
   bounded event and durable controlling signal already support a
   receiver-owned review.
-- Correlate the same event across every reporter-visible layer.
+- Match the same event across reporter-visible layers only when that result can
+  change the route, owner, or action.
 - Inspect the response and application logs before assigning a generic status
   to the platform edge.
 - Check site tools, proxies, and CDNs only when they could produce the result.
@@ -70,6 +75,10 @@ scope. Do not require registry or vendor-list research when the event suffices.
 
 Skip plugin, domain, and application checklists once direct evidence
 already identifies the controlling platform condition.
+
+Nearby SSH activity, a host-label change, or another timestamped operation is
+context, not a migration or cause. Do not make an unproven host-move theory the
+frame for the next check.
 
 ## When access is limited
 
@@ -129,6 +138,10 @@ different decision.
 Return one result: evidence complete; smallest reporter blocker; receiver-only
 correlation with a lookup tuple; corrected owner; resolved; or unverified
 post-change result.
+
+If a likely site-code cause and a successful fix already settle ownership and
+leave no WP Cloud work, keep the cause qualified and stop. Do not require a
+three-stage log chain solely to make the explanation more certain.
 
 If the controlling boundary changes, retain the useful record and replace this
 reference. Do not stack references. After a change, record what changed, when,

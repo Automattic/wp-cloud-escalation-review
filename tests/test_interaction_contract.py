@@ -1,0 +1,328 @@
+from __future__ import annotations
+
+import importlib.util
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def load_script(name: str):
+    path = ROOT / "scripts" / f"{name}.py"
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def expectation(
+    outcome: str,
+    *,
+    draft: str = "forbidden",
+    include: list[str] | None = None,
+    exclude: list[str] | None = None,
+    max_questions: int = 1,
+    required_references: list[str] | None = None,
+    forbidden_references: list[str] | None = None,
+) -> dict:
+    return {
+        "outcome": outcome,
+        "draft": draft,
+        "messages": {
+            "include": include or [],
+            "exclude": exclude or [],
+            "max_questions": max_questions,
+        },
+        "references": {
+            "required": required_references or [],
+            "forbidden": forbidden_references or [],
+        },
+    }
+
+
+class ProviderAdapterTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.runner = load_script("run_evaluations")
+        self.package = ROOT / "skills" / "wp-cloud-escalation-review"
+
+    def test_runtime_stages_in_each_clients_project_skill_directory(self) -> None:
+        for provider, prefix in (
+            ("codex", ".agents/skills"),
+            ("claude", ".claude/skills"),
+        ):
+            with self.subTest(provider=provider), tempfile.TemporaryDirectory() as directory:
+                workspace = Path(directory)
+                staged = self.runner.stage_runtime(
+                    self.package,
+                    workspace,
+                    provider=provider,
+                )
+                self.assertEqual(
+                    workspace / prefix / "wp-cloud-escalation-review",
+                    staged,
+                )
+                self.assertTrue((staged / "SKILL.md").is_file())
+
+    def test_codex_events_normalize_messages_and_reference_reads(self) -> None:
+        events = "\n".join(
+            (
+                json.dumps(
+                    {
+                        "type": "item" + ".completed",
+                        "item": {
+                            "type": "agent_message",
+                            "text": "Please check the dashboard first.",
+                        },
+                    }
+                ),
+                json.dumps(
+                    {
+                        "type": "item" + ".completed",
+                        "item": {
+                            "type": "command_execution",
+                            "command": "sed -n '1,80p' .agents/skills/wp-cloud-escalation-review/references/style-guide.md",
+                            "aggregated_output": (
+                                "references/guided-workflow.md\n"
+                                "references/http-and-automation.md\n"
+                            ),
+                        },
+                    }
+                ),
+                json.dumps({"type": "future" + ".event", "ignored": True}),
+            )
+        )
+
+        normalized = self.runner.normalize_event_stream(
+            "codex",
+            events,
+            final_output="Please check the dashboard first.",
+        )
+
+        self.assertEqual("Please check the dashboard first.", normalized["output"])
+        self.assertEqual(
+            ["references/style-guide.md"],
+            normalized["references"],
+        )
+        self.assertEqual("final", normalized["messages"][-1]["phase"])
+
+    def test_claude_events_normalize_messages_and_reference_reads(self) -> None:
+        events = "\n".join(
+            (
+                json.dumps(
+                    {
+                        "type": "assistant",
+                        "message": {
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "I’ll check the relevant guidance.",
+                                },
+                                {
+                                    "type": "tool_use",
+                                    "name": "Read",
+                                    "input": {
+                                        "file_path": ".claude/skills/wp-cloud-escalation-review/references/guided-workflow.md"
+                                    },
+                                },
+                            ]
+                        },
+                    }
+                ),
+                json.dumps(
+                    {
+                        "type": "result",
+                        "is_error": False,
+                        "result": "Is the problem still happening?",
+                    }
+                ),
+            )
+        )
+
+        normalized = self.runner.normalize_event_stream("claude", events)
+
+        self.assertEqual("Is the problem still happening?", normalized["output"])
+        self.assertEqual(
+            ["references/guided-workflow.md"],
+            normalized["references"],
+        )
+        self.assertEqual(
+            ["commentary", "final"],
+            [message["phase"] for message in normalized["messages"]],
+        )
+
+    def test_normalization_sanitizes_every_persisted_text_field(self) -> None:
+        events = json.dumps(
+            {
+                "type": "item" + ".completed",
+                "item": {
+                    "type": "agent_message",
+                    "text": "api_" + "key=synthetic-sensitive-value",
+                },
+            }
+        )
+
+        normalized = self.runner.normalize_event_stream(
+            "codex",
+            events,
+            final_output="pass" + "word=synthetic-sensitive-value",
+        )
+        serialized = json.dumps(normalized)
+
+        self.assertNotIn("synthetic-sensitive-value", serialized)
+        self.assertIn("<redacted authentication material>", serialized)
+
+
+class SemanticScoringTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.scorer = load_script("score_evaluations")
+
+    def score(
+        self,
+        expected: dict,
+        *,
+        output: str,
+        messages: list[dict] | None = None,
+        references: list[str] | None = None,
+    ) -> dict:
+        case = {
+            "id": "semantic-check",
+            "entry": "Guided",
+            "input": "Review this.",
+            "expect": expected,
+        }
+        result = {
+            "id": "semantic-check",
+            "status": "completed",
+            "output": output,
+            "messages": messages or [{"phase": "final", "text": output}],
+            "references": references or [],
+        }
+        return self.scorer.score_case(case, result)
+
+    def test_no_post_outcome_does_not_require_a_readiness_line(self) -> None:
+        score = self.score(
+            expectation(
+                "no_post",
+                include=["don’t post"],
+                forbidden_references=["references/http-and-automation.md"],
+            ),
+            output="Don’t post this escalation. There is nothing left for WP Cloud to answer.",
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+        self.assertEqual("no_post", score["outcome"])
+
+    def test_one_compatible_readiness_line_is_allowed(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["don’t post"]),
+            output=(
+                "Readiness: Resolved during validation\n"
+                "Don’t post this escalation. The remaining work belongs with the site developer."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_plain_resolved_wording_maps_to_no_post(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["nothing left for WP Cloud"]),
+            output=(
+                "This is resolved during validation. "
+                "There is nothing left for WP Cloud to answer or do."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_close_without_escalation_maps_to_no_post(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["nothing left for WP Cloud"]),
+            output=(
+                "This can close without a WP Cloud escalation. "
+                "There is nothing left for WP Cloud to answer or do."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_close_without_escalating_maps_to_no_post(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["nothing left for WP Cloud"]),
+            output=(
+                "Close this without escalating to WP Cloud. "
+                "There is nothing left for WP Cloud to answer or do."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_request_for_existing_time_window_maps_to_needs_evidence(self) -> None:
+        score = self.score(
+            expectation("needs_existing_evidence", include=["existing UTC"]),
+            output=(
+                "Add the existing UTC start and end time so WP Cloud can match "
+                "the failed operation in platform logs."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_workflow_jargon_in_commentary_fails_a_clean_final_answer(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["don’t post"]),
+            output="Don’t post this escalation.",
+            messages=[
+                {
+                    "phase": "commentary",
+                    "text": "I’m running the HTTP-routing review and challenge pass.",
+                },
+                {"phase": "final", "text": "Don’t post this escalation."},
+            ],
+        )
+
+        self.assertFalse(score["passed"])
+        self.assertIn("workflow jargon", " ".join(score["failures"]))
+
+    def test_question_and_reference_limits_cover_the_whole_interaction(self) -> None:
+        score = self.score(
+            expectation(
+                "needs_reporter_check",
+                include=["still happening"],
+                max_questions=1,
+                forbidden_references=["references/http-and-automation.md"],
+            ),
+            output="Is the problem still happening?",
+            messages=[
+                {"phase": "commentary", "text": "What changed?"},
+                {"phase": "final", "text": "Is the problem still happening?"},
+            ],
+            references=["references/http-and-automation.md"],
+        )
+
+        self.assertFalse(score["passed"])
+        failures = " ".join(score["failures"])
+        self.assertIn("questions", failures)
+        self.assertIn("forbidden reference", failures)
+
+    def test_ready_result_requires_a_substantive_copy_paste_block(self) -> None:
+        score = self.score(
+            expectation("ready", draft="required", max_questions=2),
+            output=(
+                "This is ready to send.\n\n"
+                "### Copy/paste\n"
+                "```markdown\n"
+                "Please review the verified managed-operation failure and confirm the result.\n"
+                "```"
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+
+if __name__ == "__main__":
+    unittest.main()

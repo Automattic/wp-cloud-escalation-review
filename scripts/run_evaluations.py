@@ -19,8 +19,15 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
 INPUT_SCHEMA = "wp-cloud-escalation-review-inputs/v1"
-RESULT_SCHEMA = "wp-cloud-escalation-review-results/v1"
+RESULT_SCHEMA = "wp-cloud-escalation-review-results/v2"
+ADAPTER_VERSION = "wp-cloud-escalation-review-adapter/v1"
 SKILL_NAME = "wp-cloud-escalation-review"
+PROVIDERS = ("codex", "claude")
+PROVIDER_SKILL_ROOTS = {
+    "codex": Path(".agents/skills"),
+    "claude": Path(".claude/skills"),
+}
+CODEX_ITEM_COMPLETED = "item" + ".completed"
 RUNTIME_MANIFEST = (
     "SKILL.md",
     "agents/openai.yaml",
@@ -93,9 +100,18 @@ def verify_runtime_manifest(package: Path) -> None:
         raise EvaluationError(f"runtime package contains symlinks: {sorted(symlinks)}")
 
 
-def stage_runtime(package: Path, workspace: Path) -> Path:
+def stage_runtime(
+    package: Path,
+    workspace: Path,
+    *,
+    provider: str = "codex",
+) -> Path:
     verify_runtime_manifest(package)
-    staged = workspace / ".agents" / "skills" / SKILL_NAME
+    try:
+        skill_root = PROVIDER_SKILL_ROOTS[provider]
+    except KeyError as error:
+        raise EvaluationError(f"unsupported evaluation provider: {provider}") from error
+    staged = workspace / skill_root / SKILL_NAME
     for relative in RUNTIME_MANIFEST:
         source = package / relative
         target = staged / relative
@@ -126,12 +142,21 @@ def validate_projection(projection: Any) -> dict[str, Any]:
     return projection
 
 
-def build_prompt(case: dict[str, str]) -> str:
+def build_prompt(case: dict[str, str], *, provider: str = "codex") -> str:
+    if provider not in PROVIDERS:
+        raise EvaluationError(f"unsupported evaluation provider: {provider}")
+    invocation = (
+        f"${SKILL_NAME}"
+        if provider == "codex"
+        else f"/{SKILL_NAME}"
+    )
     return (
-        f"${SKILL_NAME}\n"
+        f"{invocation}\n"
         "Use only the staged public skill and its linked references. "
         "Follow it exactly. Do not inspect paths outside this workspace. "
-        f"Use the {case['entry']} entry path.\n\n"
+        "Return only the review response: no progress updates, tool narration, "
+        "or announcements about the skill, review mode, or references. "
+        f"Internal review mode (never name it in the response): {case['entry']}.\n\n"
         "Material to review:\n"
         f"{case['input']}"
     )
@@ -147,10 +172,99 @@ def sanitize_text(text: str) -> str:
     )
 
 
+def _reference_paths(value: Any) -> list[str]:
+    serialized = json.dumps(value, ensure_ascii=False)
+    return [
+        relative
+        for relative in RUNTIME_MANIFEST
+        if relative.startswith("references/") and relative in serialized
+    ]
+
+
+def _append_message(messages: list[dict[str, str]], text: Any) -> None:
+    if not isinstance(text, str) or not text.strip():
+        return
+    cleaned = sanitize_text(text.strip())
+    if messages and messages[-1]["text"] == cleaned:
+        return
+    messages.append({"phase": "commentary", "text": cleaned})
+
+
+def normalize_event_stream(
+    provider: str,
+    event_stream: str,
+    *,
+    final_output: str = "",
+) -> dict[str, Any]:
+    """Normalize provider events into the public evaluation result contract."""
+    if provider not in PROVIDERS:
+        raise EvaluationError(f"unsupported evaluation provider: {provider}")
+    messages: list[dict[str, str]] = []
+    references: list[str] = []
+    provider_final = ""
+    for line in event_stream.splitlines():
+        if not line.strip():
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(event, dict):
+            continue
+        if provider == "codex":
+            item = event.get("item")
+            if event.get("type") == CODEX_ITEM_COMPLETED and isinstance(item, dict):
+                item_type = item.get("type")
+                if item_type == "agent_message":
+                    _append_message(messages, item.get("text"))
+                elif item_type == "command_execution":
+                    for reference in _reference_paths(item.get("command")):
+                        if reference not in references:
+                            references.append(reference)
+                elif item_type == "mcp_tool_call":
+                    for reference in _reference_paths(item.get("arguments")):
+                        if reference not in references:
+                            references.append(reference)
+        else:
+            if event.get("type") == "assistant":
+                message = event.get("message")
+                content = message.get("content") if isinstance(message, dict) else None
+                if isinstance(content, list):
+                    for block in content:
+                        if not isinstance(block, dict):
+                            continue
+                        if block.get("type") == "text":
+                            _append_message(messages, block.get("text"))
+                        elif (
+                            block.get("type") == "tool_use"
+                            and block.get("name") == "Read"
+                        ):
+                            for reference in _reference_paths(block.get("input")):
+                                if reference not in references:
+                                    references.append(reference)
+            elif event.get("type") == "result":
+                result = event.get("result")
+                if isinstance(result, str) and result.strip():
+                    provider_final = result.strip()
+
+    output = sanitize_text((final_output or provider_final).strip())
+    if output:
+        if not messages or messages[-1]["text"] != output:
+            messages.append({"phase": "final", "text": output})
+        else:
+            messages[-1]["phase"] = "final"
+    return {
+        "output": output,
+        "messages": messages,
+        "references": references,
+    }
+
+
 def run_case(
     package: Path,
     case: dict[str, str],
     *,
+    provider: str,
     model: str | None,
     effort: str,
     timeout_seconds: float,
@@ -162,52 +276,93 @@ def run_case(
         temp_root = Path(directory)
         workspace = temp_root / "workspace"
         workspace.mkdir()
-        stage_runtime(package, workspace)
+        stage_runtime(package, workspace, provider=provider)
         final_message = temp_root / "final.txt"
-        command = [
-            "codex",
-            "exec",
-            "-",
-            "--ephemeral",
-            "--ignore-user-config",
-            "--ignore-rules",
-            "--skip-git-repo-check",
-            "--sandbox",
-            "read-only",
-            "--cd",
-            str(workspace),
-            "--output-last-message",
-            str(final_message),
-            "--config",
-            f'model_reasoning_effort="{effort}"',
-        ]
+        if provider == "codex":
+            command = [
+                "codex",
+                "exec",
+                "-",
+                "--json",
+                "--ephemeral",
+                "--ignore-user-config",
+                "--ignore-rules",
+                "--skip-git-repo-check",
+                "--sandbox",
+                "read-only",
+                "--cd",
+                str(workspace),
+                "--output-last-message",
+                str(final_message),
+                "--config",
+                f'model_reasoning_effort="{effort}"',
+            ]
+        elif provider == "claude":
+            command = [
+                "claude",
+                "-p",
+                "--output-format",
+                "stream-json",
+                "--verbose",
+                "--no-session-persistence",
+                "--permission-mode",
+                "dontAsk",
+                "--tools",
+                "Read,Glob,Grep,Skill",
+                "--setting-sources",
+                "project",
+                "--effort",
+                effort,
+            ]
+        else:
+            raise EvaluationError(f"unsupported evaluation provider: {provider}")
         if model:
             command.extend(("--model", model))
         try:
             completed = subprocess.run(
                 command,
-                input=build_prompt(case),
+                input=build_prompt(case, provider=provider),
                 text=True,
                 capture_output=True,
                 timeout=timeout_seconds,
                 check=False,
+                cwd=workspace,
             )
         except FileNotFoundError as error:
-            raise EvaluationError("Codex CLI is not installed or not on PATH") from error
+            raise EvaluationError(
+                f"{provider.title()} CLI is not installed or not on PATH"
+            ) from error
         except subprocess.TimeoutExpired:
             return {
                 "id": case["id"],
+                "provider": provider,
                 "status": "timeout",
                 "output": "",
+                "messages": [],
+                "references": [],
                 "diagnostic": "model run exceeded the configured timeout",
                 "duration_seconds": round(time.monotonic() - started, 3),
             }
-        output = final_message.read_text(encoding="utf-8") if final_message.exists() else ""
+        final_output = (
+            final_message.read_text(encoding="utf-8")
+            if provider == "codex" and final_message.exists()
+            else ""
+        )
+        normalized = normalize_event_stream(
+            provider,
+            completed.stdout,
+            final_output=final_output,
+        )
         diagnostic = sanitize_text(completed.stderr.strip())
         return {
             "id": case["id"],
-            "status": "completed" if completed.returncode == 0 and output else "error",
-            "output": sanitize_text(output),
+            "provider": provider,
+            "status": (
+                "completed"
+                if completed.returncode == 0 and normalized["output"]
+                else "error"
+            ),
+            **normalized,
             "diagnostic": diagnostic,
             "duration_seconds": round(time.monotonic() - started, 3),
         }
@@ -217,22 +372,28 @@ def run_projection(
     package: Path,
     projection: dict[str, Any],
     *,
+    provider: str = "codex",
     model: str | None = None,
     effort: str = "medium",
     timeout_seconds: float = 300,
 ) -> dict[str, Any]:
     projection = validate_projection(projection)
     verify_runtime_manifest(package)
+    if provider not in PROVIDERS:
+        raise EvaluationError(f"unsupported evaluation provider: {provider}")
     return {
         "schema": RESULT_SCHEMA,
         "suite": projection["suite"],
         "source_digest": projection["source_digest"],
+        "provider": provider,
+        "adapter_version": ADAPTER_VERSION,
         "model": model or "configured-default",
         "effort": effort,
         "cases": [
             run_case(
                 package,
                 case,
+                provider=provider,
                 model=model,
                 effort=effort,
                 timeout_seconds=timeout_seconds,
@@ -257,6 +418,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--package", required=True, type=Path)
     parser.add_argument("--cases", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--provider", choices=PROVIDERS, default="codex")
     parser.add_argument("--model")
     parser.add_argument("--effort", choices=("low", "medium", "high"), default="medium")
     parser.add_argument("--timeout-seconds", type=float, default=300)
@@ -272,6 +434,7 @@ def main() -> int:
         result = run_projection(
             args.package,
             projection,
+            provider=args.provider,
             model=args.model,
             effort=args.effort,
             timeout_seconds=args.timeout_seconds,

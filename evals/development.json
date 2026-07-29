@@ -1,5 +1,5 @@
 {
-  "schema": "wp-cloud-escalation-review-evals/v1",
+  "schema": "wp-cloud-escalation-review-evals/v2",
   "suite": "development",
   "description": "Small synthetic suite for core escalation-review behavior.",
   "cases": [
@@ -8,21 +8,75 @@
       "entry": "Direct",
       "input": "Review this possible escalation in one pass. On synthetic site label demo-site-a, three POST requests to /wp-json/example/v1/callback returned HTTP 500 from 10:00 to 10:05 UTC on <eval-date>. The matching WP Cloud managed-operation records identify stage example-finalize and error example-operation-failed for all three attempts. The reporter repeated the documented workflow, and the current public WP Cloud managed-operations page says this accepted operation should complete successfully. The failures block the test deployment. Ask WP Cloud to inspect the verified managed-operation failure while preserving unrelated operations.",
       "expect": {
-        "readiness": ["Ready"],
-        "draft": true,
-        "include": [],
-        "exclude": ["Reporter action required"]
+        "outcome": "ready",
+        "draft": "required",
+        "messages": {
+          "include": ["managed-operation"],
+          "exclude": ["Reporter action required"],
+          "max_questions": 2
+        },
+        "references": {
+          "required": ["references/style-guide.md"],
+          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+        }
       }
     },
     {
-      "id": "guided-validation-missing",
+      "id": "guided-dashboard-first",
       "entry": "Guided",
-      "input": "Help review a possible escalation. A test extension reports intermittent failures, but the reporter has not reproduced the issue or run any available reporter-owned check.",
+      "input": "Help review a possible escalation. A bounded period and synthetic site label are known. The draft claims every authenticated request failed after nearby SSH activity and a host-label change. The reporter has not checked the single-site dashboard, which can show affected count, request paths, and the direct reason requests reached another server.",
       "expect": {
-        "readiness": ["Reporter action required"],
-        "draft": false,
-        "include": ["validation"],
-        "exclude": ["Copy/paste"]
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["single-site dashboard", "request count"],
+          "exclude": ["migration", "host move", "representative event"],
+          "max_questions": 1
+        },
+        "references": {
+          "required": ["references/style-guide.md", "references/guided-workflow.md"],
+          "forbidden": ["references/http-and-automation.md", "references/challenge.md"]
+        }
+      }
+    },
+    {
+      "id": "guided-currentness-before-proof",
+      "entry": "Guided",
+      "input": "Help review a possible escalation. A code review gives a plausible site-code explanation for an invalid response, but it is unknown whether the issue still happens after the code was fixed or what question remains for WP Cloud. A complete three-log chain has not been collected.",
+      "expect": {
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["still", "WP Cloud"],
+          "exclude": ["three matching", "complete causal chain"],
+          "max_questions": 1
+        },
+        "references": {
+          "required": ["references/style-guide.md", "references/guided-workflow.md"],
+          "forbidden": ["references/http-and-automation.md", "references/challenge.md"]
+        }
+      }
+    },
+    {
+      "id": "guided-resolved-no-post",
+      "entry": "Guided",
+      "input": "Continue this review. Reporter-visible evidence now narrows the affected population, directly explains why a small request class reached a read-only secondary, and shows no user action put the database into read-only mode. The likely site-code trigger was fixed, the affected workflow now passes, and no WP Cloud decision or action remains.",
+      "expect": {
+        "outcome": "no_post",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["site"],
+          "exclude": ["confirmed root cause"],
+          "max_questions": 0
+        },
+        "references": {
+          "required": ["references/style-guide.md", "references/guided-workflow.md"],
+          "forbidden": [
+            "references/documentation-routing.md",
+            "references/http-and-automation.md",
+            "references/challenge.md"
+          ]
+        }
       }
     },
     {
@@ -30,10 +84,17 @@
       "entry": "Direct",
       "input": "Review this in one pass. One candidate concerns slow managed requests and needs WP Cloud capacity review. A separate candidate concerns an unrelated extension setting controlled by the reporter. They have different owners and outcomes.",
       "expect": {
-        "readiness": ["Split required"],
-        "draft": false,
-        "include": ["split"],
-        "exclude": ["Copy/paste"]
+        "outcome": "split",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["split"],
+          "exclude": ["Copy/paste"],
+          "max_questions": 1
+        },
+        "references": {
+          "required": ["references/style-guide.md"],
+          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+        }
       }
     },
     {
@@ -41,10 +102,17 @@
       "entry": "Direct",
       "input": "Review this draft. The reporter pasted active authentication material into the working notes. The value is omitted here, but rotation and review of affected sessions have not happened.",
       "expect": {
-        "readiness": ["Reporter action required"],
-        "draft": false,
-        "include": ["affected sessions"],
-        "exclude": ["Copy/paste"]
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["affected sessions"],
+          "exclude": ["Copy/paste"],
+          "max_questions": 1
+        },
+        "references": {
+          "required": ["references/style-guide.md"],
+          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+        }
       }
     },
     {
@@ -52,10 +120,17 @@
       "entry": "Direct",
       "input": "Review this possible WP Cloud escalation in one pass. The evidence shows the requested correction is entirely in a reporter-controlled extension setting, and no WP Cloud action remains.",
       "expect": {
-        "readiness": ["Reporter action required", "Belongs elsewhere"],
-        "draft": false,
-        "include": ["reporter"],
-        "exclude": ["Copy/paste"]
+        "outcome": "alternate_owner",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["reporter"],
+          "exclude": ["Copy/paste"],
+          "max_questions": 0
+        },
+        "references": {
+          "required": ["references/style-guide.md"],
+          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+        }
       }
     },
     {
@@ -63,10 +138,17 @@
       "entry": "Direct",
       "input": "Review this draft in one pass. It claims a WP Cloud Atomic API operation is broken, but the supplied request uses a field that is absent from the current public contract. The reporter has not retried with the documented field.",
       "expect": {
-        "readiness": ["Reporter action required"],
-        "draft": false,
-        "include": ["documented field"],
-        "exclude": ["Ready with caveats"]
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": ["documented field"],
+          "exclude": ["Ready with caveats"],
+          "max_questions": 1
+        },
+        "references": {
+          "required": ["references/style-guide.md"],
+          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+        }
       }
     }
   ]
