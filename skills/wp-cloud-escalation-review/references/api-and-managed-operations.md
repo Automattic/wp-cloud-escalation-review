@@ -90,6 +90,12 @@ scope, and interface limit. Separate control from observability.
 A direct platform exception can justify a short report. Do not add generic
 troubleshooting to make it look substantial.
 
+Do not require every possible lookup field. Stable site IDs, a bounded range,
+and a distinctive operation stage and error can be sufficient without an exact
+second or a literal job ID. For multiple sites with the same operation,
+failure, impact, owner, and requested decision, keep one mapped handoff when
+separate posts are unnecessary.
+
 ## Reporter-owned checks
 
 - Validate the call against the current endpoint contract.
@@ -126,8 +132,9 @@ objects.
 Record unavailable documentation or tooling honestly. Ask only for the
 smallest item the reporter can obtain.
 
-Without receiver-only logs, preserve site, job or request ID, UTC time, stage
-or endpoint, and result. This can support a narrow handoff.
+When platform logs are unavailable to the reporter, preserve site, job or
+request ID, UTC time, stage or endpoint, and result. This can support a narrow
+handoff.
 
 An emergency may waive waiting for docs, not safety or ownership gates.
 

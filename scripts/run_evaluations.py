@@ -18,9 +18,9 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-INPUT_SCHEMA = "wp-cloud-escalation-review-inputs/v1"
-RESULT_SCHEMA = "wp-cloud-escalation-review-results/v2"
-ADAPTER_VERSION = "wp-cloud-escalation-review-adapter/v1"
+INPUT_SCHEMA = "wp-cloud-escalation-review-inputs/v2"
+RESULT_SCHEMA = "wp-cloud-escalation-review-results/v3"
+ADAPTER_VERSION = "wp-cloud-escalation-review-adapter/v2"
 SKILL_NAME = "wp-cloud-escalation-review"
 PROVIDERS = ("codex", "claude")
 PROVIDER_SKILL_ROOTS = {
@@ -35,7 +35,6 @@ RUNTIME_MANIFEST = (
     "references/challenge.md",
     "references/documentation-routing.md",
     "references/domains-network-and-protocol-access.md",
-    "references/guided-workflow.md",
     "references/http-and-automation.md",
     "references/performance-and-capacity.md",
     "references/security-handoffs.md",
@@ -66,7 +65,6 @@ def source_digest(cases: list[dict[str, Any]]) -> str:
     inputs = [
         {
             "id": case["id"],
-            "entry": case["entry"],
             "input": case["input"],
         }
         for case in cases
@@ -133,10 +131,8 @@ def validate_projection(projection: Any) -> dict[str, Any]:
     if not isinstance(cases, list) or not 1 <= len(cases) <= 8:
         raise EvaluationError("input projection must contain one to eight cases")
     for case in cases:
-        if not isinstance(case, dict) or set(case) != {"id", "entry", "input"}:
-            raise EvaluationError("each projected case must contain id, entry, input")
-        if case["entry"] not in {"Direct", "Guided"}:
-            raise EvaluationError("projected case entry must be Direct or Guided")
+        if not isinstance(case, dict) or set(case) != {"id", "input"}:
+            raise EvaluationError("each projected case must contain id and input")
         if not all(isinstance(case[key], str) and case[key] for key in case):
             raise EvaluationError("projected case values must be non-empty strings")
     return projection
@@ -155,8 +151,7 @@ def build_prompt(case: dict[str, str], *, provider: str = "codex") -> str:
         "Use only the staged public skill and its linked references. "
         "Follow it exactly. Do not inspect paths outside this workspace. "
         "Return only the review response: no progress updates, tool narration, "
-        "or announcements about the skill, review mode, or references. "
-        f"Internal review mode (never name it in the response): {case['entry']}.\n\n"
+        "or announcements about the skill or references.\n\n"
         "Material to review:\n"
         f"{case['input']}"
     )

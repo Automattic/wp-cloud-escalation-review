@@ -116,8 +116,8 @@ Return one result: reporter-owned correction resolved the issue; another
 network or service owner controls the next step; documentation answers the
 question; a named evidence blocker prevents phase attribution; or an exact
 platform-only condition remains with a sufficient correlation tuple. Treat a
-complete tuple plus a demonstrated receiver-only visibility limit as
-`Ready with caveats`, not unfinished reporter work.
+complete tuple plus a demonstrated platform-log access limit as a
+non-blocking caveat, not unfinished reporter work.
 
 When a current authoritative check succeeds and the symptom is gone, return
 `Resolved during validation` with technical reference `none`.

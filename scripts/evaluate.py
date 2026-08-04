@@ -34,7 +34,6 @@ def project_cases(suite: str, cases: Iterable[dict[str, Any]]) -> dict[str, Any]
         "cases": [
             {
                 "id": case["id"],
-                "entry": case["entry"],
                 "input": render_input(case["input"]),
             }
             for case in case_list

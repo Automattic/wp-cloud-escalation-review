@@ -1,246 +1,343 @@
 {
-  "schema": "wp-cloud-escalation-review-evals/v2",
+  "schema": "wp-cloud-escalation-review-evals/v3",
   "suite": "regression",
   "description": "Broader synthetic suite for pre-release behavior checks.",
   "cases": [
     {
-      "id": "guided-current-state-question",
-      "entry": "Guided",
+      "id": "auto-current-state-question",
       "input": "Review a possible escalation interactively. The only evidence is an old log search. It is unknown whether the behavior still occurs or what WP Cloud still needs to answer.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["still", "WP Cloud"],
-          "exclude": ["Copy/paste"],
-          "max_questions": 1
+          "include": [
+            "still",
+            "WP Cloud"
+          ],
+          "exclude": [
+            "Copy/paste"
+          ],
+          "max_question_turns": 1
         },
         "references": {
-          "required": ["references/style-guide.md", "references/guided-workflow.md"],
-          "forbidden": ["references/challenge.md"]
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
         }
       }
     },
     {
-      "id": "direct-existing-artifact-missing",
-      "entry": "Direct",
+      "id": "auto-existing-artifact-missing",
       "input": "Review this in one pass. The reporter completed the documented check and observed a managed-operation failure, but omitted the already-existing UTC event window needed for lookup. No new investigation is required.",
       "expect": {
         "outcome": "needs_existing_evidence",
         "draft": "forbidden",
         "messages": {
-          "include": ["UTC"],
-          "exclude": ["Copy/paste"],
-          "max_questions": 1
+          "include": [
+            "UTC"
+          ],
+          "exclude": [
+            "Copy/paste"
+          ],
+          "max_question_turns": 1
         },
         "references": {
-          "required": ["references/style-guide.md"],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
         }
       }
     },
     {
-      "id": "direct-safe-receiver-change",
-      "entry": "Direct",
+      "id": "auto-safe-receiver-change",
       "input": "Review this request in one pass. On synthetic site label demo-site-b, all three ExampleWebhook/1.0 POST requests to /wp-json/example/v1/callback returned HTTP 429 from 11:00 to 11:04 UTC on <eval-date>. The matching WP Cloud record reports example-rate-limit for that request class. The reporter verified the callbacks are expected and that the failures block test-order updates. Ask WP Cloud to review a narrow receiver-owned adjustment for this verified request class while preserving protection for unrelated traffic.",
       "expect": {
         "outcome": "ready",
         "draft": "required",
         "messages": {
-          "include": ["unrelated traffic"],
-          "exclude": ["change controls missing"],
-          "max_questions": 2
+          "include": [
+            "preserving protection"
+          ],
+          "exclude": [
+            "change controls missing"
+          ],
+          "max_question_turns": 2
         },
         "references": {
-          "required": ["references/style-guide.md", "references/http-and-automation.md"],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "required": [
+            "references/http-and-automation.md",
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
         }
       }
     },
     {
-      "id": "direct-rate-limit-log-link",
-      "entry": "Direct",
+      "id": "auto-rate-limit-log-link",
       "input": "Review this request in one pass. On synthetic site label demo-site-g, 18 of 240 POST requests to /wp-json/example/v1/order returned HTTP 429 from 16:00 to 16:10 UTC on <eval-date>: 7.5% for that fixed interval. The traffic logs record example-protection-result for those 18 requests, and failed test-order updates demonstrate the impact. The reporter supplied a shareable saved traffic-log link with the same absolute interval: <shareable-log-link>. Ask WP Cloud to review the recorded protection result while preserving protection for unrelated traffic. The link contains ordinary traffic details and no authentication material or sensitive payload values.",
       "expect": {
         "outcome": "ready",
         "draft": "required",
         "messages": {
-          "include": ["<shareable-log-link>", "18 of 240", "7.5%", "16:00", "16:10"],
-          "exclude": ["sanitize", "redact", "remove the traffic", "share the link"],
-          "max_questions": 1
+          "include": [
+            "<shareable-log-link>",
+            "18 of 240",
+            "7.5%",
+            "16:00",
+            "16:10"
+          ],
+          "exclude": [
+            "sanitize",
+            "redact",
+            "remove the traffic",
+            "share the link"
+          ],
+          "max_question_turns": 1
         },
         "references": {
-          "required": ["references/style-guide.md", "references/http-and-automation.md"],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "required": [
+            "references/http-and-automation.md",
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
         }
       }
     },
     {
-      "id": "direct-rate-limit-no-shareable-link",
-      "entry": "Direct",
+      "id": "auto-rate-limit-no-shareable-link",
       "input": "Review this request in one pass. On synthetic site label demo-site-h, 12 of 300 GET requests to /example-path returned HTTP 429 from 17:00 to 17:10 UTC on <eval-date>. A copied traffic-log excerpt records example-protection-result for those requests, and a test workflow failed. The reporter cannot create a shareable log link, but the site, bounded window, method, path, counts, reason, and impact are recorded. Ask WP Cloud to review the recorded protection result while preserving protection for unrelated traffic.",
       "expect": {
         "outcome": "ready",
         "draft": "required",
         "messages": {
-          "include": ["12 of 300"],
-          "exclude": ["need a link", "shareable link", "send the link", "sanitize"],
-          "max_questions": 1
+          "include": [
+            "12 of 300"
+          ],
+          "exclude": [
+            "need a link",
+            "send the link",
+            "sanitize"
+          ],
+          "max_question_turns": 1
         },
         "references": {
-          "required": ["references/style-guide.md", "references/http-and-automation.md"],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "required": [
+            "references/http-and-automation.md",
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
         }
       }
     },
     {
-      "id": "direct-performance-attribution-gap",
-      "entry": "Direct",
+      "id": "auto-performance-attribution-gap",
       "input": "Review this in one pass. Users report slowness, but no Metrics, APM, logs, controlled comparison, request class, or workflow impact has been checked. The draft assumes platform capacity is the cause.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["dashboards and logs"],
-          "exclude": ["Copy/paste"],
-          "max_questions": 1
+          "include": [
+            "log"
+          ],
+          "exclude": [
+            "Copy/paste"
+          ],
+          "max_question_turns": 1
         },
         "references": {
-          "required": ["references/style-guide.md"],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
         }
       }
     },
     {
-      "id": "direct-protocol-receiver-visibility",
-      "entry": "Direct",
+      "id": "auto-protocol-receiver-visibility",
       "input": "Review this in one pass. A protocol handshake to synthetic endpoint label demo-endpoint-a fails before an application response. The synthetic site label is demo-site-a. The reporter recorded repeated attempts from source-network-a to target port 443 on <eval-date>, beginning at 14:10 UTC and ending at 14:14 UTC. DNS resolution, the destination selection, the port, and a control connection were checked and recorded. The sanitized client output shows the connection ending during the TLS handshake. Only receiver-side telemetry can establish the failing layer and scope. Ask the WP Cloud receiver to match that exact tuple while preserving the endpoint configuration.",
       "expect": {
         "outcome": "ready_with_caveat",
         "draft": "required",
         "messages": {
-          "include": ["platform logs"],
-          "exclude": ["Reporter action required"],
-          "max_questions": 2
+          "include": [
+            "platform logs"
+          ],
+          "exclude": [
+            "Reporter action required"
+          ],
+          "max_question_turns": 2
         },
         "references": {
           "required": [
+            "references/domains-network-and-protocol-access.md",
             "references/style-guide.md",
-            "references/domains-network-and-protocol-access.md"
+            "references/challenge.md"
           ],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "forbidden": []
         }
       }
     },
     {
-      "id": "direct-security-route",
-      "entry": "Direct",
+      "id": "auto-security-route",
       "input": "Review this in one pass. At 09:30 UTC on <eval-date>, the audit log for synthetic site label demo-site-d recorded unauthorized use of an integration credential. The credential was revoked at 09:35 UTC, affected sessions were reviewed and invalidated, and a sanitized audit excerpt was preserved. No authentication material is included. Scope is limited to demo-site-d. An authorized restricted security route is identified. Ask the authorized security receiver to review the preserved audit evidence.",
       "expect": {
         "outcome": "ready",
         "draft": "required",
         "messages": {
-          "include": ["authorized"],
+          "include": [
+            "authorized"
+          ],
           "exclude": [],
-          "max_questions": 2
+          "max_question_turns": 2
         },
         "references": {
-          "required": ["references/style-guide.md", "references/security-handoffs.md"],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "required": [
+            "references/security-handoffs.md",
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
         }
       }
     },
     {
-      "id": "direct-documentation-gap",
-      "entry": "Direct",
+      "id": "auto-documentation-gap",
       "input": "Review this documentation-gap proposal in one pass. The current public managed-operations instructions were checked. They explain how to start an operation and read its result, but do not say whether the returned job ticket must be retained for later support lookup. A sanitized test confirms that the operation returns a job ticket. Ask the WP Cloud documentation owner to add that retention decision to the managed-operations page through the public documentation issue tracker.",
       "expect": {
-        "outcome": "ready",
-        "draft": "required",
+        "outcome": "alternate_owner",
+        "draft": "forbidden",
         "messages": {
-          "include": ["managed-operations page"],
-          "exclude": ["support escalation"],
-          "max_questions": 2
+          "include": [
+            "managed-operations page"
+          ],
+          "exclude": [
+            "support escalation"
+          ],
+          "max_question_turns": 2
         },
         "references": {
-          "required": ["references/style-guide.md"],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "required": [
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
         }
       }
     },
     {
-      "id": "direct-resolved-current-check",
-      "entry": "Direct",
+      "id": "auto-resolved-current-check",
       "input": "Review this possible escalation in one pass. The reporter repeated the exact documented workflow and the issue no longer occurs. No WP Cloud decision or receiver action remains.",
       "expect": {
         "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
-          "include": ["nothing left for WP Cloud"],
-          "exclude": ["Copy/paste"],
-          "max_questions": 0
+          "include": [
+            "nothing left for WP Cloud"
+          ],
+          "exclude": [
+            "Copy/paste"
+          ],
+          "max_question_turns": 0
         },
         "references": {
-          "required": ["references/style-guide.md"],
+          "required": [
+            "references/style-guide.md"
+          ],
           "forbidden": [
             "references/documentation-routing.md",
             "references/http-and-automation.md",
-            "references/challenge.md",
-            "references/guided-workflow.md"
+            "references/challenge.md"
           ]
         }
       }
     },
     {
-      "id": "guided-one-question",
-      "entry": "Guided",
+      "id": "auto-one-question",
       "input": "Help review this possible escalation interactively. The symptom and desired outcome are clear, but the owner, current state, and reporter validation are not recorded.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["?"],
-          "exclude": ["Copy/paste"],
-          "max_questions": 2
+          "include": [
+            "?"
+          ],
+          "exclude": [
+            "Copy/paste"
+          ],
+          "max_question_turns": 2
         },
         "references": {
-          "required": ["references/style-guide.md", "references/guided-workflow.md"],
-          "forbidden": ["references/challenge.md"]
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
         }
       }
     },
     {
-      "id": "guided-progress-from-scope-to-cause",
-      "entry": "Guided",
+      "id": "auto-progress-from-scope-to-cause",
       "input": "Continue this review. The reporter originally claimed every authenticated request failed. The dashboards and logs available to them instead show that 25 of 100 homepage GET requests, apparently from logged-out visitors, received the read-only database error during the supplied bounded window. One affected request ID is available. The next useful step is to determine why an affected request reached the read-only secondary, not to collect another timestamp or reconcile the customer report.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["25", "secondary"],
-          "exclude": ["request class", "exact timestamp", "confirm they were authenticated", "what exact HTTP status"],
-          "max_questions": 1
+          "include": [
+            "25",
+            "secondary"
+          ],
+          "exclude": [
+            "request class",
+            "exact timestamp",
+            "confirm they were authenticated",
+            "what exact HTTP status"
+          ],
+          "max_question_turns": 1
         },
         "references": {
-          "required": ["references/style-guide.md", "references/guided-workflow.md"],
-          "forbidden": ["references/http-and-automation.md", "references/challenge.md"]
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/http-and-automation.md",
+            "references/challenge.md"
+          ]
         }
       }
     },
     {
-      "id": "guided-cron-warning-before-attribution",
-      "entry": "Guided",
+      "id": "auto-cron-warning-before-attribution",
       "input": "Continue this possible escalation. Current logs contain schedule_event_false and could_not_set warnings for several unrelated scheduled hooks. A pasted line adds the reporter's annotation that a failed unschedule left a stale event, but the raw log does not say that. A large historical failed-action count is also present. Nobody has shown that an expected sync, purge, recurring event, or queued action was missed, late, duplicated, or otherwise wrong. The draft calls the warnings false positives and asks WP Cloud which callback returned false. No diagnostic command has been run.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["scheduled"],
-          "exclude": ["Copy/paste", "which callback returned false", "wp eval"],
-          "max_questions": 1
+          "include": [
+            "scheduled"
+          ],
+          "exclude": [
+            "Copy/paste",
+            "which callback returned false",
+            "wp eval"
+          ],
+          "max_question_turns": 1
         },
         "references": {
-          "required": ["references/style-guide.md", "references/guided-workflow.md"],
+          "required": [
+            "references/style-guide.md"
+          ],
           "forbidden": [
             "references/documentation-routing.md",
             "references/api-and-managed-operations.md",
@@ -250,78 +347,109 @@
       }
     },
     {
-      "id": "direct-cron-warning-with-healthy-work",
-      "entry": "Direct",
+      "id": "auto-cron-warning-with-healthy-work",
       "input": "Review this possible escalation in one pass. Current logs repeatedly contain schedule_event_false and could_not_set warnings. Jetpack status and sync health are clean. The expected purge completed, the recurring event was created, and the queued action ran on time. Historical Action Scheduler failures were investigated and found unrelated. No missed work, broken workload, or remaining WP Cloud decision has been demonstrated.",
       "expect": {
         "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
-          "include": ["nothing left"],
-          "exclude": ["Copy/paste", "callback returned", "false positive", "platform incident"],
-          "max_questions": 0
+          "include": [
+            "WP Cloud"
+          ],
+          "exclude": [
+            "Copy/paste",
+            "callback returned",
+            "false positive",
+            "platform incident"
+          ],
+          "max_question_turns": 0
         },
         "references": {
-          "required": ["references/style-guide.md"],
+          "required": [
+            "references/style-guide.md"
+          ],
           "forbidden": [
             "references/documentation-routing.md",
             "references/api-and-managed-operations.md",
-            "references/challenge.md",
-            "references/guided-workflow.md"
+            "references/challenge.md"
           ]
         }
       }
     },
     {
-      "id": "direct-unsupported-cause",
-      "entry": "Direct",
+      "id": "auto-unsupported-cause",
       "input": "Edit this escalation in one pass. Source draft: On synthetic site label demo-site-c, the managed operation failed at stage example-finalize at 12:10 and 12:14 UTC on <eval-date> with error example-operation-failed. The returned synthetic job ticket labels were demo-job-a and demo-job-b, respectively. The reporter repeated the documented workflow and confirmed that the failures block the test deployment. Please ask WP Cloud to inspect the verified managed-operation failure. The draft also says, without evidence, that WP Cloud's internal queue shard certainly caused it.",
       "expect": {
         "outcome": "ready",
         "draft": "required",
         "messages": {
-          "include": ["operation"],
-          "exclude": ["certainly caused"],
-          "max_questions": 2
+          "include": [
+            "operation"
+          ],
+          "exclude": [
+            "certainly caused"
+          ],
+          "max_question_turns": 2
         },
         "references": {
-          "required": ["references/style-guide.md", "references/api-and-managed-operations.md"],
-          "forbidden": ["references/guided-workflow.md", "references/challenge.md"]
+          "required": [
+            "references/api-and-managed-operations.md",
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
         }
       }
     },
     {
-      "id": "guided-host-fact-not-theory",
-      "entry": "Guided",
+      "id": "auto-host-fact-not-theory",
       "input": "Review this possible escalation. A host label changed near an SSH command and a later application error. The draft calls this a migration and asks whether the failure coincided with the host move or another managed operation. No direct evidence connects those facts. The site label and affected period are known, but the reporter's WP Cloud client and available tooling are not. They may have a host or Grafana dashboard, a company panel, nginx or PHP logs, or metrics from the WP Cloud Atomic API.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
-          "include": ["logs"],
-          "exclude": ["single-site dashboard", "migration activity", "host move or another managed operation"],
-          "max_questions": 1
+          "include": [
+            "logs"
+          ],
+          "exclude": [
+            "single-site dashboard",
+            "migration activity",
+            "host move or another managed operation"
+          ],
+          "max_question_turns": 1
         },
         "references": {
-          "required": ["references/style-guide.md", "references/guided-workflow.md"],
-          "forbidden": ["references/http-and-automation.md", "references/challenge.md"]
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/http-and-automation.md",
+            "references/challenge.md"
+          ]
         }
       }
     },
     {
-      "id": "guided-likely-cause-no-proof-ritual",
-      "entry": "Guided",
+      "id": "auto-likely-cause-no-proof-ritual",
       "input": "Continue this review. A code defect is a likely explanation for the original invalid response. The fix is deployed, the affected workflow passes, and no WP Cloud decision or action remains. Three matching log excerpts would increase confidence in the full chain but would not change ownership or the next action.",
       "expect": {
         "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
-          "include": ["nothing left"],
-          "exclude": ["matching log", "three matching", "confirmed root cause"],
-          "max_questions": 0
+          "include": [
+            "nothing left"
+          ],
+          "exclude": [
+            "matching log",
+            "three matching",
+            "confirmed root cause"
+          ],
+          "max_question_turns": 0
         },
         "references": {
-          "required": ["references/style-guide.md", "references/guided-workflow.md"],
+          "required": [
+            "references/style-guide.md"
+          ],
           "forbidden": [
             "references/documentation-routing.md",
             "references/http-and-automation.md",
@@ -331,19 +459,24 @@
       }
     },
     {
-      "id": "guided-general-docs-do-not-prove-event",
-      "entry": "Guided",
-      "input": "Continue this review. Direct reporter-visible evidence already shows that an invalid application response caused a small set of requests to be retried on a read-only secondary. The issue is fixed and no WP Cloud work remains. A public page about general automatic failover exists, but it does not describe or prove this event-specific retry path.",
+      "id": "auto-general-docs-do-not-prove-event",
+      "input": "Continue this review. Evidence available to the reporter already shows that an invalid application response caused a small set of requests to be retried on a read-only secondary. The issue is fixed and no WP Cloud work remains. A public page about general automatic failover exists, but it does not describe or prove this event-specific retry path.",
       "expect": {
         "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
-          "include": ["nothing left"],
-          "exclude": ["automatic failover"],
-          "max_questions": 0
+          "include": [
+            "nothing left"
+          ],
+          "exclude": [
+            "automatic failover"
+          ],
+          "max_question_turns": 0
         },
         "references": {
-          "required": ["references/style-guide.md", "references/guided-workflow.md"],
+          "required": [
+            "references/style-guide.md"
+          ],
           "forbidden": [
             "references/documentation-routing.md",
             "references/http-and-automation.md",
@@ -353,26 +486,210 @@
       }
     },
     {
-      "id": "guided-ready-internal-challenge",
-      "entry": "Guided",
+      "id": "auto-ready-internal-challenge",
       "input": "Continue this review and prepare the final draft. The current selected issue affects synthetic site label demo-site-f. At 15:20 UTC on <eval-date>, a POST to /wp-json/example/v1/callback returned HTTP 429 with direct platform reason example-protection-result. The expected test callback failed, blocking a test-order update. Reporter-visible checks and the public documentation check are complete. Ask WP Cloud to review this exact receiver-side result while preserving protection for unrelated traffic. No safety blocker remains.",
       "expect": {
         "outcome": "ready",
         "draft": "required",
         "messages": {
-          "include": ["Copy/paste"],
-          "exclude": ["Challenged:", "challenge pass"],
-          "max_questions": 2
+          "include": [
+            "Copy/paste"
+          ],
+          "exclude": [
+            "Challenged:",
+            "challenge pass"
+          ],
+          "max_question_turns": 2
         },
         "references": {
           "required": [
-            "references/style-guide.md",
-            "references/guided-workflow.md",
             "references/http-and-automation.md",
+            "references/style-guide.md",
             "references/challenge.md"
           ],
           "forbidden": []
-        }
+        },
+        "max_narrative_words": 350
+      }
+    },
+    {
+      "id": "auto-long-code-draft-site-mismatch",
+      "input": "Review and shorten this prepared escalation. It opens with synthetic site label demo-site-j but later asks to reactivate the affected plugin on demo-site-k without explaining whether that is another affected site or a typo. The draft repeats the same callback loop and code locations under Description, Mechanism, Evidence basis, Related findings, and Troubleshooting, calls the effect site-wide, and includes a useful stack trace. The platform-owned callback is a likely trigger, the plugin remains disabled, and the site has lost its test analytics workflow. No reproduction was attempted because re-enabling the plugin in production could trigger the fatal again.",
+      "expect": {
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": [
+            "site",
+            "demo-site-j",
+            "demo-site-k"
+          ],
+          "exclude": [
+            "Copy/paste",
+            "site-wide",
+            "confirmed root cause"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
+        },
+        "max_narrative_words": 180
+      }
+    },
+    {
+      "id": "auto-code-backed-draft-compression",
+      "input": "Review and rewrite this complete escalation in one pass. Synthetic site demo-site-l hit a PHP memory fatal at 18:30 UTC on <eval-date> when an analytics plugin checked a custom capability. The plugin remains disabled, so the test analytics workflow is unavailable. Inspection of the deployed platform MU-plugin found an unguarded capability re-check that re-enters the same callback chain. The supplied trace shows the platform callback and capability frames repeating. Disabling the analytics plugin stops the fatal, which makes that combination the likely trigger, but the complete cause was not reproduced because production reactivation is unsafe. PHP logs, the deployed code, current plugin versions, and earlier relevant cases were checked. The primary request is for WP Cloud to review and correct the platform callback so the plugin can be re-enabled. A full trace is included and needed for verification. Do not repeat its line-by-line walkthrough.",
+      "expect": {
+        "outcome": "ready_with_caveat",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-l",
+            "likely",
+            "not reproduced"
+          ],
+          "exclude": [
+            "Evidence basis",
+            "Related findings",
+            "site-wide",
+            "confirmed root cause",
+            "routes through"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/api-and-managed-operations.md",
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 450
+      }
+    },
+    {
+      "id": "auto-group-material-questions",
+      "input": "Review this draft. It describes a current customer impact but does not identify the affected site, whether the condition still happens after the reported workaround, or what WP Cloud is being asked to answer. Those three answers are all needed before ownership and readiness can be decided.",
+      "expect": {
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": [
+            "site",
+            "still",
+            "WP Cloud"
+          ],
+          "exclude": [
+            "Copy/paste",
+            "request class"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
+        },
+        "max_narrative_words": 180
+      }
+    },
+    {
+      "id": "auto-adequate-range-and-request-id",
+      "input": "Review this escalation. On synthetic site demo-site-m, request label demo-request-a returned HTTP 503 during the bounded period 14:00 to 14:08 UTC on <eval-date>. The same request did not reach the application logs, the customer workflow failed, and the reporter exhausted the dashboards and logs available to them. Only WP Cloud can match the request in platform logs and explain the response. The exact second is unavailable, but the range and request label are sufficient for lookup.",
+      "expect": {
+        "outcome": "ready_with_caveat",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-request-a",
+            "14:00",
+            "14:08"
+          ],
+          "exclude": [
+            "exact timestamp",
+            "more precise",
+            "Reporter action required"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/http-and-automation.md",
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 350
+      }
+    },
+    {
+      "id": "auto-multi-site-shared-decision",
+      "input": "Review this escalation in one pass. Synthetic sites demo-site-n and demo-site-o use the same managed operation. Each failed at stage example-finalize during 09:00 to 09:10 UTC on <eval-date> with error example-operation-failed and separate mapped job labels. The documented workflow was repeated on both sites, both test deployments remain blocked, and one WP Cloud managed-operation review can answer the shared question. Separate posts were confirmed unnecessary.",
+      "expect": {
+        "outcome": "ready",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-n",
+            "demo-site-o"
+          ],
+          "exclude": [
+            "separate escalation",
+            "one site only"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/api-and-managed-operations.md",
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 350
+      }
+    },
+    {
+      "id": "auto-polished-out-of-scope",
+      "input": "Rewrite this polished WP Cloud escalation. The supplied evidence shows a reporter-controlled theme setting disables the affected feature. Re-enabling that setting resolves the test, and no platform behavior, state, decision, or action remains for WP Cloud.",
+      "expect": {
+        "outcome": "alternate_owner",
+        "draft": "forbidden",
+        "messages": {
+          "include": [
+            "theme",
+            "WP Cloud"
+          ],
+          "exclude": [
+            "Copy/paste",
+            "ready to send"
+          ],
+          "max_question_turns": 0
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
+        },
+        "max_narrative_words": 140
       }
     }
   ]

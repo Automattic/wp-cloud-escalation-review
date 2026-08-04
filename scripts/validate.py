@@ -17,7 +17,7 @@ import build_plugin as plugin_package
 from run_evaluations import RUNTIME_MANIFEST, SKILL_NAME, runtime_files
 
 ROOT = Path(__file__).resolve().parents[1]
-FIXTURE_SCHEMA = "wp-cloud-escalation-review-evals/v2"
+FIXTURE_SCHEMA = "wp-cloud-escalation-review-evals/v3"
 OUTCOMES = {
     "ready",
     "ready_with_caveat",
@@ -158,10 +158,19 @@ def _expectation_errors(expect: Any, label: str) -> list[str]:
     if not isinstance(expect, dict):
         return [f"{label}.expect must be an object"]
     errors: list[str] = []
-    if set(expect) != {"outcome", "draft", "messages", "references"}:
+    if not {"outcome", "draft", "messages", "references"} <= set(expect):
         errors.append(
             f"{label}.expect must contain outcome, draft, messages, and references"
         )
+    unexpected = set(expect) - {
+        "outcome",
+        "draft",
+        "messages",
+        "references",
+        "max_narrative_words",
+    }
+    if unexpected:
+        errors.append(f"{label}.expect contains unexpected fields: {sorted(unexpected)}")
     if expect.get("outcome") not in OUTCOMES:
         errors.append(f"{label}.expect.outcome contains an invalid value")
     if expect.get("draft") not in {"required", "forbidden"}:
@@ -171,10 +180,10 @@ def _expectation_errors(expect: Any, label: str) -> list[str]:
     if not isinstance(messages, dict) or set(messages) != {
         "include",
         "exclude",
-        "max_questions",
+        "max_question_turns",
     }:
         errors.append(
-            f"{label}.expect.messages must contain include, exclude, and max_questions"
+            f"{label}.expect.messages must contain include, exclude, and max_question_turns"
         )
         messages = {}
     for key in ("include", "exclude"):
@@ -184,10 +193,19 @@ def _expectation_errors(expect: Any, label: str) -> list[str]:
             or any(not isinstance(value, str) or not value.strip() for value in values)
         ):
             errors.append(f"{label}.expect.messages.{key} must be a string list")
-    max_questions = messages.get("max_questions")
-    if not isinstance(max_questions, int) or not 0 <= max_questions <= 3:
+    max_question_turns = messages.get("max_question_turns")
+    if not isinstance(max_question_turns, int) or not 0 <= max_question_turns <= 3:
         errors.append(
-            f"{label}.expect.messages.max_questions must be between zero and three"
+            f"{label}.expect.messages.max_question_turns must be between zero and three"
+        )
+
+    max_narrative_words = expect.get("max_narrative_words")
+    if max_narrative_words is not None and (
+        not isinstance(max_narrative_words, int)
+        or not 40 <= max_narrative_words <= 1200
+    ):
+        errors.append(
+            f"{label}.expect.max_narrative_words must be null or 40 to 1200"
         )
 
     references = expect.get("references")
@@ -246,8 +264,8 @@ def load_fixture(path: Path) -> dict[str, Any]:
         if not isinstance(case, dict):
             errors.append(f"{label} must be an object")
             continue
-        if set(case) != {"id", "entry", "input", "expect"}:
-            errors.append(f"{label} must contain id, entry, input, and expect")
+        if set(case) != {"id", "input", "expect"}:
+            errors.append(f"{label} must contain id, input, and expect")
         case_id = case.get("id")
         if not isinstance(case_id, str) or not re.fullmatch(r"[a-z0-9-]+", case_id):
             errors.append(f"{label}.id must be a kebab-case label")
@@ -255,8 +273,6 @@ def load_fixture(path: Path) -> dict[str, Any]:
             errors.append(f"{label}.id is duplicated")
         else:
             ids.add(case_id)
-        if case.get("entry") not in {"Direct", "Guided"}:
-            errors.append(f"{label}.entry must be Direct or Guided")
         if not isinstance(case.get("input"), str) or not case["input"].strip():
             errors.append(f"{label}.input must be non-empty")
         errors.extend(_expectation_errors(case.get("expect"), label))

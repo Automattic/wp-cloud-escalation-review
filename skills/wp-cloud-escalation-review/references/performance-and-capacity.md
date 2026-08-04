@@ -25,7 +25,7 @@ Split separate incident, optimization, capability, and commercial questions.
 
 Use only facts that can change the decision:
 
-- Affected workflow or request class and its observed effect.
+- Affected workflow, method/path, or traffic slice and its observed effect.
 - A bounded UTC window with Metrics, logs, and traces aligned to it.
 - End-to-end time separated from queueing, PHP, database, external-call, and
   client time when available.
@@ -45,11 +45,11 @@ A small repeatable test that contradicts configured platform behavior can be
 enough. Do not demand a ceremonial checklist after the decisive fact is known.
 
 A bounded diagnostic test may proceed when current traces show queueing,
-remaining telemetry is receiver-only, and value, approval, scope, duration,
-success measure, and rollback are present. Keep cause suspected and use
-receiver-only visibility as a caveat.
+remaining telemetry is available only to WP Cloud, and value, approval, scope,
+duration, success measure, and rollback are present. Keep cause suspected and
+state that access limit as a caveat.
 
-If no reporter-visible evidence yet connects the symptom to the proposed
+If no evidence available to the reporter yet connects the symptom to the proposed
 capacity control, ask for that smallest check before collecting change
 controls. Impact alone does not justify the requested setting.
 
@@ -71,16 +71,17 @@ site owner until the analysis identifies a specific platform constraint.
 
 When exhaustion activates protection, determine whether an exempted request
 would succeed, hit another limit, or add load. Separate capacity correction
-from request classification.
+from deciding how the affected traffic should be handled.
 
 ## When access is limited
 
 Never require a tool the reporter cannot access. Ask what is available and use
 the nearest reliable substitute.
 
-When platform telemetry is available only to the receiver, provide exact sites,
-UTC windows, request classes, and reporter-visible results for correlation.
-Missing receiver-only data is an access limit, not proof of a platform cause.
+When platform telemetry is available only to WP Cloud, provide exact sites,
+UTC windows, affected methods, paths, callers or workflows, and the results the
+reporter can see for matching. Missing platform-only data is an access limit,
+not proof of a platform cause.
 It also does not block a bounded handoff after the reporter has exhausted its
 own layer.
 
@@ -127,9 +128,9 @@ review owner.
 ## Return to the router
 
 Return one result: a supported platform contradiction or capacity decision;
-the smallest reporter-owned check; a condition resolved during testing; work
+the smallest useful reporter check; a condition resolved during testing; work
 that remains with the application or another owner; or a bounded request for
-receiver-only correlation.
+matching in platform logs.
 
 If evidence changes the controlling boundary, retain useful facts and replace
 this reference. Do not stack references.

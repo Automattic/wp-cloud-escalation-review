@@ -33,7 +33,7 @@ Prefer an approved, technically validated article for behavior/procedure.
 Glossary can clarify terms, not replace canonical procedure. Treat
 review-needed or unclear material as a limitation.
 
-In Guided, state what the selected section says, why it changes investigation,
+When more reporter work remains, state only what the selected section changes
 and link the page. Never dump search results, frontmatter, glossary, or
 unrelated sections.
 
@@ -77,3 +77,8 @@ WordPress REST API, GraphQL, and ordinary browser traffic.
 Historical examples never override current docs. Preserve unclear,
 inaccessible, or apparently incorrect documentation as a limitation. Add a
 public link to copy-ready text only when the receiver needs it.
+
+A request to improve public documentation belongs to the documentation owner
+and issue tracker, not a WP Cloud platform escalation. State that route without
+an escalation draft unless the reporter explicitly asks for separate issue
+copy.

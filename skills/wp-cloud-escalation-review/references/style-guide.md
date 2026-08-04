@@ -1,241 +1,214 @@
 # Escalation writing style
 
-Write the shortest self-contained handoff that lets the receiver act without
-reconstructing reporter work. Keep evidence, impact, controls, constraints,
-uncertainty, and requested decision. The router owns readiness and safety.
+Apply this guide before every user-visible response: questions, progress,
+blockers, outcomes, caveats, and copy-ready drafts.
 
-## Use this style for every response
+Write the shortest self-contained handoff that lets the recipient act without
+reconstructing the reporter's work. Preserve necessary evidence, context,
+uncertainty, impact, safety, and the requested decision.
 
-Apply this guide to commentary, questions, blockers, outcomes, and review notes,
-not only the final escalation draft.
+## Speak plainly
 
-Lead with what the HE should do or decide. Use direct verbs and familiar words.
-Describe an evidence gap without blaming the reporter, explain why the check
-matters, ask one focused question, and stop.
+Lead with what the reporter should do or what WP Cloud needs to decide. Use
+direct verbs, familiar words, and clear subjects. Explain a material gap
+without blame.
 
-Keep routing, readiness, challenge status, reason codes, evidence classes, and
-reference selection private. Do not announce skill loading, Direct or Guided
-paths, documentation research, reference reads, or challenge work. If
-compatibility requires a `Readiness:` line, use one short line and immediately
-state the practical decision. Do not print `Blocking:`, `Challenged:`,
-`Checked:`, phase names, or a review checklist.
+Keep workflow, readiness, challenge status, reason codes, evidence classes,
+and reference selection private. Never announce skill loading, paths, phases,
+research, reference reads, or challenge work. Do not print internal labels
+such as `Blocking:`, `Challenged:`, or `Checked:`.
 
-Translate internal analysis into ordinary language. Avoid phrases such as
-“active causal investigation,” “smallest reporter-owned evidence,” “bounded
-incident window,” “coherent causal hypothesis,” “clears the earlier
-attribution blocker,” “HTTP-routing review and challenge pass,” “reported
-platform behavior,” and “No further WP Cloud decision appears outstanding.”
-Prefer “check the dashboards and logs you can access for this period,” “this is
-a likely cause, but it is not confirmed,” and “there is nothing left for WP
-Cloud to answer.”
+Translate internal analysis into ordinary language. Never use these phrases in
+visible text, even while explaining that they should be removed:
 
-Do not name an internal dashboard unless the reporter is known to have access.
-When access is unknown, refer to “the dashboards and logs available to you.”
-Offer examples such as a host or Grafana dashboard, company panel, nginx or PHP
-logs, or metrics from the WP Cloud Atomic API only when they help the reader
-find an equivalent.
+- active causal investigation;
+- smallest reporter-owned evidence;
+- bounded incident window;
+- coherent causal hypothesis;
+- clears the attribution blocker;
+- challenge pass;
+- reported platform behavior;
+- request class when URL, method, caller, or traffic is clearer;
+- receiver-only or receiver-side;
+- reporter-visible evidence; or
+- no further WP Cloud decision appears outstanding.
 
-Prefer “match this request with the platform logs” or “these happened around
-the same time” over the abstract noun “correlation” when either is accurate.
-Ask “which URL and HTTP method failed?” instead of “what request class was
-affected?” Say “information only WP Cloud can access” instead of
-“receiver-side visibility.” Keep technical terminology only when the HE or
-receiver needs it. Do not use “request class,” “receiver-side,”
-“receiver-only,” or “reporter-visible evidence” in any user-facing response.
+Prefer “check the dashboards and logs available to you,” “this is a likely
+cause, but it is not confirmed,” “match this request with the platform logs,”
+and “there is nothing left for WP Cloud to answer.”
 
-Treat time as a lookup aid, not a ritual. Keep an adequate bounded window.
-Quietly normalize a known time zone. Ask for a more exact time only when no
-existing request, trace, or job ID can identify the event WP Cloud must find.
+Name a dashboard only when access is known. Otherwise offer useful examples
+such as a host or Grafana dashboard, company panel, nginx or PHP logs, or
+metrics from the WP Cloud Atomic API.
 
-Once ownership and action are settled, remove unneeded proof requests from the
-response. Do not explain that extra logs would increase confidence when the
-reader does not need to collect them.
+## Make questions useful
 
-Show progress between questions. State the useful conclusion from the latest
-answer, then ask only for the next check that could change the decision. Do not
-turn missing fields or conflicting customer reports into an interrogation.
-Test a disputed claim without repeating it as though it were true.
+State what the supplied evidence already changed, then ask all currently known
+questions that can change scope, ownership, certainty, safety, routing, or the
+requested action. Group them into one focused turn. Several short questions
+are better than a serial interrogation.
 
-Describe warnings as warnings until an observable failure is established.
-Prefer “What scheduled work did not happen?” over questions about which
-callback returned a value. Do not call warnings “damage,” “false positives,” or
-“broken recurring work” without a mapped failed result. Challenge the exact
-claims “false positive,” “breaking recurring cron,” and “real-world damage”
-when no failed outcome supports them.
+Do not ask for a field because a template contains it. Explain briefly why a
+check matters and how to perform it when useful. Do not repeat a disputed claim
+as fact in the question, quotation, or recap. Say its scope or cause is not yet
+supported.
 
-## Draft from the record
+Do not respond to an undefined cause with a list of every possible log and
+metric. Ask for the smallest grouped set that can choose the route. When a
+blocker is clear, ask for the correction without describing the future rewrite
+or repeating claims that will be removed.
 
-Inventory the selected issue before editing:
+Treat time as a lookup aid. Keep an adequate event time or bounded range and
+time zone. Ask for greater precision only when WP Cloud cannot find the event
+from the existing range and request, trace, job, or other identifier.
 
-- observed condition or requested decision;
-- affected scope and blocked goal;
-- verified basis, including useful negative results;
-- remaining uncertainty;
-- requested outcome at the WP Cloud boundary.
+Once ownership and action are settled, remove unneeded proof requests. Do not
+tell the reporter that extra logs would increase confidence when collecting
+them would not change the result.
 
-Draft from this inventory, not source paragraphs. Every sentence must establish
-issue, scope, evidence, uncertainty, impact, risk, ownership, or action.
+## Draft from verified meaning
 
-Mark facts, negative findings, conditions, warnings, decisions, risks,
-mitigations, and actions as protected anchors. Preserve each anchor's actor,
-scope, negation, attribution, certainty, condition, consequence, and force.
-Preserve useful directness, candor, and deliberate roughness.
+Before editing, identify:
 
-Keep exact errors, identifiers, UTC times, request details, commands,
-measurements, and uncertainty only when they change the decision.
+- selected issue or justified bundle;
+- mapped sites and current state;
+- observed versus expected result;
+- impact and blocked goal;
+- strongest sufficient evidence and useful negative results;
+- remaining uncertainty or access limit; and
+- one primary WP Cloud outcome.
+
+Draft from that record, not source paragraphs. Every sentence must help the
+recipient understand issue, scope, evidence, certainty, impact, ownership,
+safety, lookup, or action.
+
+Preserve decision-bearing meaning once. Do not preserve source order, duplicate
+wording, exhaustive history, generic explanation, ornamental precision, or
+speculation. Keep versions, code locations, trace frames, workarounds, and
+history only when they change the decision.
 
 ## Open with the handoff
 
-Incident: observed condition, scope, verified basis, request.
+Lead with the verified problem, scope, impact, and request. Do not begin with
+the review process, evidence taxonomy, a generic summary, or a long technical
+explanation.
 
-> Site `<site-id>` returned HTTP 429 for the vendor webhook. We reproduced two
-> failures at `<UTC times>` and observed `<limit-reason>`. Can WP Cloud review
-> these events and confirm the recorded protection result?
+Use the smallest helpful structure. A normal post often needs only a useful
+title, two to four short paragraphs or a few meaningful bullets, the requested
+action, and an evidence artifact when justified. Do not force headings or a
+template.
 
-Capability/policy: requested change, current limit, verified need, decision.
+For code-backed platform work, present:
 
-> We request `<capability>` for `<scope>`. The workaround takes `<measured
-> effort>`. Can WP Cloud decide whether to prioritize the change?
+1. affected site or mapped sites, current impact, and workaround;
+2. the shortest supported trigger-to-failure explanation;
+3. what was inspected or tested and the important limitation;
+4. one primary WP Cloud outcome, with only related secondary questions; and
+5. a trace, code excerpt, or evidence link when it helps verification.
 
-Never invent an outage, site, timestamp, or request. Title must match record
-scope and certainty. Avoid unsupported `platform bug`, `false positive`,
-`root cause`, or `pool issue`.
+## Remove AI and code-review padding
 
-## Match ask to evidence
+Cut throat-clearing, importance theater, corporate filler, causal certainty,
+recap endings, canned thanks, rhetorical questions, dramatic fragments,
+decorative headings, generic tutorials, repeated framing, and conclusions
+repeated after each section.
 
-Ask for the smallest unresolved WP Cloud action:
+When evidence narrows a broad source claim, write only the measured scope. Do
+not quote or name the rejected broader claim in the correction.
 
-- interpret platform-only state;
-- correlate exact receiver-only events;
-- review a narrow protection change after traffic/risk identification;
-- correct platform-managed behavior contradicting repeatable tests;
-- inspect an exact managed job stage;
-- decide on a missing capability.
+Also challenge these patterns:
 
-Do not ask WP Cloud to perform first reproduction, inspect reporter-visible
-evidence, extract facts from a memo, optimize a healthy site without a platform
-question, or validate unrelated issues.
+- long prose chains of “calls,” “routes through,” “re-enters,” “falls through,”
+  and “returns” when a short explanation plus the trace is enough;
+- the same file, line, callback, version gate, missing guard, or workaround
+  repeated under several headings;
+- separate Description, Mechanism, Evidence, Related Findings, and
+  Troubleshooting sections that carry the same proof;
+- repeated “confirmed / observed / inferred” prefixes when normal prose can
+  express certainty once;
+- “site-wide,” “all requests,” “the only,” “nothing,” or “without bound”
+  without a precise supported population;
+- implementation prescriptions before the desired platform outcome; and
+- several questions competing as separate primary asks.
 
-State outcome and decision before remedies. Retain evidence-backed candidate
-controls only when they expose different safety, availability, or durability
-tradeoffs; name demonstrated limits without prescribing WP Cloud's mechanism.
-Do not append an unrequested change option to correlation/review.
+These are review signals, not word bans. Keep exact technical language and
+control-flow detail when the recipient needs it to verify or change behavior.
 
-## Keep decision-bearing detail
+## Keep sufficient evidence
 
-One direct platform error, bounded aggregate, or protection reason may already
-establish action. Do not add ceremonial timestamps, URLs, plugin checks, or
-generic troubleshooting.
+Use the strongest sufficient evidence, not the shortest possible evidence.
+Preserve qualifications, negative results, reproduction limits, and access
+boundaries that prevent a false conclusion.
 
-Use more detail only when it changes the decision:
+Always retain a supplied shareable evidence link when it helps verification or
+lookup, and say what it supports. Counts, percentages, and rates need a fixed
+bounded interval and denominator. A missing shareable link is not a blocker
+when an excerpt or lookup tuple is sufficient.
 
-- shortest ordered trace establishing impact;
-- minimal stack boundary;
-- controlled comparison and held variables;
-- multi-site pattern with denominator;
-- turning-point timeline showing recurrence, control effect, owner routing, or
-  ruled-out layers;
-- success, review, rollback controls for executable change.
+Logs, traces, code, queries, requests, and responses may remain inline or be
+linked. Do not prefer one form universally. A large artifact must be relevant,
+mapped to the correct site and time, interpretable, safe, and non-duplicative.
+State its meaning once.
 
-Keep decisive excerpts. Link large artifacts, state what they prove, and retain
-enough detail that the receiver need not reopen them to understand the claim.
-Precision is not relevance. Remove unrelated hashes, counts, classifier fields,
-comparison sites, and history.
+When retaining a full trace, summarize only the frames that establish the entry
+point, repeating loop or failure boundary, and platform-owned code. Do not
+narrate every frame and then reproduce the sequence. Keep an omission or
+sanitization note only when it changes interpretation.
 
-Always include a supplied, shareable link to the relevant logs, dashboard view,
-or saved query. For traffic and rate-limit claims, link the exact view or query
-that supports the count or protection reason and say what it shows. A count,
-percentage, or “per day” claim must name its absolute bounded interval and
-denominator. Preserve the same fixed interval in whatever log, saved-search,
-dashboard, or evidence link is available; do not rely on a drifting “last 24
-hours” view. If the reporter cannot share a link, keep a short excerpt or
-lookup details instead; the missing link is not a blocker. Do not ask the
-reporter to sanitize ordinary traffic details. Remove only actual
-authentication material or a specific sensitive personal or financial value.
+If the source states that the issue was not reproduced, say “not reproduced”
+or an equally direct phrase. “Not confirmed” describes certainty but does not
+preserve reproduction status.
 
-For scheduled work, prefer one mapped hook/error example plus runtime limit.
-Remove diagnostic installation history, raw filter inventories, and extra
-hooks unless they change action.
+Use screenshots only for an interface state or visual error that text would
+lose. Use a non-production example only when it safely reproduces a complex
+issue. For domain and network issues, include only commands and results that
+test the claimed phase.
 
-## Edit source material, not shape
+Do not ask the reporter to sanitize ordinary traffic. Remove only actual
+authentication material or a specific unauthorized sensitive value.
 
-Customer, vendor, and generated analysis are evidence. Preserve facts and
-useful caveats, not structure or confidence:
+## Match claims and asks to evidence
 
-- separate supplied claims from reporter validation;
-- merge repeated conclusions;
-- remove generic explanations and advocacy;
-- remove untested causes/remedies;
-- keep reporter conclusion and remaining question.
+Describe warnings as warnings until a failed outcome is shown. Do not call them
+false positives, broken recurring work, or real-world damage without mapped
+failed work. When no failed scheduled result is shown, ask only which expected
+work failed and what its observed result was. Do not ask about callback
+attribution or diagnostics yet.
 
-Remove instructional brackets, unused headings, empty fields, unchecked
-checklists, and editorial notes. Add headings/bullets only for navigation,
-parallel scanning, safety, or a real procedure. Long source does not justify
-long review.
+Separate observed facts, likely triggers, and confirmed causes. A workaround
+can support a likely trigger without proving the full chain. Nearby activity,
+precise prose, or repeated timestamps do not prove causality.
 
-## Remove AI-style padding
+Challenge broad scope with measured scope. Map every site and identifier. If a
+later site ID or domain conflicts with the opening, clarify whether it is an
+error or an intentional additional site.
 
-Review observable patterns, not authorship. Cut throat-clearing, importance
-theater, causal certainty, corporate filler, repeated framing, recap endings,
-canned thanks, rhetorical questions, dramatic fragments, metaphorical closers,
-emoji headings, decorative bold, and full-report blockquotes.
+When the affected site and time range are already known, test a broad traffic
+claim with the available dashboard or log summary first: how many failed out
+of how many, which URL and method, and the recorded reason when available. Do
+not ask for a full incident packet before that check shows what else matters.
 
-Remove generic explanations of HTTP, DNS, caching, webhooks, fingerprints,
-workers, or security controls. Preserve exact quotations, errors, product
-names, and necessary terminology.
+Ask for the smallest unresolved WP Cloud action. Lead with the desired outcome
+before implementation ideas. Keep a code suggestion, version question, or
+workaround only when it directly affects the same decision.
 
-Sentences over 25 words are review signals, not failures. Prefer clear
-subjects, direct verbs, familiar words, and one main statement. Break these
-preferences before making text false, incomplete, unsafe, or flat.
+## Compress and finish
 
-## Present major-change value
+A normal single-issue draft should usually be about 200–350 narrative words.
+More than about 450 narrative words triggers another private compression pass.
+Longer text is allowed when mapped sites, a justified issue bundle, safety, or
+necessary explanation materially helps the recipient. Justified artifacts are
+outside the narrative target.
 
-When prioritization needs it, retain only decision-changing facts: validated
-demand, affected customers/sites/workflows, authorized revenue/value, support
-volume, workaround cost, deadline/commitment, churn risk, expected benefit, and
-broader demand. Business value changes priority, never cause or safety.
+Before returning copy, confirm:
 
-Executable production changes also need target/environment, current/requested
-state, authorization, duration/review point, blast radius, success measure,
-rollback owner, and trigger. Prioritization proposals need no invented
-implementation controls.
-
-## Match the destination
-
-A durable standalone technical record needs available decision-bearing title,
-issue/decision, evidence, UTC lookup tuple, durable link, impact mechanism,
-tested controls, constraints, negative findings, scope, and ask.
-
-A same-issue reply adds only new evidence, correction, answer, or result.
-Changed issue/decision gets a linked durable record.
-
-Compact chat works only when one owner can close one immediate action without
-persisting evidence, authorization, decision, or outcome. Urgent coordination
-may begin there; lasting facts still need durable backfill.
-
-Keep only audience-facing caveats inside copy-ready text. Keep review metadata
-and editorial notes outside. When independent issues knowingly share a post,
-give each separate evidence, readiness, and ask.
-
-## Record outcomes
-
-After change/resolution, record what changed, when, observed result, tested
-scope, and remaining limitation. Use UTC when correlation matters. Never write
-only `fixed`, `resolved`, or `working now`.
-
-## Editing check
-
-Before returning copy-ready text:
-
-1. Title/opening match selected issue.
-2. Every claim matches evidence and uncertainty.
-3. Decisive details survive; irrelevant precision does not.
-4. Ask belongs to WP Cloud and fits proof.
-5. Each conclusion appears once.
-6. Business value stays separate from cause.
-7. Destination preserves needed context.
-8. Text ends after last concrete action/question.
-9. Every decision-bearing record item survives directly or equivalently.
-10. An in-order source sweep preserves every protected anchor.
-11. No unsupported relationship, consensus, sequence, heading, list, recap, or
-    structural symmetry was added.
+1. The opening matches the selected issue and measured scope.
+2. Every claim matches its evidence and certainty.
+3. Important context and limitations survive.
+4. The ask belongs to WP Cloud and fits the evidence.
+5. Each conclusion and important code location appears once.
+6. The artifact and narrative do not duplicate each other.
+7. The text ends after the last concrete action or question.
+8. No internal framework term or recognizable AI padding remains.
+9. No claim rejected during review appears again, even in an instruction to
+   remove or replace it.

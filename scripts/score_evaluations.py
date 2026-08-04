@@ -20,6 +20,8 @@ COPY_PASTE_BLOCK = re.compile(
     r"(?is)###\s+Copy/paste.*?```markdown\s*(.*?)```"
 )
 MARKDOWN_FENCE = re.compile(r"(?is)```markdown\s*.+?```")
+QUESTION = re.compile(r"(?m)([^?\n]{2,}\?)")
+WORD = re.compile(r"\b[\w’-]+\b")
 MINIMUM_DRAFT_CHARACTERS = 20
 READINESS_OUTCOMES = {
     "Ready": "ready",
@@ -78,11 +80,55 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
     if "split" in lowered or "separate issue" in lowered:
         return "split"
     if has_draft:
-        if "caveat" in lowered or "limitation" in lowered:
+        if (
+            "caveat" in lowered
+            or "limitation" in lowered
+            or "outside the reporter’s access" in lowered
+            or "outside the reporter's access" in lowered
+            or "do not have access" in lowered
+            or "cannot access the platform logs" in lowered
+            or "cannot access more detailed platform data" in lowered
+            or "platform logs are required" in lowered
+            or "only wp cloud can complete" in lowered
+            or "remain unverified" in lowered
+            or "does not establish why" in lowered
+            or "cannot identify the producing layer" in lowered
+            or "cannot establish what terminated" in lowered
+            or "does not identify which layer" in lowered
+            or "does not establish where the response was generated" in lowered
+            or "cannot establish the platform layer" in lowered
+            or "do not establish the failing platform layer" in lowered
+            or "does not establish which platform layer" in lowered
+            or "exhausted the dashboards and logs available" in lowered
+        ):
             return "ready_with_caveat"
         return "ready"
     if (
-        "existing" in lowered or ("utc" in lowered and "locate the event" in lowered)
+        "not ready" in lowered
+        or "before escalating" in lowered
+        or "before sending" in lowered
+        or "before deciding whether to involve wp cloud" in lowered
+    ):
+        return "needs_reporter_check"
+    if any(
+        phrase in lowered
+        for phrase in (
+            "belongs with",
+            "belongs elsewhere",
+            "not as a platform escalation",
+            "another owner",
+            "reporter-controlled",
+            "controlled by the reporter",
+            "reporter controls",
+            "reporter owns",
+            "reporter should",
+        )
+    ):
+        return "alternate_owner"
+    if (
+        "existing" in lowered
+        or "already-known" in lowered
+        or ("utc" in lowered and "locate the event" in lowered)
     ) and any(
         phrase in lowered
         for phrase in (
@@ -100,10 +146,13 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
         phrase in lowered
         for phrase in (
             "please check",
+            "please confirm",
+            "please provide",
             "can you check",
             "need to check",
             "please verify",
             "please retest",
+            "check the application",
             "check the dashboards",
             "report how many",
             "retry once",
@@ -135,6 +184,11 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
         )
     ):
         return "no_post"
+    if (
+        "no current impact" in lowered
+        and "remaining question for wp cloud" in lowered
+    ):
+        return "no_post"
     if any(
         phrase in lowered
         for phrase in (
@@ -153,22 +207,10 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "without a wp cloud escalation",
             "without escalating to wp cloud",
             "the issue is resolved",
+            "should not be escalated",
         )
     ):
         return "no_post"
-    if any(
-        phrase in lowered
-        for phrase in (
-            "belongs with",
-            "belongs elsewhere",
-            "another owner",
-            "reporter-controlled",
-            "reporter controls",
-            "reporter owns",
-            "reporter should",
-        )
-    ):
-        return "alternate_owner"
     return None
 
 
@@ -187,6 +229,36 @@ def interaction_messages(result: dict[str, Any]) -> list[dict[str, str]]:
     ):
         messages.append({"phase": "final", "text": output.strip()})
     return messages
+
+
+def question_texts(messages: list[dict[str, str]]) -> list[str]:
+    questions: list[str] = []
+    for message in messages:
+        for match in QUESTION.findall(message["text"]):
+            normalized = " ".join(match.casefold().split())
+            if normalized:
+                questions.append(normalized)
+    return questions
+
+
+def narrative_word_count(output: str) -> int:
+    narrative: list[str] = []
+    in_fence = False
+    include_fence = False
+    for line in output.splitlines():
+        stripped = line.lstrip()
+        if stripped.startswith("```"):
+            if in_fence:
+                in_fence = False
+                include_fence = False
+            else:
+                language = stripped[3:].strip().casefold()
+                in_fence = True
+                include_fence = language in {"markdown", "md"}
+            continue
+        if not in_fence or include_fence:
+            narrative.append(line)
+    return len(WORD.findall("\n".join(narrative)))
 
 
 def score_case(case: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
@@ -244,11 +316,25 @@ def score_case(case: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
         failures.append(
             "contained internal review labels: " + ", ".join(sorted(set(internal_labels)))
         )
-    question_count = interaction.count("?")
-    if question_count > message_expectation["max_questions"]:
+    question_turns = sum("?" in message["text"] for message in messages)
+    if question_turns > message_expectation["max_question_turns"]:
         failures.append(
-            f"interaction contained {question_count} questions; "
-            f"expected at most {message_expectation['max_questions']}"
+            f"interaction contained {question_turns} question turns; "
+            f"expected at most {message_expectation['max_question_turns']}"
+        )
+    questions = question_texts(messages)
+    repeated_questions = {
+        question for question in questions if questions.count(question) > 1
+    }
+    if repeated_questions:
+        failures.append("repeated a question across the interaction")
+
+    narrative_words = narrative_word_count(output)
+    max_narrative_words = expectation.get("max_narrative_words")
+    if max_narrative_words is not None and narrative_words > max_narrative_words:
+        failures.append(
+            f"narrative contained {narrative_words} words; "
+            f"expected at most {max_narrative_words}"
         )
 
     references = result.get("references")
@@ -266,7 +352,8 @@ def score_case(case: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
         "outcome": actual_outcome,
         "readiness": actual_readiness,
         "draft": has_draft,
-        "questions": question_count,
+        "question_turns": question_turns,
+        "narrative_words": narrative_words,
         "failures": failures,
     }
 
