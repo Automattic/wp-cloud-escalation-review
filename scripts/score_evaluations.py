@@ -79,6 +79,18 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
     lowered = output.casefold()
     if "split" in lowered or "separate issue" in lowered:
         return "split"
+    if (
+        "belongs in the public documentation issue tracker" in lowered
+        or "public wp cloud documentation issue tracker" in lowered
+        or "route this through the public wp cloud documentation issue tracker"
+        in lowered
+        or (
+            "belongs in" in lowered
+            and "rather than" in lowered
+            and "platform escalation" in lowered
+        )
+    ):
+        return "alternate_owner"
     if has_draft:
         if (
             "caveat" in lowered
@@ -88,9 +100,21 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             or "do not have access" in lowered
             or "cannot access the platform logs" in lowered
             or "cannot access more detailed platform data" in lowered
+            or "platform data the reporter cannot access" in lowered
+            or "no more detailed platform data" in lowered
             or "platform logs are required" in lowered
             or "only wp cloud can complete" in lowered
+            or "available only to wp cloud" in lowered
+            or "unavailable to the reporter" in lowered
+            or "pending receiver telemetry" in lowered
+            or "could not identify where the response originated" in lowered
             or "remain unverified" in lowered
+            or "remains unconfirmed" in lowered
+            or "remains unknown" in lowered
+            or "cause remains unknown" in lowered
+            or "not reproduced" in lowered
+            or "did not reproduce" in lowered
+            or "without reproducing" in lowered
             or "does not establish why" in lowered
             or "cannot identify the producing layer" in lowered
             or "cannot establish what terminated" in lowered
@@ -114,6 +138,7 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
         phrase in lowered
         for phrase in (
             "belongs with",
+            "belongs in",
             "belongs elsewhere",
             "not as a platform escalation",
             "another owner",
@@ -147,6 +172,7 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
         for phrase in (
             "please check",
             "please confirm",
+            "confirm whether",
             "please provide",
             "can you check",
             "need to check",
@@ -154,12 +180,17 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "please retest",
             "check the application",
             "check the dashboards",
+            "trace the affected request",
             "report how many",
             "retry once",
             "retry with",
+            "retry it with",
             "retry the operation",
+            "retry one representative",
+            "correct the request",
             "before escalating",
             "before resubmitting",
+            "escalate only if",
             "cannot proceed while",
             "revoke or rotate",
             "rotate it",
@@ -177,6 +208,15 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
         )
         and (
             "nothing left for wp cloud" in lowered
+            or "no remaining platform-owned action" in lowered
+            or "no remaining wp cloud action" in lowered
+            or "no wp cloud action remains" in lowered
+            or "wp cloud has no remaining action" in lowered
+            or "warnings show no functional impact" in lowered
+            or "no unresolved action for wp cloud" in lowered
+            or "no platform work remains" in lowered
+            or "no wp cloud action is needed" in lowered
+            or "wp cloud has nothing to investigate or decide" in lowered
             or (
                 "remaining question for wp cloud" in lowered
                 and "no demonstrated" in lowered
@@ -196,6 +236,8 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "don't post",
             "do not post",
             "no escalation is needed",
+            "no wp cloud escalation is needed",
+            "does not need a wp cloud escalation",
             "no need to post",
             "close the wp cloud escalation",
             "close this escalation",
@@ -203,10 +245,12 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "resolved during validation",
             "no escalation draft is needed",
             "the review can stop here",
+            "close the review unless",
             "stop the escalation",
             "without a wp cloud escalation",
             "without escalating to wp cloud",
             "the issue is resolved",
+            "wp cloud has nothing left to investigate or change",
             "should not be escalated",
         )
     ):
@@ -278,10 +322,13 @@ def score_case(case: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
     copy_paste = COPY_PASTE_BLOCK.search(output)
     draft_body = copy_paste.group(1).strip() if copy_paste else ""
     has_draft = bool(MARKDOWN_FENCE.search(output))
-    expected_draft = expectation["draft"] == "required"
-    if has_draft != expected_draft:
+    draft_rule = expectation["draft"]
+    expected_draft = draft_rule == "required"
+    if (draft_rule == "required" and not has_draft) or (
+        draft_rule == "forbidden" and has_draft
+    ):
         failures.append(
-            f"draft presence was {has_draft}; expected {expectation['draft']}"
+            f"draft presence was {has_draft}; expected {draft_rule}"
         )
     if expected_draft and copy_paste is None:
         failures.append("ready result did not contain a Copy/paste markdown draft")
