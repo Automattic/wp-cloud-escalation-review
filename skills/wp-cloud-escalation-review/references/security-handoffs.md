@@ -73,7 +73,8 @@ from a connection attempt.
 
 ## When access is limited
 
-Do not demand receiver-only logs. Provide the smallest correlation packet:
+Do not demand logs the reporter cannot access. Provide the smallest lookup
+packet:
 site or account, UTC window, sanitized artifact identity, observed behavior,
 and reporter-owned results.
 
@@ -104,10 +105,10 @@ Prefer a narrow diagnostic or containment action. Preserve evidence first.
 ## Return to the router
 
 Return one result: reporter-owned containment remains; an authorized security
-route is required; no receiver action remains; a bounded receiver-only
-correlation is needed; or the technical boundary changed.
+route is required; no WP Cloud action remains; bounded matching in platform
+logs is needed; or the technical boundary changed.
 
 If HTTP protection, protocol access, or a managed operation becomes
 controlling, retain the record and replace this reference. Do not stack
-references. Only an explicitly Guided path runs inline challenge. Direct
-returns these findings with `challenge=not_reached`; the router owns readiness.
+references. Any potentially ready result returns to the main workflow for the
+private challenge before drafting.

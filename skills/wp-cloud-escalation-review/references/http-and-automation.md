@@ -29,8 +29,8 @@ Collect fields that change the decision:
   source, full User-Agent, and correlation or vendor event ID.
 - Response provenance: relevant headers, signature, renderer, origin
   visibility, and recorded protection reason.
-- For an aggregate: bounded UTC window, affected count, denominator, request
-  class, verified impact, and direct platform signal.
+- For an aggregate: bounded UTC window, affected count, denominator, affected
+  method/path/caller or workflow, verified impact, and direct platform signal.
 - For automation: normal and peak rate, concurrency, burst shape, retry and
   backoff behavior, duplicate work, cacheability, and request cost.
 - A shareable link to the exact log view, dashboard view, or saved query when
@@ -55,9 +55,9 @@ scope. Do not require registry or vendor-list research when the event suffices.
 ## Reporter-owned checks
 
 - For a broad failure or routing claim with a known site and time window, check
-  the single-site dashboard or equivalent summary first. Quantify affected
-  requests, paths or request class, denominator, and the direct reason any
-  request reached another server before narrowing to one raw event.
+  the dashboards and logs available for that site first. Quantify affected
+  requests, methods or paths, denominator, and the direct reason any request
+  reached another server before narrowing to one raw event.
 - Reproduce safely when reproducibility controls the decision. Never label a
   log search as reproduction. Do not demand a fresh reproduction when a recent
   bounded event and durable controlling signal already support a
@@ -74,9 +74,9 @@ scope. Do not require registry or vendor-list research when the event suffices.
 - Confirm stable caller identity. Correct misleading identities when controlled;
   otherwise record the weakness and narrow the request.
 - Map each site, caller, source, method, path, and event. Do not transfer an
-  identity or legitimacy conclusion across providers or request classes.
-- After partial changes, identify failing status, request class, and protection
-  reason before readjusting. Continued failure does not prove the original
+  identity or legitimacy conclusion across providers or different traffic.
+- After partial changes, identify failing status, method/path/caller, and
+  protection reason before readjusting. Continued failure does not prove the original
   mechanism persists.
 
 Skip plugin, domain, and application checklists once direct evidence
@@ -88,7 +88,7 @@ frame for the next check.
 
 ## When access is limited
 
-Do not require receiver-only logs. Provide a compact lookup tuple: site, UTC
+Do not require logs the reporter cannot access. Provide a compact lookup tuple: site, UTC
 time, method or path, status, source, User-Agent, workflow, response
 characteristics, and origin observation.
 
@@ -141,8 +141,8 @@ different decision.
 
 ## Return to the router
 
-Return one result: evidence complete; smallest reporter blocker; receiver-only
-correlation with a lookup tuple; corrected owner; resolved; or unverified
+Return one result: evidence complete; next useful reporter check; matching in
+platform logs with a lookup tuple; corrected owner; resolved; or unverified
 post-change result.
 
 If a likely site-code cause and a successful fix already settle ownership and

@@ -26,7 +26,7 @@ def expectation(
     draft: str = "forbidden",
     include: list[str] | None = None,
     exclude: list[str] | None = None,
-    max_questions: int = 1,
+    max_question_turns: int = 1,
     required_references: list[str] | None = None,
     forbidden_references: list[str] | None = None,
 ) -> dict:
@@ -36,7 +36,7 @@ def expectation(
         "messages": {
             "include": include or [],
             "exclude": exclude or [],
-            "max_questions": max_questions,
+            "max_question_turns": max_question_turns,
         },
         "references": {
             "required": required_references or [],
@@ -87,7 +87,7 @@ class ProviderAdapterTests(unittest.TestCase):
                             "type": "command_execution",
                             "command": "sed -n '1,80p' .agents/skills/wp-cloud-escalation-review/references/style-guide.md",
                             "aggregated_output": (
-                                "references/guided-workflow.md\n"
+                                "references/challenge.md\n"
                                 "references/http-and-automation.md\n"
                             ),
                         },
@@ -126,7 +126,7 @@ class ProviderAdapterTests(unittest.TestCase):
                                     "type": "tool_use",
                                     "name": "Read",
                                     "input": {
-                                        "file_path": ".claude/skills/wp-cloud-escalation-review/references/guided-workflow.md"
+                                        "file_path": ".claude/skills/wp-cloud-escalation-review/references/challenge.md"
                                     },
                                 },
                             ]
@@ -147,7 +147,7 @@ class ProviderAdapterTests(unittest.TestCase):
 
         self.assertEqual("Is the problem still happening?", normalized["output"])
         self.assertEqual(
-            ["references/guided-workflow.md"],
+            ["references/challenge.md"],
             normalized["references"],
         )
         self.assertEqual(
@@ -191,7 +191,6 @@ class SemanticScoringTests(unittest.TestCase):
     ) -> dict:
         case = {
             "id": "semantic-check",
-            "entry": "Guided",
             "input": "Review this.",
             "expect": expected,
         }
@@ -374,7 +373,7 @@ class SemanticScoringTests(unittest.TestCase):
             expectation(
                 "needs_reporter_check",
                 include=["still happening"],
-                max_questions=1,
+                max_question_turns=1,
                 forbidden_references=["references/http-and-automation.md"],
             ),
             output="Is the problem still happening?",
@@ -387,12 +386,45 @@ class SemanticScoringTests(unittest.TestCase):
 
         self.assertFalse(score["passed"])
         failures = " ".join(score["failures"])
-        self.assertIn("questions", failures)
+        self.assertIn("question turns", failures)
         self.assertIn("forbidden reference", failures)
+
+    def test_several_questions_in_one_turn_are_allowed(self) -> None:
+        score = self.score(
+            expectation(
+                "needs_reporter_check",
+                include=["still happening", "site ID", "WP Cloud"],
+                max_question_turns=1,
+            ),
+            output=(
+                "Before posting, can you confirm whether this is still happening? "
+                "Which site ID is affected? What still needs WP Cloud to answer?"
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+        self.assertEqual(1, score["question_turns"])
+
+    def test_repeated_question_across_turns_fails(self) -> None:
+        score = self.score(
+            expectation(
+                "needs_reporter_check",
+                include=["still happening"],
+                max_question_turns=2,
+            ),
+            output="Is this still happening?",
+            messages=[
+                {"phase": "commentary", "text": "Is this still happening?"},
+                {"phase": "final", "text": "Is this still happening?"},
+            ],
+        )
+
+        self.assertFalse(score["passed"])
+        self.assertIn("repeated a question", " ".join(score["failures"]))
 
     def test_ready_result_requires_a_substantive_copy_paste_block(self) -> None:
         score = self.score(
-            expectation("ready", draft="required", max_questions=2),
+            expectation("ready", draft="required", max_question_turns=2),
             output=(
                 "This is ready to send.\n\n"
                 "### Copy/paste\n"

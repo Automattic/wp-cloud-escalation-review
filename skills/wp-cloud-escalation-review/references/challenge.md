@@ -1,70 +1,83 @@
-# Guided challenge
+# Private ready-case challenge
 
-Run once after one selected Guided issue passes Route, Define, and Validate.
-Skip Direct, splits, interim blockers, resolved conditions, and alternate
-routes. The pass is read-only; the router owns record, readiness, and draft.
+Run this once whenever an issue could be ready, before drafting. A polished
+source, edit or rewrite request, “one pass,” or client choice never waives it.
+Keep the result private.
 
-## Choose one route
+Review the verified record, not the source draft. Return either material
+objections, non-blocking caveats, or pass.
 
-Use one bounded inline adversarial pass in current context. Never create a
-subagent, call another model, or describe it as independent/fresh. Cover all
-applicable objections together. Final record-to-text checking is not another
-adversarial pass.
+## Need and ownership
 
-Give extra scrutiny when:
+- Is there still a specific WP Cloud question or action?
+- Is it within WP Cloud's support boundary?
+- Could applicable documentation, prior cases, accessible code, logs, or
+  standard tools answer it first?
+- Does another known owner control the correction?
+- Has reasonable reporter work been exhausted when access is limited?
 
-- material causality rests on indirect, conflicting, or narrow evidence;
-- one example expands to wider scope;
-- warnings are called a “false positive,” “breaking recurring cron,” or
-  “real-world damage” without a mapped failed outcome;
-- sensitive security or availability risk exists;
-- a requested change could weaken protection, isolation, reliability, or
-  rollback safety.
+## Evidence and certainty
 
-Customer value, urgency, long prose, AI authorship, or an initially mixed
-bundle never adds passes.
+- Is functional impact shown, or only a warning, callback, label, nearby event,
+  or historical count?
+- For scheduled warnings, is the next step limited to one expected work result
+  until failure is shown?
+- Are observed result, expected result, impact, and blocked goal clear?
+- Does the evidence support the claimed layer, mechanism, scope, and cause?
+- Is a likely trigger incorrectly called the confirmed complete cause?
+- Are broad words such as “site-wide,” “all,” or “only” tied to a measured
+  population?
+- Are counts and rates tied to a fixed interval and denominator?
+- Is the event locatable from an honest time/range, time zone, and available
+  request, trace, or job identifier without demanding unnecessary precision?
+- Does every artifact support the claim assigned to it?
+- Are useful negative findings, reproduction limits, and access limits kept?
+- Is “not reproduced” preserved as reproduction status rather than weakened to
+  “not confirmed”?
+- For a routing question, were the available logs followed toward ownership or
+  was access honestly exhausted?
+- If only an aggregate and request ID are present, reject readiness until that
+  reporter check or access limit is recorded.
 
-## Build a bounded packet
+Challenge “false positive,” “breaking recurring cron,” and “real-world damage”
+when no failed outcome is mapped.
 
-Remove actual authentication material first. Keep ordinary traffic evidence
-and relevant shareable log links. Include only:
+## Identifiers and grouping
 
-- selected issue and action;
-- supplied candidate report or compact handoff;
-- relevant claims, state, provenance, currentness, and evidence;
-- reporter access and completed owned checks;
-- selected technical contract, or `none`;
-- settled routing, scope, authorization, and safety facts.
+- Can every site, domain, request, job, operation, and event be mapped?
+- Does a later site ID or domain unexpectedly differ from the opening?
+- If several sites are included, do they share the demonstrated problem,
+  recipient, and decision, with evidence mapped per site?
+- Do included issues share the same owner and requested decision, or should
+  they split?
 
-Exclude raw/ambiguous credentials, unrelated branches, full conversation, and
-conclusions copied from an earlier draft. Review the verified record, not
-source order.
+## Request and safety
 
-## Ask for objections, not a rewrite
+- Is there one clear primary WP Cloud outcome?
+- Are secondary questions necessary and tied to it?
+- Are code ideas or remedies presented as useful options rather than proof?
+- Are production changes bounded by target, authority, risk, success, and
+  rollback?
+- Have actual secrets and unauthorized sensitive values been removed without
+  stripping ordinary evidence?
 
-Return only:
+## Recipient readability
 
-- unsupported/overconfident claims;
-- missing evidence that changes the decision;
-- plausible alternatives or layer, comparison, precedent, scope, ownership
-  errors;
-- irrelevant material hiding the handoff;
-- requested-action risk;
-- verdict: pass, pass with named caveat, or block.
+- Can the recipient identify issue, scope, impact, evidence, uncertainty, and
+  ask in one quick read?
+- Does the opening lead with the handoff?
+- Are framework terms, AI prose, generic tutorials, or blame exposed?
+- Does a blocker repeat rejected wording or list checks that depend on the
+  reporter's answer?
+- Did the final literal scan remove every banned framework term and rejected
+  claim?
+- Is the same proof repeated across sections or repeated beside an artifact?
+- Are code paths and line references reduced to what the recipient needs?
+- Is a long narrative justified?
+- Can any paragraph, heading, qualifier, or artifact be removed without losing
+  important context or actionability?
 
-Do not edit, assign readiness, contact systems, or recommend broad production
-changes from weak evidence.
-
-## Resolve once
-
-Map objections to record. Accept supported objections, reject those
-contradicted by evidence, and mark unresolved items as blockers or
-non-blocking caveats. Then assign readiness.
-
-For ready Guided work, keep the challenge result in the private record. State
-only a caveat that changes what the HE or receiver needs to know. Never mention
-the challenge pass or its categories in user-facing output.
-
-If challenge changes issue boundary or reveals independent issues, replace the
-technical reference or return to split handling before drafting. If final
-record-to-text checking fails, withdraw draft and return smallest blocker.
+Any material objection prevents copy-ready text. Return it to the main workflow
+as a focused correction or grouped question. Non-blocking caveats remain
+plain, audience-facing limitations. Pass only when no material objection
+remains.

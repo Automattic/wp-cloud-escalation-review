@@ -38,6 +38,12 @@ class FixtureContractTests(unittest.TestCase):
             {case["id"] for case in development["cases"]}
             & {case["id"] for case in regression["cases"]},
         )
+        for case in development["cases"] + regression["cases"]:
+            with self.subTest(case=case["id"]):
+                required = case["expect"]["references"]["required"]
+                self.assertIn("references/style-guide.md", required)
+                if case["expect"]["outcome"] in {"ready", "ready_with_caveat"}:
+                    self.assertIn("references/challenge.md", required)
 
     def test_projection_never_contains_expectations(self) -> None:
         fixture = self.validate.load_fixture(ROOT / "evals" / "development.json")
@@ -48,7 +54,7 @@ class FixtureContractTests(unittest.TestCase):
         self.assertNotIn("include", serialized)
         self.assertNotIn("exclude", serialized)
         self.assertEqual(
-            {"id", "entry", "input"},
+            {"id", "input"},
             set(projection["cases"][0]),
         )
 
@@ -87,7 +93,6 @@ class RuntimeIsolationTests(unittest.TestCase):
         sentinel = "expectation-" + "must-not-cross"
         case = {
             "id": "isolation-check",
-            "entry": "Direct",
             "input": "Review the supplied material.",
             "expect": {"include": [sentinel]},
         }
@@ -97,6 +102,9 @@ class RuntimeIsolationTests(unittest.TestCase):
         self.assertNotIn(sentinel, json.dumps(projection))
         self.assertNotIn(sentinel, prompt)
         self.assertIn("$wp-cloud-escalation-review", prompt)
+        self.assertNotIn("Direct", prompt)
+        self.assertNotIn("Guided", prompt)
+        self.assertNotIn("challenge every", prompt)
         with tempfile.TemporaryDirectory() as directory:
             staged = Path(directory) / "workspace"
             self.runner.stage_runtime(self.package, staged)
@@ -214,22 +222,25 @@ class ScoringTests(unittest.TestCase):
         draft: str = "forbidden",
         include: list[str] | None = None,
         exclude: list[str] | None = None,
+        max_narrative_words: int | None = None,
     ) -> dict:
-        return {
+        value = {
             "outcome": outcome,
             "draft": draft,
             "messages": {
                 "include": include or [],
                 "exclude": exclude or [],
-                "max_questions": 2,
+                "max_question_turns": 2,
             },
             "references": {"required": [], "forbidden": []},
         }
+        if max_narrative_words is not None:
+            value["max_narrative_words"] = max_narrative_words
+        return value
 
     def test_ready_draft_and_text_expectations_are_scored(self) -> None:
         case = {
             "id": "ready-check",
-            "entry": "Direct",
             "input": "Review this.",
             "expect": self.expectation(
                 "ready",
@@ -255,18 +266,34 @@ class ScoringTests(unittest.TestCase):
         self.assertTrue(score["passed"], score["failures"])
         self.assertEqual([], score["failures"])
 
-    def test_skill_requires_a_canonical_readiness_state(self) -> None:
+    def test_skill_keeps_one_internal_outcome(self) -> None:
         skill = (
             ROOT / "skills" / "wp-cloud-escalation-review" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("Every result uses exactly one readiness state", skill)
-        self.assertIn("readiness stays internal", skill)
+        self.assertIn("Keep one internal outcome", skill)
+        self.assertIn("Ready and ready-with-caveat results require", skill)
+
+    def test_skill_has_no_mode_shortcut_and_requires_style_and_challenge(self) -> None:
+        package = ROOT / "skills" / "wp-cloud-escalation-review"
+        skill = (package / "SKILL.md").read_text(encoding="utf-8")
+        security = (package / "references" / "security-handoffs.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertNotIn("Direct", skill)
+        self.assertNotIn("Guided", skill)
+        self.assertNotIn("guided-workflow.md", "\n".join(
+            path.as_posix() for path in package.rglob("*")
+        ))
+        self.assertIn("Before any user-visible response", skill)
+        self.assertIn("private challenge", skill)
+        self.assertIn("cannot skip a\ngate", skill)
+        self.assertIn("Any potentially ready result returns", security)
 
     def test_plain_language_blockers_do_not_require_a_readiness_label(self) -> None:
         case = {
             "id": "plain-blocker",
-            "entry": "Direct",
             "input": "Review this.",
             "expect": self.expectation(
                 "needs_reporter_check",
@@ -295,7 +322,6 @@ class ScoringTests(unittest.TestCase):
     def test_plain_language_alternate_owner_needs_no_readiness_label(self) -> None:
         case = {
             "id": "plain-alternate-owner",
-            "entry": "Direct",
             "input": "Review this.",
             "expect": self.expectation("alternate_owner", draft="forbidden"),
         }
@@ -321,25 +347,20 @@ class ScoringTests(unittest.TestCase):
             ROOT / "skills" / "wp-cloud-escalation-review" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("dashboards and logs available", skill)
-        self.assertIn("Grafana dashboard", skill)
-        self.assertIn("nginx or PHP logs", skill)
-        self.assertIn("metrics from the WP Cloud", skill)
+        self.assertIn("Use the tools available to that WP Cloud client", skill)
+        self.assertIn("Grafana", skill)
+        self.assertIn("nginx", skill)
+        self.assertIn("WP Cloud Atomic API state", skill)
         self.assertNotIn("single-site dashboard", skill)
 
     def test_skill_advances_investigation_without_timestamp_or_access_dead_ends(self) -> None:
         package = ROOT / "skills" / "wp-cloud-escalation-review"
         skill = (package / "SKILL.md").read_text(encoding="utf-8")
-        guided = (package / "references" / "guided-workflow.md").read_text(
-            encoding="utf-8"
-        )
-
         self.assertIn("which URL and HTTP method", skill)
         self.assertIn("PHP fatal", skill)
-        self.assertIn("Do not ask the reporter to\n  restate an adequate window", skill)
-        self.assertIn("permit a narrow escalation", skill)
-        self.assertIn("State what the latest answer changed", guided)
-        self.assertIn("narrow last-resort escalation", guided)
+        self.assertIn("Do not push for an exact second", skill)
+        self.assertIn("Permit a narrow", skill)
+        self.assertIn("Ask all currently known material questions", skill)
 
     def test_skill_preserves_shareable_log_links_without_generic_sanitization(self) -> None:
         package = ROOT / "skills" / "wp-cloud-escalation-review"
@@ -350,20 +371,15 @@ class ScoringTests(unittest.TestCase):
         style = (package / "references" / "style-guide.md").read_text(
             encoding="utf-8"
         )
-        guided = (package / "references" / "guided-workflow.md").read_text(
-            encoding="utf-8"
-        )
-
-        self.assertIn("Always keep a supplied, shareable link", skill)
-        self.assertIn("count, percentage, or rate", skill)
-        self.assertIn("log, saved-search, dashboard, or evidence link", skill)
-        self.assertIn("never block only because there is no link", skill)
-        self.assertIn("Do not ask the reporter to sanitize ordinary traffic", skill)
+        self.assertIn("Always keep a supplied shareable log", skill)
+        self.assertIn("Counts,\npercentages, and rates", skill)
+        self.assertIn("saved-search, dashboard, or evidence", skill)
+        self.assertIn("do not block\nsolely for the link", skill)
+        self.assertIn("Do not ask for generic sanitization", skill)
         self.assertIn("Always carry it into the handoff", http)
         self.assertIn("absolute bounded interval and denominator", http)
-        self.assertIn("Always include a supplied, shareable link", style)
-        self.assertIn("do not rely on a drifting", style)
-        self.assertIn("do not ask for\n  generic sanitization of traffic", guided)
+        self.assertIn("Always retain a supplied shareable evidence link", style)
+        self.assertIn("fixed\nbounded interval and denominator", style)
 
     def test_skill_requires_failed_work_and_safe_diagnostics(self) -> None:
         package = ROOT / "skills" / "wp-cloud-escalation-review"
@@ -372,12 +388,11 @@ class ScoringTests(unittest.TestCase):
             package / "references" / "api-and-managed-operations.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("Functional impact first", skill)
-        self.assertIn("execution and its observable result", skill)
-        self.assertIn("warnings without failed work", skill)
-        self.assertIn("Never make the warning ready", skill)
+        self.assertIn("A warning is not functional impact", skill)
+        self.assertIn("expected execution and observable result", skill)
+        self.assertIn("warning with no failed result", skill)
         self.assertIn("Treat diagnostic commands by what they execute", skill)
-        self.assertIn("ordinary WordPress, PHP, plugin", skill)
+        self.assertIn("accessible WordPress, plugin, theme, MU-plugin", skill)
         self.assertIn("Start with the work result, not callback attribution", managed)
         self.assertIn("Treat `wp eval` as arbitrary PHP execution", managed)
         self.assertIn("reporter analysis, not raw log output", managed)
@@ -391,7 +406,6 @@ class ScoringTests(unittest.TestCase):
     def test_multiple_readiness_lines_are_rejected(self) -> None:
         case = {
             "id": "contradictory-readiness",
-            "entry": "Direct",
             "input": "Review this.",
             "expect": self.expectation("ready", draft="required"),
         }
@@ -408,7 +422,6 @@ class ScoringTests(unittest.TestCase):
     def test_ready_draft_must_be_substantive(self) -> None:
         case = {
             "id": "short-draft",
-            "entry": "Direct",
             "input": "Review this.",
             "expect": self.expectation("ready", draft="required"),
         }
@@ -419,10 +432,56 @@ class ScoringTests(unittest.TestCase):
         self.assertFalse(score["passed"])
         self.assertIn("substantive", " ".join(score["failures"]))
 
+    def test_narrative_limit_ignores_non_markdown_artifacts(self) -> None:
+        case = {
+            "id": "artifact-budget",
+            "input": "Review this.",
+            "expect": self.expectation(
+                "ready",
+                draft="required",
+                max_narrative_words=40,
+            ),
+        }
+        output = (
+            "Ready to send.\n\n### Copy/paste\n"
+            "```markdown\nA concise verified handoff for WP Cloud to review.\n```\n"
+            "```text\n" + ("trace frame detail " * 200) + "\n```"
+        )
+
+        score = self.scorer.score_case(
+            case,
+            {"status": "completed", "output": output, "messages": [], "references": []},
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_narrative_limit_rejects_verbose_copy(self) -> None:
+        case = {
+            "id": "verbose-copy",
+            "input": "Review this.",
+            "expect": self.expectation(
+                "ready",
+                draft="required",
+                max_narrative_words=40,
+            ),
+        }
+        output = (
+            "Ready to send.\n\n### Copy/paste\n```markdown\n"
+            + ("unnecessary repeated explanation " * 30)
+            + "\n```"
+        )
+
+        score = self.scorer.score_case(
+            case,
+            {"status": "completed", "output": output, "messages": [], "references": []},
+        )
+
+        self.assertFalse(score["passed"])
+        self.assertIn("narrative contained", " ".join(score["failures"]))
+
     def test_blocked_result_rejects_a_misheaded_markdown_draft(self) -> None:
         case = {
             "id": "misheaded-draft",
-            "entry": "Direct",
             "input": "Review this.",
             "expect": self.expectation("needs_reporter_check"),
         }
@@ -441,7 +500,6 @@ class ScoringTests(unittest.TestCase):
             "cases": [
                 {
                     "id": "envelope-check",
-                    "entry": "Direct",
                     "input": "Review this.",
                     "expect": self.expectation("needs_reporter_check"),
                 }
@@ -473,7 +531,7 @@ class ScoringTests(unittest.TestCase):
             "suite": "development",
             "source_digest": digest,
             "provider": "codex",
-            "adapter_version": "wp-cloud-escalation-review-adapter/v1",
+            "adapter_version": "wp-cloud-escalation-review-adapter/v2",
             "cases": [completed_case],
         }
         self.assertTrue(self.scorer.score_suite(fixture, valid_results)["success"])
