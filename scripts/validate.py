@@ -173,8 +173,10 @@ def _expectation_errors(expect: Any, label: str) -> list[str]:
         errors.append(f"{label}.expect contains unexpected fields: {sorted(unexpected)}")
     if expect.get("outcome") not in OUTCOMES:
         errors.append(f"{label}.expect.outcome contains an invalid value")
-    if expect.get("draft") not in {"required", "forbidden"}:
-        errors.append(f"{label}.expect.draft must be required or forbidden")
+    if expect.get("draft") not in {"required", "forbidden", "optional"}:
+        errors.append(
+            f"{label}.expect.draft must be required, forbidden, or optional"
+        )
 
     messages = expect.get("messages")
     if not isinstance(messages, dict) or set(messages) != {

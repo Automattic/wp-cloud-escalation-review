@@ -293,6 +293,177 @@ class SemanticScoringTests(unittest.TestCase):
 
         self.assertTrue(score["passed"], score["failures"])
 
+    def test_do_not_escalate_with_no_platform_action_maps_to_no_post(self) -> None:
+        score = self.score(
+            expectation("no_post", include=["do not escalate"]),
+            output=(
+                "Do not escalate this to WP Cloud. The affected workflow now "
+                "passes, and there is no remaining platform-owned action."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_plain_caveat_variants_map_to_ready_with_caveat(self) -> None:
+        for wording in (
+            "The cause remains unknown.",
+            "The full cause remains unconfirmed.",
+            "The control completed without reproducing the failure.",
+            "The remaining evidence is available only to WP Cloud.",
+        ):
+            with self.subTest(wording=wording):
+                output = (
+                    f"{wording}\n\n### Copy/paste\n```markdown\n"
+                    "Please inspect the recorded failure and advise how to "
+                    "complete the blocked operation safely.\n```"
+                )
+                score = self.score(
+                    expectation("ready_with_caveat", draft="required"),
+                    output=output,
+                )
+                self.assertTrue(score["passed"], score["failures"])
+
+    def test_plain_belongs_in_wording_maps_to_alternate_owner(self) -> None:
+        score = self.score(
+            expectation("alternate_owner"),
+            output=(
+                "This belongs in the public documentation issue tracker, "
+                "not a platform escalation."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_alternate_owner_can_include_requested_destination_copy(self) -> None:
+        output = (
+            "This belongs in the public documentation issue tracker rather "
+            "than a platform escalation.\n\n### Copy/paste\n```markdown\n"
+            "Please clarify whether clients must retain the returned job "
+            "ticket for later support lookup.\n```"
+        )
+        score = self.score(
+            expectation("alternate_owner", draft="required"),
+            output=output,
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_documentation_tracker_copy_maps_to_alternate_owner(self) -> None:
+        output = (
+            "This belongs in the public documentation issue tracker because "
+            "the documentation owner must decide the requirement.\n\n"
+            "### Copy/paste\n```markdown\nPlease clarify the documented "
+            "retention requirement for managed-operation job tickets.\n```"
+        )
+        score = self.score(
+            expectation("alternate_owner", draft="required"),
+            output=output,
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_optional_alternate_owner_copy_accepts_both_forms(self) -> None:
+        for output in (
+            "Route this through the public WP Cloud documentation issue "
+            "tracker, not a platform escalation.",
+            (
+                "This belongs in the public documentation issue tracker.\n\n"
+                "### Copy/paste\n```markdown\nPlease clarify the retention "
+                "requirement.\n```"
+            ),
+        ):
+            with self.subTest(output=output):
+                score = self.score(
+                    expectation("alternate_owner", draft="optional"),
+                    output=output,
+                )
+                self.assertTrue(score["passed"], score["failures"])
+
+    def test_warning_without_impact_maps_to_no_post(self) -> None:
+        score = self.score(
+            expectation("no_post"),
+            output=(
+                "Do not escalate this to WP Cloud. The scheduled work "
+                "completed, and the warnings show no functional impact."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_natural_development_outcome_variants_are_classified(self) -> None:
+        cases = (
+            (
+                expectation("no_post"),
+                "WP Cloud has nothing left to investigate or change.",
+            ),
+            (
+                expectation("needs_reporter_check"),
+                "Correct the request, then retry one representative call.",
+            ),
+            (
+                expectation("needs_reporter_check"),
+                "Retry it with the documented field. Escalate only if it fails.",
+            ),
+            (
+                expectation("needs_reporter_check"),
+                "Confirm whether demo-site-k is a typo or a second site.",
+            ),
+            (
+                expectation("ready_with_caveat", draft="required"),
+                (
+                    "This requires platform data the reporter cannot access.\n\n"
+                    "### Copy/paste\n```markdown\nPlease inspect the failed "
+                    "request in platform logs and report the recorded reason.\n```"
+                ),
+            ),
+        )
+        for expected, output in cases:
+            with self.subTest(output=output):
+                score = self.score(expected, output=output)
+                self.assertTrue(score["passed"], score["failures"])
+
+    def test_natural_no_post_and_caveat_variants_are_classified(self) -> None:
+        cases = (
+            "Do not escalate. WP Cloud has nothing to investigate or decide.",
+            "No WP Cloud escalation is needed because the fix now passes.",
+            "This does not need a WP Cloud escalation.",
+            "Do not escalate. Close the review unless expected work later fails.",
+        )
+        for output in cases:
+            with self.subTest(output=output):
+                score = self.score(expectation("no_post"), output=output)
+                self.assertTrue(score["passed"], score["failures"])
+
+        output = (
+            "The failing layer is pending receiver telemetry.\n\n"
+            "### Copy/paste\n```markdown\nPlease match the failed handshake "
+            "in platform telemetry.\n```"
+        )
+        score = self.score(
+            expectation("ready_with_caveat", draft="required"),
+            output=output,
+        )
+        self.assertTrue(score["passed"], score["failures"])
+
+    def test_valid_technical_language_is_not_globally_rejected(self) -> None:
+        output = (
+            "This is ready to send.\n\n### Copy/paste\n```markdown\n"
+            "## Description\nThe customer reports that `demo_callback` has "
+            "failed twice on `demo-site-a`.\n\n## Mechanism\nThe request "
+            "routes through `demo_filter` before the platform returns HTTP "
+            "503: this is the supported scope, not all traffic. The longer "
+            "sentence keeps the callback, request, and returned error together "
+            "because separating them would hide the technical relationship.\n\n"
+            "## Troubleshooting Steps Taken\n- Repeated `demo-request-a` in "
+            "the traffic and PHP logs.\n- Confirmed the same identifier in the "
+            "full trace.\n\n## Stack trace\n`demo_callback -> demo_filter -> "
+            "demo_callback`\n\n## Ask\nPlease inspect `demo-request-a` and "
+            "explain why it returned HTTP 503.\n```"
+        )
+        score = self.score(expectation("ready", draft="required"), output=output)
+
+        self.assertTrue(score["passed"], score["failures"])
+
     def test_warning_does_not_support_escalation_maps_to_no_post(self) -> None:
         score = self.score(
             expectation("no_post", include=["nothing left"]),

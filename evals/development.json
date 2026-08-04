@@ -36,7 +36,6 @@
         "draft": "forbidden",
         "messages": {
           "include": [
-            "dashboards",
             "logs",
             "out of",
             "URL"

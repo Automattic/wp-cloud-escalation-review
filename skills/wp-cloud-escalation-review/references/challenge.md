@@ -66,16 +66,19 @@ when no failed outcome is mapped.
 - Can the recipient identify issue, scope, impact, evidence, uncertainty, and
   ask in one quick read?
 - Does the opening lead with the handoff?
-- Are framework terms, AI prose, generic tutorials, or blame exposed?
+- Does any sentence narrate the analysis instead of giving the recipient a
+  fact, limitation, evidence, safety boundary, or action they need?
+- Do internal code detail, negative evidence, provenance, omissions, or a
+  secondary finding change interpretation or the requested decision?
+- Does the request lead with the platform outcome rather than an
+  implementation?
+- Can any repeated proof, framework term, AI prose, paragraph, heading,
+  qualifier, or artifact be removed without losing important context or
+  actionability?
+- Are terms stable, material sources clear, rhythm natural, and formatting
+  functional?
 - Does a blocker repeat rejected wording or list checks that depend on the
   reporter's answer?
-- Did the final literal scan remove every banned framework term and rejected
-  claim?
-- Is the same proof repeated across sections or repeated beside an artifact?
-- Are code paths and line references reduced to what the recipient needs?
-- Is a long narrative justified?
-- Can any paragraph, heading, qualifier, or artifact be removed without losing
-  important context or actionability?
 
 Any material objection prevents copy-ready text. Return it to the main workflow
 as a focused correction or grouped question. Non-blocking caveats remain

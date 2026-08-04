@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import subprocess
 import tempfile
 import unittest
@@ -65,6 +66,22 @@ class FixtureContractTests(unittest.TestCase):
         )
 
         self.assertEqual("Observed on 2040-02-03.", rendered)
+
+    def test_public_fixture_identifiers_are_synthetic(self) -> None:
+        cases = []
+        for name in ("development", "regression"):
+            cases.extend(
+                self.validate.load_fixture(ROOT / "evals" / f"{name}.json")[
+                    "cases"
+                ]
+            )
+
+        text = "\n".join(case["input"] for case in cases)
+        self.assertNotRegex(text, r"https?://|\b[\w.+-]+@[\w.-]+\b")
+        self.assertNotRegex(text, r"\b(?:\d{1,3}\.){3}\d{1,3}\b|\b\d{6,}\b")
+        for site in re.findall(r"\bdemo-site-[a-z]\b", text):
+            self.assertRegex(site, r"^demo-site-[a-z]$")
+        self.assertNotRegex(text, r"\b(?:wordpress\.com|wpcomstaging\.com)\b")
 
 
 class RuntimeIsolationTests(unittest.TestCase):
@@ -290,6 +307,95 @@ class ScoringTests(unittest.TestCase):
         self.assertIn("private challenge", skill)
         self.assertIn("cannot skip a\ngate", skill)
         self.assertIn("Any potentially ready result returns", security)
+
+    def test_style_is_a_required_contextual_correctness_gate(self) -> None:
+        package = ROOT / "skills" / "wp-cloud-escalation-review"
+        skill = (package / "SKILL.md").read_text(encoding="utf-8")
+        style = (package / "references" / "style-guide.md").read_text(
+            encoding="utf-8"
+        )
+        challenge = (package / "references" / "challenge.md").read_text(
+            encoding="utf-8"
+        )
+        normalized_style = " ".join(style.split())
+
+        self.assertIn("required correctness check, not optional polish", skill)
+        self.assertIn("apply the final-copy check again before returning", skill)
+        self.assertIn("Do not summarize the evidence or why the draft passed", skill)
+        self.assertIn("one stable term", style)
+        self.assertIn("complete subjects and verbs", normalized_style)
+        self.assertIn("one main topic per sentence and paragraph", normalized_style)
+        self.assertIn("explain it once", style)
+        self.assertIn("stale metaphors, idioms, figures of speech", normalized_style)
+        self.assertIn("reflecting", style)
+        self.assertIn("showcasing", style)
+        self.assertIn("AI patterns are prohibited", style)
+        self.assertIn("review signal, not a hard limit", style)
+        self.assertIn("em dash", style)
+        self.assertIn("does not rule out", style)
+        self.assertIn("analysis instead of giving the recipient", challenge)
+        self.assertIn("terms stable, material sources clear", challenge)
+        self.assertIn("rhythm natural", challenge)
+        self.assertIn("formatting", challenge)
+        self.assertIn("`is`, `has`, `uses`, `failed`, or `returned`", style)
+        self.assertIn("plain heading such as `Stack trace`", style)
+        self.assertIn("Do not announce edits", normalized_style)
+        self.assertIn("do not recap the readiness checklist", normalized_style)
+        self.assertIn("Do not add a research-access caveat", style)
+
+    def test_style_rules_remain_contextual_and_preserve_useful_artifacts(self) -> None:
+        style = (
+            ROOT
+            / "skills"
+            / "wp-cloud-escalation-review"
+            / "references"
+            / "style-guide.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("AI patterns are prohibited", style)
+        self.assertIn("does not ban exact technical language", style)
+        self.assertIn("When retaining a full trace", style)
+        self.assertIn("Longer text is allowed", style)
+
+    def test_regression_covers_prepared_draft_style_failures(self) -> None:
+        regression = json.loads(
+            (ROOT / "evals" / "regression.json").read_text(encoding="utf-8")
+        )
+        cases = {case["id"]: case for case in regression["cases"]}
+
+        self.assertIn("auto-general-style-prepared-draft", cases)
+        code_case = cases["auto-code-backed-draft-compression"]
+        general_case = cases["auto-general-style-prepared-draft"]
+        self.assertIn("That frame is incidental", code_case["input"])
+        self.assertIn("does not rule", " ".join(code_case["expect"]["messages"]["exclude"]))
+        self.assertIn("At the outset", general_case["input"])
+        self.assertIn("—", general_case["expect"]["messages"]["exclude"])
+        for case in (code_case, general_case):
+            self.assertIn(
+                "references/style-guide.md",
+                case["expect"]["references"]["required"],
+            )
+        for required in (
+            "analytics workflow",
+            "not reproduced",
+            "unsafe",
+            "platform",
+            "re-enabled",
+        ):
+            self.assertIn(required, code_case["expect"]["messages"]["include"])
+        for required in (
+            "example-operation-failed",
+            "documented workflow",
+            "complete",
+            "not reproduce",
+            "inspect",
+            "safe",
+        ):
+            self.assertIn(required, general_case["expect"]["messages"]["include"])
+            self.assertIn(
+                "references/challenge.md",
+                case["expect"]["references"]["required"],
+            )
 
     def test_plain_language_blockers_do_not_require_a_readiness_label(self) -> None:
         case = {

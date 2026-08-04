@@ -10,9 +10,11 @@ or draft. It decides whether a handoff is needed and improves ready copy. It
 may help with bounded checks needed for that decision, but it is not a general
 WP Cloud troubleshooting or issue-resolution tool.
 
+Treat writing style as a required correctness check, not optional polish.
 Before any user-visible response, open and apply
-[the escalation writing style](references/style-guide.md). Apply it to
-questions, progress, blockers, outcomes, caveats, and drafts. Keep the review
+[the escalation writing style](references/style-guide.md) to questions,
+progress, blockers, outcomes, caveats, and drafts.
+Always apply the final-copy check again before returning. Keep the review
 workflow, internal record, reference reads, and challenge private.
 
 ## Follow one workflow
@@ -35,12 +37,19 @@ gate.
 7. When the issue could be ready, open
    [the private challenge](references/challenge.md) and resolve every material
    objection before drafting.
-8. Draft once from the verified record, then apply the style and compression
+8. For code-backed work, reduce the record to one supported
+   trigger-to-failure explanation and only the code or trace details that
+   change verification, ownership, safety, or action. Ask for the platform
+   outcome, not a guessed patch. Omit frame inventories and secondary code
+   findings unless they change the decision. Do not keep frame-removal notes
+   or speculative guard and version-gate findings by default.
+9. Draft once from the verified record, then apply the style and compression
    check.
 
 Resolved, out-of-scope, alternate-owner, or incomplete work produces no ready
 draft and therefore needs no ready-draft challenge. It still receives the
 scope, evidence, and writing checks needed for a clear outcome.
+Do not draft for another destination unless the user asks.
 
 When one reporter check is still needed to establish the boundary or owner, do
 not load documentation or a technical reference unless it is necessary to
@@ -83,6 +92,10 @@ Before improving prose, determine:
 Prefer solving, narrowing, or rerouting over escalation. If no WP Cloud action
 remains, stop before documentation research, a technical reference, challenge,
 or drafting.
+
+A present-tense blocked goal with the latest failed result can establish the
+current state. Do not ask the reporter to confirm it again without a conflict
+or a material reason to think it is stale.
 
 Do not permanently block a reporter who made a reasonable effort but cannot
 access or interpret the decisive platform information. Permit a narrow
@@ -264,7 +277,9 @@ Keep one internal outcome:
 - split required.
 
 Ready and ready-with-caveat results require the private challenge. Provide one
-short practical decision and one pasteable block in this exact shape:
+short practical decision and one pasteable block in this exact shape. Before
+the block, use one sentence with only the ready decision and any material
+caveat. Do not summarize the evidence or why the draft passed.
 
 ````text
 ### Copy/paste
@@ -284,26 +299,12 @@ When a material blocker is clear, ask for the correction without outlining a
 future rewrite, restating rejected claims, or listing checks that depend on the
 answer.
 
-Draft from a concise verified record, not source paragraphs. Preserve
-decision-bearing meaning once: mapped sites, current state, observed error,
-honest time or lookup ID, impact, important troubleshooting, uncertainty,
-access and safety limits, evidence links, and the remaining WP Cloud action.
-When evidence supports a narrower scope than the source claims, state only the
-supported scope. Do not name the rejected broader claim, even while explaining
-the correction.
-When the source says the issue was not reproduced, preserve that fact plainly;
-do not replace it with only “not confirmed.”
-Do not preserve source order, duplicate wording, exhaustive history, generic
-explanation, or speculation.
+Draft from the verified record, not source paragraphs. The style guide is the
+canonical contract for content, evidence compression, artifact handling,
+length, and language.
 
-Normal single-issue narrative should usually be about 200–350 words. Treat
-more than about 450 narrative words as a compression trigger, not a hard cap.
-Justified logs, traces, code, requests, and responses do not count toward that
-target, but they must remain relevant, safe, interpretable, and
-non-duplicative.
-
-Before returning, scan every visible sentence and rewrite any occurrence of
-`request class`, `receiver-only`, `receiver-side`,
-`reporter-visible evidence`, workflow/challenge terminology, or any claim the
-review marked unsupported or removed. Do not repeat rejected wording while
-telling the reporter to remove it.
+Before returning, scan every visible sentence for internal workflow language,
+analysis narration, repeated proof, implementation-first wording, and claims
+rejected during review. Rewrite every material failure. Do not repeat rejected
+text while asking the reporter to remove it, or describe editing and removed
+claims.

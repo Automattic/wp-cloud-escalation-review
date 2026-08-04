@@ -62,7 +62,7 @@
         "draft": "required",
         "messages": {
           "include": [
-            "preserving protection"
+            "protection"
           ],
           "exclude": [
             "change controls missing"
@@ -170,9 +170,7 @@
         "outcome": "ready_with_caveat",
         "draft": "required",
         "messages": {
-          "include": [
-            "platform logs"
-          ],
+          "include": [],
           "exclude": [
             "Reporter action required"
           ],
@@ -216,7 +214,7 @@
       "input": "Review this documentation-gap proposal in one pass. The current public managed-operations instructions were checked. They explain how to start an operation and read its result, but do not say whether the returned job ticket must be retained for later support lookup. A sanitized test confirms that the operation returns a job ticket. Ask the WP Cloud documentation owner to add that retention decision to the managed-operations page through the public documentation issue tracker.",
       "expect": {
         "outcome": "alternate_owner",
-        "draft": "forbidden",
+        "draft": "optional",
         "messages": {
           "include": [
             "managed-operations page"
@@ -242,9 +240,7 @@
         "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
-          "include": [
-            "nothing left for WP Cloud"
-          ],
+          "include": [],
           "exclude": [
             "Copy/paste"
           ],
@@ -387,7 +383,9 @@
             "operation"
           ],
           "exclude": [
-            "certainly caused"
+            "certainly caused",
+            "documentation was not available",
+            "documentation could not be checked"
           ],
           "max_question_turns": 2
         },
@@ -436,9 +434,7 @@
         "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
-          "include": [
-            "nothing left"
-          ],
+          "include": [],
           "exclude": [
             "matching log",
             "three matching",
@@ -465,9 +461,7 @@
         "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
-          "include": [
-            "nothing left"
-          ],
+          "include": [],
           "exclude": [
             "automatic failover"
           ],
@@ -544,7 +538,7 @@
     },
     {
       "id": "auto-code-backed-draft-compression",
-      "input": "Review and rewrite this complete escalation in one pass. Synthetic site demo-site-l hit a PHP memory fatal at 18:30 UTC on <eval-date> when an analytics plugin checked a custom capability. The plugin remains disabled, so the test analytics workflow is unavailable. Inspection of the deployed platform MU-plugin found an unguarded capability re-check that re-enters the same callback chain. The supplied trace shows the platform callback and capability frames repeating. Disabling the analytics plugin stops the fatal, which makes that combination the likely trigger, but the complete cause was not reproduced because production reactivation is unsafe. PHP logs, the deployed code, current plugin versions, and earlier relevant cases were checked. The primary request is for WP Cloud to review and correct the platform callback so the plugin can be re-enabled. A full trace is included and needed for verification. Do not repeat its line-by-line walkthrough.",
+      "input": "Review and rewrite this polished escalation in one pass. Treat the source draft as evidence rather than a structure to preserve. Source draft: Description: Synthetic site demo-site-l hit a PHP memory fatal at 18:30 UTC on <eval-date> when an analytics plugin checked a custom capability. The plugin remains disabled, so the test analytics workflow is unavailable. Mechanism: That frame is incidental, just where the process happened to be when memory ran out. Entry point is the analytics capability check. Trigger condition: the deployed platform MU-plugin re-checks the capability and re-enters the same callback, repeating without bound. Each level pops before it recurses, so growth is in call frames, not in the stack array. Evidence basis: PHP logs, deployed code, current versions, and earlier relevant cases were checked. Missing matching log entries does not rule the patch out. Disabling the plugin stops the fatal, making the platform callback and plugin combination the likely trigger, but the complete cause was not reproduced because production reactivation is unsafe. Related findings: **No upper version bound**. **Scope is site-wide, not the analytics plugin**. Ask: Add a re-entrancy guard to the PHP_INT_MAX closure. Does the version gate need a ceiling? Troubleshooting: the same callback, line references, version gate, workaround, and trace sequence are explained again here. **Sanitized stack trace, supplied by the customer**: example_plugin_capability_check -> example_platform_filter -> example_capability_check -> example_platform_filter. Frames 6 to 9 were removed before it was supplied; later frames repeat the same sequence. The full trace is included and needed for WP Cloud to verify the platform-owned callback. The primary outcome is a safe platform correction so the plugin can be re-enabled.",
       "expect": {
         "outcome": "ready_with_caveat",
         "draft": "required",
@@ -552,15 +546,36 @@
           "include": [
             "Copy/paste",
             "demo-site-l",
+            "analytics workflow",
             "likely",
-            "not reproduced"
+            "not reproduced",
+            "unsafe",
+            "platform",
+            "re-enabled"
           ],
           "exclude": [
+            "That frame is incidental",
+            "Entry point is",
+            "Trigger condition",
+            "without bound",
+            "call frames",
+            "stack array",
+            "does not rule",
             "Evidence basis",
             "Related findings",
+            "No upper version bound",
             "site-wide",
             "confirmed root cause",
-            "routes through"
+            "routes through",
+            "re-entrancy guard",
+            "closure",
+            "PHP_INT_MAX",
+            "version gate",
+            "upper bound",
+            "Sanitized stack trace",
+            "Frames 6",
+            "have been removed",
+            "unsupported claim"
           ],
           "max_question_turns": 1
         },
@@ -572,7 +587,63 @@
           ],
           "forbidden": []
         },
-        "max_narrative_words": 450
+        "max_narrative_words": 350
+      }
+    },
+    {
+      "id": "auto-general-style-prepared-draft",
+      "input": "Review and rewrite this polished escalation in one pass. Source draft: At the outset, it is important to note that synthetic site demo-site-q encountered a managed-operation failure at stage example-finalize from 08:15 to 08:20 UTC on <eval-date> with error example-operation-failed. The documented workflow was repeated, and the failed operation blocked the test deployment. The expected result was a completed test deployment. A separate non-production control did not reproduce the failure. This is not a minor inconvenience, not an isolated curiosity, and not merely a failed job; it is a critical platform inflection point. Why does this matter? The evidence serves as a robust testament to a multifaceted platform concern, underscoring the importance of a timely review. Industry guidance suggests that failures of this nature warrant comprehensive action. The operation, workflow, and process must be assessed — not just observed. **Key Insight:** WP Cloud should inspect the recorded managed-operation failure and provide the safe path to complete the deployment. Ultimately, this situation highlights the vital role of proactive collaboration and serves as a reminder that operational excellence is paramount. The report includes the bounded time, site mapping, stage, error, observed result, expected result, impact, troubleshooting, uncertainty, and requested WP Cloud outcome.",
+      "expect": {
+        "outcome": "ready_with_caveat",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-q",
+            "example-finalize",
+            "example-operation-failed",
+            "documented workflow",
+            "test deployment",
+            "complete",
+            "not reproduce",
+            "inspect",
+            "safe"
+          ],
+          "exclude": [
+            "At the outset",
+            "it is important to note",
+            "not a minor inconvenience",
+            "Why does this matter?",
+            "serves as",
+            "robust testament",
+            "multifaceted",
+            "underscoring",
+            "Industry guidance suggests",
+            "—",
+            "Key Insight",
+            "broader severity claims",
+            "claims are not supported",
+            "claims are unsupported",
+            "have been removed",
+            "specific failure, impact",
+            "lookup window",
+            "sufficient lookup path",
+            "documentation could not be checked",
+            "Ultimately",
+            "vital role",
+            "paramount"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/api-and-managed-operations.md",
+            "references/style-guide.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 350
       }
     },
     {
@@ -668,7 +739,7 @@
       "id": "auto-polished-out-of-scope",
       "input": "Rewrite this polished WP Cloud escalation. The supplied evidence shows a reporter-controlled theme setting disables the affected feature. Re-enabling that setting resolves the test, and no platform behavior, state, decision, or action remains for WP Cloud.",
       "expect": {
-        "outcome": "alternate_owner",
+        "outcome": "no_post",
         "draft": "forbidden",
         "messages": {
           "include": [
