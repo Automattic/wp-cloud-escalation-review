@@ -20,7 +20,7 @@ irrelevant detail.
 
 This avoidable transfer of work is the cognitive AI tax.
 
-Do not impose a cognitive AI tax on others. Eliminate it or pay it yourself.
+Do not impose a cognitive AI tax on others.
 
 Four principles guide the review:
 
