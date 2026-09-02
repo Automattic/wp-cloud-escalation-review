@@ -26,7 +26,7 @@ Split independent domain, network, certificate, and login failures.
 
 Preserve the smallest phase-specific packet:
 
-- WP Cloud site ID, domain or host, intended destination, source network, and
+- Atomic Site ID, domain or host, intended destination, source network, and
   exact UTC window.
 - DNS: queried name and type, resolver, answer, authoritative result, TTL, and
   propagation result.
@@ -46,9 +46,9 @@ Preserve the smallest phase-specific packet:
 - The exact first failure and a successful control from the same source when
   available.
 
-Preserve domains, site IDs, IP addresses, account labels, public keys, logs,
-and protocol output when useful. Remove passwords, private keys, tokens, and
-session material under the shared secret rule.
+Preserve domains, Atomic Site IDs, IP addresses, account labels, public keys,
+logs, and protocol output when useful. Remove passwords, private keys, tokens,
+and session material under the shared secret rule.
 
 ## Reporter-owned checks
 

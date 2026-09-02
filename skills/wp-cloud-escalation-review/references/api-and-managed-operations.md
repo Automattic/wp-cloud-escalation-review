@@ -90,9 +90,10 @@ scope, and interface limit. Separate control from observability.
 A direct platform exception can justify a short report. Do not add generic
 troubleshooting to make it look substantial.
 
-Do not require every possible lookup field. Stable site IDs, a bounded range,
-and a distinctive operation stage and error can be sufficient without an exact
-second or a literal job ID. For multiple sites with the same operation,
+Do not require every possible lookup field. The Atomic Site ID for every
+affected site, a bounded range, and a distinctive operation stage and error can
+be sufficient without an exact second or a literal job ID. For multiple sites
+with the same operation,
 failure, impact, owner, and requested decision, keep one mapped handoff when
 separate posts are unnecessary.
 

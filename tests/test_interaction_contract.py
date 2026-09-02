@@ -486,6 +486,17 @@ class SemanticScoringTests(unittest.TestCase):
 
         self.assertTrue(score["passed"], score["failures"])
 
+    def test_request_to_attach_blocked_record_maps_to_needs_evidence(self) -> None:
+        score = self.score(
+            expectation("needs_existing_evidence", include=["blocked request"]),
+            output=(
+                "Please attach the exact blocked request record and saved view "
+                "so WP Cloud can match it to the recorded protection reason."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
     def test_plain_imperative_maps_to_reporter_action(self) -> None:
         score = self.score(
             expectation("needs_reporter_check", include=["dashboards"]),

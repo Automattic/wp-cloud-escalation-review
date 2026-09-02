@@ -23,8 +23,8 @@ The workflow is adaptive in depth, never in required gates. A polished draft,
 an edit or rewrite request, “one pass,” or the client in use cannot skip a
 gate.
 
-1. Identify the issue or justified bundle, affected site mapping, current
-   state, impact, and desired WP Cloud outcome.
+1. Identify the issue or justified bundle, Atomic Site ID for every affected
+   site, current state, impact, and desired WP Cloud outcome.
 2. Check WP Cloud support scope, whether escalation is still needed, and
    whether another owner controls the next action.
 3. Validate the applicable evidence and troubleshooting. Do not demand
@@ -46,6 +46,12 @@ gate.
 9. Draft once from the verified record, then apply the style and compression
    check.
 
+An Atomic Site ID is required before any request can be ready or any draft can
+be returned, regardless of issue type. Require and map the ID for every
+affected site. A domain, hostname, site name, or other mapping does not replace
+it. If an ID is missing, ask for it and stop before documentation, a technical
+reference, challenge, or drafting.
+
 Resolved, out-of-scope, alternate-owner, or incomplete work produces no ready
 draft and therefore needs no ready-draft challenge. It still receives the
 scope, evidence, and writing checks needed for a clear outcome.
@@ -65,12 +71,13 @@ error, or step.
 Keep several sites together when they share the demonstrated problem,
 recipient, and decision; each site's evidence is mapped; and one post avoids
 redundant work. Do not imply one site's evidence proves every site. If a draft
-appears to describe one site but contains a different unexplained site ID or
-domain, clarify or correct it before drafting.
+appears to describe one site but contains a different unexplained Atomic Site
+ID or domain, clarify or correct it before drafting.
 
 When several sites share a managed operation, bounded range, failed stage,
-error, impact, and requested decision, prepare the grouped handoff rather than
-demanding a separate lookup ID for every site.
+error, impact, and requested decision, prepare the grouped handoff with the
+Atomic Site ID for every site. Do not demand a separate job or request ID for
+every site when the remaining evidence is sufficient.
 
 Keep tightly coupled issues together only when one recipient and decision make
 the combined handoff easier to act on. Otherwise split.
@@ -141,7 +148,7 @@ current state, and one useful result from the available dashboards or logs.
 For an incident, keep the applicable evidence needed to identify the event,
 understand its effect, reproduce it when appropriate, and act:
 
-- affected WP Cloud site ID and domain, preferring the stable site ID;
+- Atomic Site ID for every affected site, plus the domain when useful;
 - exact event time or full bounded range with a time zone, preferably UTC;
 - first and most recent known occurrence for intermittent behavior when useful;
 - observed result, expected result, customer or operational effect, and what
@@ -157,8 +164,9 @@ understand its effect, reproduce it when appropriate, and act:
 - for domain or network issues, only the DNS, curl, TCP, ping, or traceroute
   checks that test the claimed phase.
 
-This is an evidence menu, not a mandatory template. Ask for an item only when
-it changes lookup, reproduction, ownership, certainty, safety, or action.
+The Atomic Site ID is mandatory. The remaining items are an evidence menu, not
+a template. Ask for another item only when it changes lookup, reproduction,
+ownership, certainty, safety, or action.
 
 Treat time as a lookup aid, not an exactness ritual. Accept a full bounded
 range when an exact event is unknown. Do not push for an exact second when the
@@ -166,16 +174,29 @@ range plus a request, trace, job, or other identifier is enough. Missing
 first/latest intermittent timestamps is not a permanent blocker after
 reasonable effort.
 
-Do not require every possible locator. A stable site mapping, bounded range,
-and distinctive path, stage, status, or error may already let WP Cloud find the
-event. Missing an optional job or request ID is not a blocker when the
-remaining tuple is sufficient.
+Do not require every possible locator. With the required Atomic Site ID, a
+bounded range and distinctive path, stage, status, or error may already let WP
+Cloud find the event. Missing an optional job or request ID is not a blocker
+when the remaining tuple is sufficient.
 
 Always keep a supplied shareable log, saved-search, dashboard, or evidence
 link when it helps verification or lookup, and say what it supports. Counts,
 percentages, and rates need a fixed bounded interval and denominator. If no
 shareable link exists, use a sufficient excerpt or lookup tuple; do not block
 solely for the link.
+
+Prefer direct observations and one decisive event record over a larger
+research narrative. `Anomalous`, `unusual`, and similar labels are not
+evidence; replace them with the observed result and measured scope. Keep an
+inference only when it changes ownership, safety, or action, state its
+certainty, and tie it to the supporting observation.
+
+When an existing request, log row, trace, or saved view would materially
+shorten lookup, include it if accessible. Require an omitted artifact only
+when its fields are needed to match the event or choose an action and no other
+sufficient locator exists. Otherwise do not block an actionable handoff solely
+because the raw artifact is absent. Ask for the existing artifact, not more
+investigation, when it is required.
 
 ## Test impact and attribution
 
@@ -244,8 +265,9 @@ decision.
 Remove passwords, private keys, API keys or tokens, Authorization values,
 session cookies, and equivalent authentication material. Remove a specific
 sensitive personal or financial value when the receiver is not authorized to
-receive it. Keep useful domains, site IDs, URLs, IPs, errors, timestamps, logs,
-safe headers, User-Agents, hashes, public keys, and ordinary traffic details.
+receive it. Keep useful domains, Atomic Site IDs, URLs, IPs, errors,
+timestamps, logs, safe headers, User-Agents, hashes, public keys, and ordinary
+traffic details.
 Do not ask for generic sanitization. Use a typed marker such as
 `<redacted API token>`.
 

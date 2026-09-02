@@ -4,33 +4,8 @@
   "description": "Small synthetic suite for core escalation-review behavior.",
   "cases": [
     {
-      "id": "auto-ready-evidence",
-      "input": "Review this possible escalation in one pass. On synthetic site label demo-site-a, three POST requests to /wp-json/example/v1/callback returned HTTP 500 from 10:00 to 10:05 UTC on <eval-date>. The matching WP Cloud managed-operation records identify stage example-finalize and error example-operation-failed for job labels demo-job-a, demo-job-b, and demo-job-c. The reporter repeated the documented workflow, and the current public WP Cloud managed-operations page says this accepted operation should complete successfully. The failures block the test deployment. Ask WP Cloud to inspect the verified managed-operation failure while preserving unrelated operations.",
-      "expect": {
-        "outcome": "ready",
-        "draft": "required",
-        "messages": {
-          "include": [
-            "managed-operation"
-          ],
-          "exclude": [
-            "Reporter action required"
-          ],
-          "max_question_turns": 2
-        },
-        "references": {
-          "required": [
-            "references/style-guide.md",
-            "references/challenge.md",
-            "references/api-and-managed-operations.md"
-          ],
-          "forbidden": []
-        }
-      }
-    },
-    {
       "id": "auto-available-evidence-first",
-      "input": "Help review a possible escalation for synthetic site demo-site-p from 16:00 to 21:00 UTC on <eval-date>. The draft claims every authenticated request failed after nearby SSH activity and a host-label change. The reporter's WP Cloud client and available tooling are not specified. They have not checked the dashboards and logs available in their environment, which may be a host or Grafana dashboard, a company panel, nginx or PHP logs, or metrics from the WP Cloud Atomic API.",
+      "input": "Help review a possible escalation for synthetic Atomic Site ID demo-site-p from 16:00 to 21:00 UTC on <eval-date>. The draft claims every authenticated request failed after nearby SSH activity and a host-label change. The reporter's WP Cloud client and available tooling are not specified. They have not checked the dashboards and logs available in their environment, which may be a host or Grafana dashboard, a company panel, nginx or PHP logs, or metrics from the WP Cloud Atomic API.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
@@ -64,7 +39,7 @@
     },
     {
       "id": "auto-currentness-before-proof",
-      "input": "Help review a possible escalation. A code review gives a plausible site-code explanation for an invalid response, but it is unknown whether the issue still happens after the code was fixed or what question remains for WP Cloud. A complete three-log chain has not been collected.",
+      "input": "Help review a possible escalation for synthetic Atomic Site ID demo-site-c. A code review gives a plausible site-code explanation for an invalid response, but it is unknown whether the issue still happens after the code was fixed or what question remains for WP Cloud. A complete three-log chain has not been collected.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
@@ -92,7 +67,7 @@
     },
     {
       "id": "auto-resolved-no-post",
-      "input": "Continue this review. The available evidence now narrows the affected population, directly explains why a small set of requests reached a read-only secondary, and shows no user action put the database into read-only mode. The likely site-code trigger was fixed, the affected workflow now passes, and no WP Cloud decision or action remains.",
+      "input": "Continue this review for synthetic Atomic Site ID demo-site-d. The available evidence now narrows the affected population, directly explains why a small set of requests reached a read-only secondary, and shows no user action put the database into read-only mode. The likely site-code trigger was fixed, the affected workflow now passes, and no WP Cloud decision or action remains.",
       "expect": {
         "outcome": "no_post",
         "draft": "forbidden",
@@ -119,7 +94,7 @@
     },
     {
       "id": "auto-exhausted-access-narrow-escalation",
-      "input": "Continue this review. The reporter checked the dashboards and logs available for synthetic site demo-site-e from 16:00 to 16:10 UTC on <eval-date>, followed the visible application error as far as their access allows, reviewed the relevant public documentation, and asked an available teammate for help. Five identified GET requests to /example-path returned the read-only database error after invalid primary responses; their request labels are demo-request-a through demo-request-e. The reporter still cannot determine why those HTTP requests reached a read-only secondary. The issue is no longer occurring, unsupported scope and causal claims have been removed, but preventing recurrence still requires WP Cloud to explain those five requests. No more detailed platform data is available to the reporter.",
+      "input": "Continue this review. The reporter checked the dashboards and logs available for synthetic Atomic Site ID demo-site-e from 16:00 to 16:10 UTC on <eval-date>, followed the visible application error as far as their access allows, reviewed the relevant public documentation, and asked an available teammate for help. Five identified GET requests to /example-path returned the read-only database error after invalid primary responses; their request labels are demo-request-a through demo-request-e. The reporter still cannot determine why those HTTP requests reached a read-only secondary. The issue is no longer occurring, unsupported scope and causal claims have been removed, but preventing recurrence still requires WP Cloud to explain those five requests. No more detailed platform data is available to the reporter.",
       "expect": {
         "outcome": "ready_with_caveat",
         "draft": "required",
@@ -149,7 +124,7 @@
     },
     {
       "id": "auto-secret-containment",
-      "input": "Review this draft. The reporter pasted active authentication material into the working notes. The value is omitted here, but rotation and review of affected sessions have not happened.",
+      "input": "Review this draft for synthetic Atomic Site ID demo-site-s. The reporter pasted active authentication material into the working notes. The value is omitted here, but rotation and review of affected sessions have not happened.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
@@ -173,19 +148,19 @@
       }
     },
     {
-      "id": "auto-alternate-owner",
-      "input": "Review this possible WP Cloud escalation in one pass. The evidence shows the requested correction is entirely in a reporter-controlled extension setting, and no WP Cloud action remains.",
+      "id": "auto-atomic-site-id-required",
+      "input": "Review this possible escalation in one pass. The affected domain, current failure, impact, bounded UTC range, relevant log record, and requested WP Cloud action are supplied, but the Atomic Site ID is missing.",
       "expect": {
-        "outcome": "alternate_owner",
+        "outcome": "needs_reporter_check",
         "draft": "forbidden",
         "messages": {
           "include": [
-            "reporter"
+            "Atomic Site ID"
           ],
           "exclude": [
             "Copy/paste"
           ],
-          "max_question_turns": 0
+          "max_question_turns": 1
         },
         "references": {
           "required": [
@@ -199,7 +174,7 @@
     },
     {
       "id": "auto-atomic-api-correction",
-      "input": "Review this draft in one pass. It claims a WP Cloud Atomic API operation is broken, but the supplied request uses a field that is absent from the current public contract. The reporter has not retried with the documented field.",
+      "input": "Review this draft in one pass. It claims a WP Cloud Atomic API operation for synthetic Atomic Site ID demo-site-z is broken, but the supplied request uses a field that is absent from the current public contract. The reporter has not retried with the documented field.",
       "expect": {
         "outcome": "needs_reporter_check",
         "draft": "forbidden",
@@ -220,6 +195,37 @@
           "forbidden": [
             "references/challenge.md"
           ]
+        }
+      }
+    },
+    {
+      "id": "auto-rate-limit-existing-request-record",
+      "input": "Review and shorten this possible escalation in one pass. For synthetic Atomic Site ID demo-site-r and domain label demo-domain-r, GET requests to /example-graphql intermittently returned HTTP 429 from 10:00 to 11:00 UTC on <eval-date>, delaying the test catalog until an immediate retry. The traffic summary ties full User-Agent ExampleBrowser/1.0 and rate_limit_reason example-url-rate-limit to that method, path, status, and window. The behavior began around <eval-date>. An exact blocked nginx request record and saved view can be provided, but neither is attached. The draft calls the behavior anomalous and contains fingerprint comparisons, release history, a nearby firewall-change theory, burst comparisons, and separate questions about bucket keys, thresholds, refill timing, penalty duration, and historical reporting. Ask WP Cloud to review the recorded protection reason and correct the valid traffic while preserving protection for unrelated traffic.",
+      "expect": {
+        "outcome": "ready",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-r",
+            "example-url-rate-limit"
+          ],
+          "exclude": [
+            "anomalous",
+            "unusual",
+            "fingerprint",
+            "bucket",
+            "firewall"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md",
+            "references/http-and-automation.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
         }
       }
     }
