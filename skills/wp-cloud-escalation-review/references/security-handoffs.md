@@ -29,7 +29,8 @@ action, or unbounded production change.
 Collect only applicable facts:
 
 - First known, latest, and representative UTC times.
-- Affected domains, WP Cloud site IDs, accounts, and confirmed scope.
+- Atomic Site ID for every affected site, domains, accounts, and confirmed
+  scope.
 - Current state: active, contained, cleaned, recurring, or not reproducible.
 - Observed unauthorized behavior, separate from the suspected access path.
 - Sanitized artifact metadata and preserved log sources.
@@ -54,8 +55,8 @@ not a routine support request. Do not invent or expose a non-public route.
 
 Apply the shared secret rule before records, tools, challenge inputs, traces,
 or output. Never ask for authentication material. Preserve useful domains,
-site IDs, account labels, UTC times, hashes, public keys, customer context, and
-sanitized logs.
+Atomic Site IDs, account labels, UTC times, hashes, public keys, customer
+context, and sanitized logs.
 
 In a mixed artifact, remove only the unsafe value and retain the useful shape
 with a typed marker. Keep exploit payloads and sensitive reproduction material

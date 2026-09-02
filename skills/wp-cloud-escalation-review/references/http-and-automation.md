@@ -24,7 +24,7 @@ the reference by themselves. Split independent mechanisms first.
 
 Collect fields that change the decision:
 
-- Current workflow, WP Cloud site ID, domain, and user-visible effect.
+- Current workflow, Atomic Site ID, domain, and user-visible effect.
 - When needed, an exact request tuple: UTC time, method, URL or path, status,
   source, full User-Agent, and correlation or vendor event ID.
 - Response provenance: relevant headers, signature, renderer, origin
@@ -51,6 +51,23 @@ A current event, full User-Agent, method, path, verified workflow, and matching
 platform reason can support narrow review without IP, headers, body, or vendor
 ID. Require extras only for correlation, provenance, legitimacy, or risky
 scope. Do not require registry or vendor-list research when the event suffices.
+
+For rate-limit or protection results, include one matching blocked nginx or
+equivalent traffic request record when accessible, with its available time,
+Atomic Site ID, domain, method, URL, status, User-Agent, and recorded reason.
+A non-empty `rate_limit_reason` tied to a sufficiently locatable request is
+enough to start WP Cloud review. Do not block solely for the raw record when
+that reason and the remaining lookup tuple are sufficient. If missing request
+fields prevent configuration matching, ask for the existing record or saved
+view rather than broader research. Include when the behavior started if that
+could help locate a configuration change.
+
+Once that record identifies the affected path and protection reason, omit
+fingerprint comparisons, release histories, nearby platform-change theories,
+`anomalous` or `unusual` labels, and questions about internal bucket mechanics
+unless they change impact, scope, safety, or the requested correction. Keep
+aggregates only when they measure impact or materially change priority or
+scope.
 
 ## Reporter-owned checks
 

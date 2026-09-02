@@ -79,6 +79,9 @@ current state, observed and expected results, impact, strongest evidence,
 important uncertainty or access limit, and one primary WP Cloud outcome. Draft
 from that record, not source order.
 
+Always include the Atomic Site ID for every affected site. A domain, hostname,
+or site name does not replace it.
+
 Lead with the verified problem, measured scope, impact, and request. Every
 sentence must help with evidence, certainty, ownership, safety, lookup, or
 action. Preserve each fact once. Keep history, versions, code locations, trace
@@ -183,9 +186,13 @@ Separate observed facts, likely triggers, and confirmed causes. A workaround
 can support a likely trigger without proving the full chain. Nearby activity,
 precise prose, or repeated timestamps do not prove causality.
 
+Do not use `anomalous`, `unusual`, or a similar label as evidence. State the
+observed result and measured scope. Keep an inference only when it changes the
+owner, safety boundary, or requested action, and state its certainty.
+
 Challenge broad scope with measured scope. Map every site and identifier. If a
-later site ID or domain conflicts with the opening, clarify whether it is an
-error or an intentional additional site.
+later Atomic Site ID or domain conflicts with the opening, clarify whether it
+is an error or an intentional additional site.
 
 When the affected site and time range are already known, test a broad traffic
 claim with the available dashboard or log summary first: how many failed out

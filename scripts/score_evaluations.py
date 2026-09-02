@@ -153,6 +153,7 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
     if (
         "existing" in lowered
         or "already-known" in lowered
+        or "exact blocked request" in lowered
         or ("utc" in lowered and "locate the event" in lowered)
     ) and any(
         phrase in lowered
@@ -160,6 +161,8 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "share the",
             "provide the",
             "send the",
+            "attach the",
+            "needs the",
             "please add",
             "add the",
             "add that",

@@ -30,6 +30,13 @@ objections, non-blocking caveats, or pass.
 - Are counts and rates tied to a fixed interval and denominator?
 - Is the event locatable from an honest time/range, time zone, and available
   request, trace, or job identifier without demanding unnecessary precision?
+- Does the source mention an existing request, log row, trace, or saved view
+  without supplying it, even though its fields are needed to match the event
+  to configuration or choose an action?
+- Is a raw artifact being treated as a blocker even though a direct signal and
+  the remaining lookup tuple already let the recipient start?
+- Does `anomalous`, `unusual`, or another vague label stand in for the observed
+  result and measured scope?
 - Does every artifact support the claim assigned to it?
 - Are useful negative findings, reproduction limits, and access limits kept?
 - Is “not reproduced” preserved as reproduction status rather than weakened to
@@ -44,8 +51,9 @@ when no failed outcome is mapped.
 
 ## Identifiers and grouping
 
+- Is the Atomic Site ID present and mapped for every affected site?
 - Can every site, domain, request, job, operation, and event be mapped?
-- Does a later site ID or domain unexpectedly differ from the opening?
+- Does a later Atomic Site ID or domain unexpectedly differ from the opening?
 - If several sites are included, do they share the demonstrated problem,
   recipient, and decision, with evidence mapped per site?
 - Do included issues share the same owner and requested decision, or should
