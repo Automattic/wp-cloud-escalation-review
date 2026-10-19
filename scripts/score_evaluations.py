@@ -22,6 +22,23 @@ COPY_PASTE_BLOCK = re.compile(
 MARKDOWN_FENCE = re.compile(r"(?is)```markdown\s*.+?```")
 QUESTION = re.compile(r"(?m)([^?\n]{2,}\?)")
 WORD = re.compile(r"\b[\w’-]+\b")
+LIST_MARKER = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
+SENTENCE_BREAK = re.compile(r"(?<=[.?!])\s+")
+WHETHER_ITEM = re.compile(r"(?i)^whether\b")
+INDIRECT_ITEM = re.compile(r"(?i)^(?:which|why)\b")
+INDIRECT_REQUEST = re.compile(
+    r"(?i)(?:^(?:please\s+)?|\bplease\s+|\b(?:can|could) you\s+)"
+    r"(?:confirm|clarify|explain|share|report|check|identify|determine|advise)"
+    r"\s+(?:whether|which|why|what|how|if)\b"
+    r"|\b(?:let us know|tell us)\s+(?:whether|which|why|what|how|if)\b"
+)
+QUESTION_LEAD_IN = re.compile(
+    r"(?i)\b(?:confirm|clarify|share|report|check|investigate|determine|"
+    r"identify|look into|let us know|tell us|provide|answer|explain|questions?|"
+    r"need to know|requested information|information (?:needed|requested))\b"
+    r"[^:]*:\s*$"
+)
+DEFAULT_MAX_DRAFT_QUESTIONS = 1
 MINIMUM_DRAFT_CHARACTERS = 20
 READINESS_OUTCOMES = {
     "Ready": "ready",
@@ -291,6 +308,47 @@ def question_texts(messages: list[dict[str, str]]) -> list[str]:
     return questions
 
 
+def draft_questions(draft: str) -> list[str]:
+    """Return direct and indirect recipient questions in prose and list items.
+
+    Indirect forms count because an appended `whether ...` list or a
+    "Please confirm:" lead-in asks the recipient the same questions without
+    question marks. Fenced artifacts are ignored.
+    """
+    questions: list[str] = []
+    in_fence = False
+    list_context: str | None = None
+    for line in draft.splitlines():
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence or not line.strip():
+            continue
+        is_item = bool(LIST_MARKER.match(line))
+        text = LIST_MARKER.sub("", line).strip()
+        if is_item and list_context == "questions":
+            questions.append(" ".join(text.casefold().split()))
+            continue
+        if not is_item:
+            if QUESTION_LEAD_IN.search(text):
+                list_context = "questions"
+            elif text.endswith(":"):
+                list_context = "label"
+            else:
+                list_context = None
+        indirect_item = is_item and list_context != "label"
+        for index, segment in enumerate(SENTENCE_BREAK.split(text)):
+            segment = segment.strip()
+            if segment and (
+                segment.endswith("?")
+                or (is_item and index == 0 and WHETHER_ITEM.match(segment))
+                or (indirect_item and index == 0 and INDIRECT_ITEM.match(segment))
+                or INDIRECT_REQUEST.search(segment)
+            ):
+                questions.append(" ".join(segment.casefold().split()))
+    return questions
+
+
 def narrative_word_count(output: str) -> int:
     narrative: list[str] = []
     in_fence = False
@@ -381,6 +439,15 @@ def score_case(case: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
     }
     if repeated_questions:
         failures.append("repeated a question across the interaction")
+    recipient_questions = draft_questions(draft_body) if copy_paste else []
+    max_draft_questions = message_expectation.get(
+        "max_draft_questions", DEFAULT_MAX_DRAFT_QUESTIONS
+    )
+    if len(recipient_questions) > max_draft_questions:
+        failures.append(
+            f"draft contained {len(recipient_questions)} recipient questions; "
+            f"expected at most {max_draft_questions}"
+        )
 
     narrative_words = narrative_word_count(output)
     max_narrative_words = expectation.get("max_narrative_words")
@@ -406,6 +473,7 @@ def score_case(case: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
         "readiness": actual_readiness,
         "draft": has_draft,
         "question_turns": question_turns,
+        "draft_questions": len(recipient_questions),
         "narrative_words": narrative_words,
         "failures": failures,
     }

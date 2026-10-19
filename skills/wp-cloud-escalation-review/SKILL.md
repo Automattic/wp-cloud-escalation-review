@@ -44,8 +44,8 @@ gate.
    outcome, not a guessed patch. Omit frame inventories and secondary code
    findings unless they change the decision. Do not keep frame-removal notes
    or speculative guard and version-gate findings by default.
-9. Draft once from the verified record, then apply the style and compression
-   check.
+9. Draft once from the verified record with one request and at most one
+   question, then apply the style and compression check.
 
 An Atomic Site ID is required before any request can be ready or any draft can
 be returned, regardless of issue type. Require and map the ID for every
@@ -169,7 +169,9 @@ understand its effect, reproduce it when appropriate, and act:
 
 The Atomic Site ID is mandatory. The remaining items are an evidence menu, not
 a template. Ask for another item only when it changes lookup, reproduction,
-ownership, certainty, safety, or action.
+ownership, certainty, safety, or action. When the reporter cannot obtain an
+item, state that access limit once in the post. Do not convert missing menu
+items or reference fields into questions for the recipient.
 
 Treat time as a lookup aid, not an exactness ritual. Accept a full bounded
 range when an exact event is unknown. Do not push for an exact second when the
@@ -329,16 +331,19 @@ answer.
 
 Draft from the verified record, not source paragraphs. Focus the post on the
 issue, impact, evidence, completed checks, and one clear WP Cloud request.
-Do not append exploratory questions or an investigation checklist. Keep a
-recipient question only when the reporter needs the answer to act or that
-answer is the requested outcome. Exclusive platform access does not justify
-asking the team to report each intermediate diagnostic finding. Leave the
-investigation method to the receiving team. The style guide is the canonical
-contract for content, evidence compression, artifact handling, length, and
-language.
+The post asks no questions by default and never more than one. Sort every
+candidate question with the style guide: make it the request, keep it as the
+single question the reporter needs answered to act, state it as an access
+limit, route it elsewhere, or remove it. Indirect forms such as `whether …`
+items or “please confirm” count as questions. Exclusive platform access does
+not justify asking the team to report each intermediate diagnostic finding.
+Leave the investigation method to the receiving team. The style guide is the
+canonical contract for content, questions, evidence compression, artifact
+handling, length, and language.
 
 Before returning, scan every visible sentence for internal workflow language,
 analysis narration, repeated proof, implementation-first wording, and claims
-rejected during review. Rewrite every material failure. Do not repeat rejected
-text while asking the reporter to remove it, or describe editing and removed
-claims.
+rejected during review. Count the questions in the post, including indirect
+ones; if more than one remains, sort them again before returning. Rewrite every
+material failure. Do not repeat rejected text while asking the reporter to
+remove it, or describe editing and removed claims.

@@ -26,7 +26,8 @@
             "polling interval",
             "release history"
           ],
-          "max_question_turns": 0
+          "max_question_turns": 0,
+          "max_draft_questions": 0
         },
         "references": {
           "required": [
@@ -93,6 +94,72 @@
             "selection policy"
           ],
           "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md",
+            "references/api-and-managed-operations.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 350
+      }
+    },
+    {
+      "id": "auto-access-limit-replaces-question-list",
+      "input": "Review this prepared escalation for synthetic Atomic Site ID demo-site-e and domain label demo-domain-e. Since 08:00 UTC on <eval-date>, SFTP logins from the customer's verified deployment host example-source-e close immediately after key exchange with client output 'Connection closed by remote host'. SFTP with the same account and key from two other networks succeeds in the same window. The deployment pipeline is blocked. The reporter checked the relevant public documentation, the visible site access settings, and sanitized verbose client output, and cannot see platform connection or protection records. The draft ends with a numbered list asking WP Cloud whether each connection reached the SFTP service, which component closed it, which rule or reason applied, whether connection limits, brute-force protection, IP reputation, or another control was involved, whether any network changes happened near the start time, and finally whether a supported exception is available for the verified deployment host without weakening protection for other sources.",
+      "expect": {
+        "outcome": "ready_with_caveat",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-e",
+            "example-source-e",
+            "deployment"
+          ],
+          "exclude": [
+            "which component",
+            "brute-force",
+            "IP reputation",
+            "connection limits",
+            "network changes"
+          ],
+          "max_question_turns": 0,
+          "max_draft_questions": 0
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md",
+            "references/domains-network-and-protocol-access.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 350
+      }
+    },
+    {
+      "id": "auto-route-customer-general-questions",
+      "input": "Review this prepared escalation for synthetic Atomic Site ID demo-site-f. Managed restore job demo-job-f failed at example-restore-apply with error example-restore-failed between 14:00 and 14:10 UTC on <eval-date>. The test site still shows the earlier content, so the customer cannot complete a content rollback. The reporter repeated the documented restore workflow, checked all available job and application records, and found no reporter correction in the public documentation. The draft asks WP Cloud to complete or correct the failed restore. It also relays two customer questions: how the platform selects which backup storage location serves a restore, and whether the site's example-cache-mode setting influences that selection, adding 'we are asking, not asserting.' The public documentation already describes how restore sources are chosen, and no evidence ties example-cache-mode to the failure.",
+      "expect": {
+        "outcome": "ready",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-f",
+            "demo-job-f",
+            "example-restore-failed",
+            "restore"
+          ],
+          "exclude": [
+            "asking, not asserting",
+            "example-cache-mode"
+          ],
+          "max_question_turns": 0,
+          "max_draft_questions": 0
         },
         "references": {
           "required": [

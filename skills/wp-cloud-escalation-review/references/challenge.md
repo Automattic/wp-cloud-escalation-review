@@ -69,6 +69,10 @@ when no failed outcome is mapped.
   retain the question.
 - Can exploratory questions or a prescribed investigation checklist be removed
   while preserving the evidence, material unknown, and requested outcome?
+- Counting indirect `whether …` items and requests to confirm or share, does
+  the planned post ask more than one question? Is the real outcome hidden as
+  one of them? Has each missing evidence field become a question instead of
+  one access-limit statement?
 - Have reporter preparation questions been resolved before drafting?
 - Are code ideas or remedies presented as useful options rather than proof?
 - Are production changes bounded by target, authority, risk, success, and

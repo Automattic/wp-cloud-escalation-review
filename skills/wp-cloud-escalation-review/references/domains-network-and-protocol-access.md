@@ -22,6 +22,10 @@ controls the next action.
 
 Split independent domain, network, certificate, and login failures.
 
+For certificate issuance or renewal, start with the published
+[TLS certificate provisioning troubleshooting](https://wp.cloud/docs/troubleshooting/tls-certificate-provisioning/)
+guide before escalating.
+
 ## Decisive evidence
 
 Preserve the smallest phase-specific packet:
@@ -76,6 +80,13 @@ Do not require routing, firewall, or authentication logs that the reporter
 cannot access. Provide the receiver a correlation tuple: site or account,
 hostname, source and destination, port, protocol, exact UTC window, first
 failed phase, sanitized client output, and repeat pattern.
+
+State the access limit once and request the outcome. Do not ask WP Cloud to
+explain each unseen layer, selection rule, or setting, and do not relay a
+customer's general questions about how the platform chooses a provider or
+path. Answer those from documentation or route them separately. A specific
+recorded failure detail that the reporter needs in order to correct DNS,
+CAA, or another reporter-owned setting can be the one retained question.
 
 A direct test from a container may still use NAT, proxying, shared egress, or a
 different route. State what the source actually was. Missing receiver logs is
