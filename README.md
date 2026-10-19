@@ -41,6 +41,15 @@ The receiving team may still need to investigate the unresolved platform
 problem. That investigation should start at the WP Cloud boundary, without
 first reconstructing the report or auditing an unreviewed research dump.
 
+Resolve preparation questions with the reporter before drafting. A post should
+present the issue, useful evidence, completed checks, and one clear request.
+Keep a question only when the reporter needs its answer to act or the answer
+is the requested outcome. Exclusive platform access does not make every
+diagnostic finding a useful question. Leave exploratory question lists and
+investigation checklists out of the handoff. Use the published
+[WP Cloud documentation](https://wp.cloud/docs/) to find relevant procedures
+and answers before escalating.
+
 ## Install and use
 
 We recommend installing the plugin globally. The easiest way is to ask your AI:

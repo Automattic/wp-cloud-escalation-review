@@ -32,8 +32,9 @@ gate.
 4. Resolve or narrow contradictory identifiers, scope, certainty, and asks.
 5. Load documentation only when it can change the result and no more than one
    matching technical reference after the boundary is clear.
-6. Stop, solve, reroute, or ask all known material questions together when the
-   issue is not ready.
+6. Stop, solve, reroute, or ask the reporter all known material questions
+   together when the issue is not ready. Resolve these before drafting; do not
+   carry the review's question list into the post.
 7. When the issue could be ready, open
    [the private challenge](references/challenge.md) and resolve every material
    objection before drafting.
@@ -134,10 +135,12 @@ Record what each retained check showed. Do not repeat completed checks, list
 irrelevant activity, or add generic troubleshooting after direct evidence has
 settled the boundary.
 
-Ask all currently known material questions in one focused turn. Explain briefly
-why each matters and how to obtain the answer when useful. Ask again only when
-new information reveals a material question that could not have been known
-earlier.
+Ask all currently known material questions in one focused turn with the
+reporter. Explain briefly why each matters and how to obtain the answer when
+useful.
+Ask again only when new information reveals a material question that could not
+have been known earlier. These are preparation questions, not a checklist for
+the receiving team.
 
 Do not turn an undefined cause into a telemetry checklist. Ask for the smallest
 group that can choose the next route—normally the affected workflow and impact,
@@ -238,7 +241,10 @@ decision remains, stop.
 
 Use [documentation routing](references/documentation-routing.md) only after
 currentness and the remaining WP Cloud action are clear. Do not research
-general documentation to decorate a resolved result.
+general documentation to decorate a resolved result. Start with the published
+[WP Cloud documentation](https://wp.cloud/docs/) for relevant procedures,
+troubleshooting, and terminology; use the separate Atomic API reference for
+endpoint contracts.
 
 A routed technical issue loads exactly one matching reference:
 
@@ -321,9 +327,15 @@ When a material blocker is clear, ask for the correction without outlining a
 future rewrite, restating rejected claims, or listing checks that depend on the
 answer.
 
-Draft from the verified record, not source paragraphs. The style guide is the
-canonical contract for content, evidence compression, artifact handling,
-length, and language.
+Draft from the verified record, not source paragraphs. Focus the post on the
+issue, impact, evidence, completed checks, and one clear WP Cloud request.
+Do not append exploratory questions or an investigation checklist. Keep a
+recipient question only when the reporter needs the answer to act or that
+answer is the requested outcome. Exclusive platform access does not justify
+asking the team to report each intermediate diagnostic finding. Leave the
+investigation method to the receiving team. The style guide is the canonical
+contract for content, evidence compression, artifact handling, length, and
+language.
 
 Before returning, scan every visible sentence for internal workflow language,
 analysis narration, repeated proof, implementation-first wording, and claims

@@ -55,8 +55,9 @@ metrics from the WP Cloud Atomic API.
 
 ## Make questions useful
 
-State what the evidence changed. Ask all known questions that can change scope,
-ownership, certainty, safety, routing, or action in one focused turn.
+During review, ask the reporter all known questions that can change scope,
+ownership, certainty, safety, routing, or action in one focused turn. Resolve
+them before drafting; do not copy them into the escalation.
 
 Ask only for fields that matter and explain why or how when useful. Do not
 repeat a disputed claim as fact; say its scope or cause is not yet supported.
@@ -71,6 +72,29 @@ from the existing range and request, trace, job, or other identifier.
 
 Once ownership and action are settled, remove proof requests that cannot change
 the result.
+
+In the post, default to one clear request without an appended question list.
+Keep a question only when the reporter needs its answer to take a concrete
+next step or the answer is the requested outcome, and it cannot reasonably be
+obtained from available evidence or documentation. WP Cloud's exclusive access
+does not by itself justify requesting an answer. If the team can deliver the
+requested outcome without reporting an intermediate diagnostic finding, omit
+that question and leave the investigation to them.
+
+A focused request for a specific failure detail can be the primary ask when
+it will let the reporter correct the issue or understand a failure that still
+needs an explanation. State why that information is needed. State the request
+once; do not repeat it as a closing question or instruction.
+
+Remove speculative cause menus, requests to explain every internal mechanism,
+and generic requests for policy, history, recommendations, or reassurance.
+Do not add questions merely because the answers might be interesting or a
+customer asked them. Check available documentation first; route separate
+information requests appropriately when needed. Do not disguise the same
+question list as instructions to investigate or confirm each possibility.
+Let the receiving team choose how to investigate from the evidence and desired
+outcome. Do not invent extra deliverables, remedies, or assurances. Preserve a
+material unknown as a brief limitation when useful.
 
 ## Draft from verified meaning
 
@@ -223,7 +247,10 @@ Before returning copy, confirm:
 3. The opening matches the selected issue and measured scope.
 4. Every claim matches its evidence and certainty.
 5. Observed and expected results, important context, and limitations survive.
-6. The ask belongs to WP Cloud and fits the evidence.
+6. The ask belongs to WP Cloud and fits the evidence. Every retained question
+   requests an answer the reporter needs, rather than an intermediate finding
+   the recipient may use internally; no exploratory question list or
+   investigation checklist remains.
 7. Each conclusion and important code location appears once.
 8. The artifact and narrative do not duplicate each other.
 9. The text ends after the last concrete action or question.

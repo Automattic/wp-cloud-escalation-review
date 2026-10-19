@@ -13,25 +13,30 @@ relabel an event-specific retry.
 
 ## Public documentation
 
-Use the [public WP Cloud documentation repository](https://github.com/Automattic/wp-cloud-docs)
-for concepts, procedures, troubleshooting, scope, and terminology. Never
-preload the full corpus.
+Start with the published [WP Cloud documentation](https://wp.cloud/docs/)
+for concepts, procedures, troubleshooting, scope, and terminology. Use the
+site's navigation or search to find the relevant issue category. Never preload
+the full corpus. Consult the [public source repository](https://github.com/Automattic/wp-cloud-docs)
+only when source context or publication status is needed.
 
-1. Search the public catalog or `llms.txt`. Select one document that can change
-   route, validation, ownership, or action.
+1. Select one published guide that can change route, validation, ownership, or
+   action. Use a catalog or machine-readable index when available; do not
+   require one to browse the published docs.
 2. For ambiguous terminology, use the public glossary or the most specific
    matching page; follow its link for procedures or limits.
 3. Read the article outline, then relevant section. Open one related article
    only when necessary.
-4. Record key, public path, heading, catalog status, and finding. Paraphrase;
-   quote only the shortest decision-bearing phrase.
+4. Record the page title, public URL, relevant heading, and finding. Preserve
+   any stated review or publication limitation. Paraphrase; quote only the
+   shortest decision-bearing phrase.
 
-Fetch only the catalog and targeted Markdown. Do not clone a documentation
-repository for one lookup.
+Read only the selected page or its offered Markdown and necessary navigation.
+Do not clone a documentation repository for one lookup.
 
-Prefer an approved, technically validated article for behavior/procedure.
-Glossary can clarify terms, not replace canonical procedure. Treat
-review-needed or unclear material as a limitation.
+Use the relevant published procedure for behavior and troubleshooting.
+Glossary can clarify terms, not replace canonical procedure. Treat explicitly
+review-needed or unclear material as a limitation; do not assume unpublished
+catalog metadata exists on a published page.
 
 When more reporter work remains, state only what the selected section changes
 and link the page. Never dump search results, frontmatter, glossary, or
@@ -41,7 +46,7 @@ Record:
 
 ```text
 WP Cloud docs: checked | unavailable | not_applicable
-Document: <key and heading, or none>
+Document: <public URL and heading, or none>
 Glossary term: <term or none>
 Finding: <answer, correction, narrowing, or limitation>
 ```
@@ -55,7 +60,7 @@ for the smallest current source that could change scope, ownership, or action.
 For direct WP Cloud Atomic API work, validate the exact contract with the
 current [WP Cloud Atomic API reference](https://wp.cloud/docs/api/):
 
-1. route through `llms.txt`;
+1. route through the [API index](https://wp.cloud/docs/api/llms.txt);
 2. read one endpoint Markdown file;
 3. use agent guide or `openapi.json` only for API-wide rules or exact schema.
 

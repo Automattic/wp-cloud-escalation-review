@@ -62,7 +62,14 @@ when no failed outcome is mapped.
 ## Request and safety
 
 - Is there one clear primary WP Cloud outcome?
-- Are secondary questions necessary and tied to it?
+- For every recipient question, what will the reporter do with the answer, or
+  is that answer itself the justified outcome?
+- Could the team deliver the requested outcome without reporting this
+  intermediate diagnostic finding? Exclusive access alone is not a reason to
+  retain the question.
+- Can exploratory questions or a prescribed investigation checklist be removed
+  while preserving the evidence, material unknown, and requested outcome?
+- Have reporter preparation questions been resolved before drafting?
 - Are code ideas or remedies presented as useful options rather than proof?
 - Are production changes bounded by target, authority, risk, success, and
   rollback?

@@ -200,7 +200,7 @@
     },
     {
       "id": "auto-rate-limit-existing-request-record",
-      "input": "Review and shorten this possible escalation in one pass. For synthetic Atomic Site ID demo-site-r and domain label demo-domain-r, GET requests to /example-graphql intermittently returned HTTP 429 from 10:00 to 11:00 UTC on <eval-date>, delaying the test catalog until an immediate retry. The traffic summary ties full User-Agent ExampleBrowser/1.0 and rate_limit_reason example-url-rate-limit to that method, path, status, and window. The behavior began around <eval-date>. An exact blocked nginx request record and saved view can be provided, but neither is attached. The draft calls the behavior anomalous and contains fingerprint comparisons, release history, a nearby firewall-change theory, burst comparisons, and separate questions about bucket keys, thresholds, refill timing, penalty duration, and historical reporting. Ask WP Cloud to review the recorded protection reason and correct the valid traffic while preserving protection for unrelated traffic.",
+      "input": "Review and shorten this possible escalation in one pass. For synthetic Atomic Site ID demo-site-r and domain label demo-domain-r, GET requests to /example-graphql intermittently returned HTTP 429 from 10:00 to 11:00 UTC on <eval-date>, delaying the test catalog until an immediate retry. The traffic summary ties full User-Agent ExampleBrowser/1.0 and rate_limit_reason example-url-rate-limit to that method, path, status, and window. The behavior began around <eval-date>. An exact blocked nginx request record and saved view can be provided, but neither is attached. The draft calls the behavior anomalous and contains fingerprint comparisons, release history, a nearby firewall-change theory, burst comparisons, and an appended list asking about bucket keys, thresholds, refill timing, penalty duration, historical reporting, configuration recommendations, future guarantees, and which logs to inspect next. The reporter has exhausted the available traffic and application logs and relevant public documentation. Ask WP Cloud to review the recorded protection reason and correct the valid traffic while preserving protection for unrelated traffic.",
       "expect": {
         "outcome": "ready",
         "draft": "required",
@@ -215,7 +215,12 @@
             "unusual",
             "fingerprint",
             "bucket",
-            "firewall"
+            "firewall",
+            "threshold",
+            "refill",
+            "penalty duration",
+            "historical reporting",
+            "future guarantees"
           ],
           "max_question_turns": 1
         },

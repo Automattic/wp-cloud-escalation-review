@@ -105,6 +105,9 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             or "platform logs are required" in lowered
             or "only wp cloud can complete" in lowered
             or "available only to wp cloud" in lowered
+            or "accessible only to wp cloud" in lowered
+            or "available only in wp cloud" in lowered
+            or "the answer requires wp cloud" in lowered
             or "unavailable to the reporter" in lowered
             or "pending receiver telemetry" in lowered
             or "could not identify where the response originated" in lowered
