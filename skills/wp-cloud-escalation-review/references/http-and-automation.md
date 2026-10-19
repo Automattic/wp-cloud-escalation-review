@@ -20,6 +20,13 @@ Do not select it for:
 Words such as `crawler`, `migration`, `webhook`, or a status code do not select
 the reference by themselves. Split independent mechanisms first.
 
+## Start with published troubleshooting
+
+Check the matching published guide before asking WP Cloud what a response
+means: [WP Cloud HTTP status codes](https://wp.cloud/docs/troubleshooting/wp-cloud-http-status-codes/),
+[HTTP 429 and 599 errors](https://wp.cloud/docs/troubleshooting/429-599-errors/),
+or [page and edge cache](https://wp.cloud/docs/troubleshooting/page-edge-cache/).
+
 ## Decisive evidence
 
 Collect fields that change the decision:
@@ -110,8 +117,10 @@ time, method or path, status, source, User-Agent, workflow, response
 characteristics, and origin observation.
 
 Absence from origin logs narrows the boundary but does not prove where a
-response was generated. State the access limit and ask WP Cloud only for the
-correlation the reporter cannot perform.
+response was generated. State the access limit once and request the outcome.
+Do not list the producing layer, matched rule, policy name, detection reason,
+fingerprint, or protection state as questions; WP Cloud examines those while
+delivering the outcome.
 
 An empty `rate_limit_reason` does not locate the layer. Use renderer, signature,
 headers, body, origin visibility, and direct protection state. `renderer=php`

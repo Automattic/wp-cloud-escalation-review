@@ -222,7 +222,8 @@
             "historical reporting",
             "future guarantees"
           ],
-          "max_question_turns": 1
+          "max_question_turns": 1,
+          "max_draft_questions": 0
         },
         "references": {
           "required": [

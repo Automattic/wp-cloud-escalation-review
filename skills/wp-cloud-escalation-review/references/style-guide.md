@@ -73,28 +73,53 @@ from the existing range and request, trace, job, or other identifier.
 Once ownership and action are settled, remove proof requests that cannot change
 the result.
 
-In the post, default to one clear request without an appended question list.
-Keep a question only when the reporter needs its answer to take a concrete
-next step or the answer is the requested outcome, and it cannot reasonably be
-obtained from available evidence or documentation. WP Cloud's exclusive access
-does not by itself justify requesting an answer. If the team can deliver the
-requested outcome without reporting an intermediate diagnostic finding, omit
-that question and leave the investigation to them.
+## Keep the post to one request
 
-A focused request for a specific failure detail can be the primary ask when
-it will let the reporter correct the issue or understand a failure that still
-needs an explanation. State why that information is needed. State the request
-once; do not repeat it as a closing question or instruction.
+Every question in a post is work the recipient must answer or explain away. An
+appended list makes the recipient the reporter's researcher, even when each
+question is technically sound. That is the cognitive AI tax.
 
-Remove speculative cause menus, requests to explain every internal mechanism,
-and generic requests for policy, history, recommendations, or reassurance.
-Do not add questions merely because the answers might be interesting or a
-customer asked them. Check available documentation first; route separate
-information requests appropriately when needed. Do not disguise the same
-question list as instructions to investigate or confirm each possibility.
-Let the receiving team choose how to investigate from the evidence and desired
-outcome. Do not invent extra deliverables, remedies, or assurances. Preserve a
-material unknown as a brief limitation when useful.
+The post states one request and, by default, asks no questions. It may keep at
+most one question, and only when the reporter needs the answer to take a
+concrete next step and cannot get it from available evidence or documentation.
+Indirect forms count: `whether …` or `which …` items, “please confirm,”
+“please share,” “let us know,” and instructions to check each possibility.
+
+Sort every candidate question or instruction before drafting:
+
+1. **The answer is the outcome.** Make it the request. State the desired
+   outcome once and lead with it; do not also leave it as a closing question.
+2. **The reporter needs the answer to act.** For example, a specific failure
+   detail the reporter needs to correct their configuration, or a fact that
+   decides whether a retry is safe. Keep it as the single question and say why
+   it is needed.
+3. **The recipient would learn it while delivering the outcome.** For example,
+   which layer produced a response, which rule or policy matched, what a
+   component recorded, or whether a listed mechanism was involved. Remove it.
+   The recipient chooses how to investigate.
+4. **The reporter could not obtain it.** State the gap once as an access
+   limit, such as “The reporter cannot see which layer returned the response.”
+   Do not turn each missing evidence field into a question.
+5. **It asks for an explanation, policy, history, or a customer's general
+   curiosity.** Answer it from documentation, route it separately, or drop it.
+   Do not add it to the escalation.
+
+Remove these shapes from the post:
+
+- candidate-cause menus such as “whether A, B, C, or D was involved”;
+- one question per unknown evidence field;
+- requests to check for nearby changes, releases, or history that no evidence
+  ties to the failure;
+- “how does X choose” or “does setting Y affect” questions the request does
+  not depend on;
+- hedges such as “we are asking, not asserting” that keep a speculative
+  question alive; and
+- the real request hidden as the last item of a list.
+
+WP Cloud's exclusive access does not by itself justify a question. Do not
+disguise a removed question as an instruction to investigate or confirm. Do
+not invent extra deliverables, remedies, or assurances. Preserve a material
+unknown as a brief limitation when useful.
 
 ## Draft from verified meaning
 
@@ -247,10 +272,11 @@ Before returning copy, confirm:
 3. The opening matches the selected issue and measured scope.
 4. Every claim matches its evidence and certainty.
 5. Observed and expected results, important context, and limitations survive.
-6. The ask belongs to WP Cloud and fits the evidence. Every retained question
-   requests an answer the reporter needs, rather than an intermediate finding
-   the recipient may use internally; no exploratory question list or
-   investigation checklist remains.
+6. The ask belongs to WP Cloud and fits the evidence. Count every question in
+   the post, including `whether …` items and requests to confirm, share, or
+   check. There is one request and at most one question. Any question left is
+   one the reporter needs answered to act. No exploratory question list,
+   cause menu, or investigation checklist remains.
 7. Each conclusion and important code location appears once.
 8. The artifact and narrative do not duplicate each other.
 9. The text ends after the last concrete action or question.

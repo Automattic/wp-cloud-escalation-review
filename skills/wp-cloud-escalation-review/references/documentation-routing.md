@@ -15,9 +15,20 @@ relabel an event-specific retry.
 
 Start with the published [WP Cloud documentation](https://wp.cloud/docs/)
 for concepts, procedures, troubleshooting, scope, and terminology. Use the
-site's navigation or search to find the relevant issue category. Never preload
-the full corpus. Consult the [public source repository](https://github.com/Automattic/wp-cloud-docs)
+site's navigation or search to find the relevant issue category. For a
+symptom, start with the [Troubleshooting](https://wp.cloud/docs/troubleshooting/)
+section. Then use the matching area, such as
+[Edge](https://wp.cloud/docs/edge/), [Security](https://wp.cloud/docs/security/),
+[Performance](https://wp.cloud/docs/performance/),
+[Site access](https://wp.cloud/docs/site-access/), or
+[API & automation](https://wp.cloud/docs/api-automation/). Never preload the
+full corpus. Consult the [public source repository](https://github.com/Automattic/wp-cloud-docs)
 only when source context or publication status is needed.
+
+When a draft carries a general question about how the platform works, chooses,
+or behaves, check here first. A documented answer goes back to the reporter or
+customer, not into the escalation. An undocumented general question is a
+separate information request, not part of an incident handoff.
 
 1. Select one published guide that can change route, validation, ownership, or
    action. Use a catalog or machine-readable index when available; do not

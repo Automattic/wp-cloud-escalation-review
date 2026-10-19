@@ -29,15 +29,19 @@ def expectation(
     max_question_turns: int = 1,
     required_references: list[str] | None = None,
     forbidden_references: list[str] | None = None,
+    max_draft_questions: int | None = None,
 ) -> dict:
+    messages = {
+        "include": include or [],
+        "exclude": exclude or [],
+        "max_question_turns": max_question_turns,
+    }
+    if max_draft_questions is not None:
+        messages["max_draft_questions"] = max_draft_questions
     return {
         "outcome": outcome,
         "draft": draft,
-        "messages": {
-            "include": include or [],
-            "exclude": exclude or [],
-            "max_question_turns": max_question_turns,
-        },
+        "messages": messages,
         "references": {
             "required": required_references or [],
             "forbidden": forbidden_references or [],
@@ -621,6 +625,80 @@ class SemanticScoringTests(unittest.TestCase):
 
         self.assertTrue(score["passed"], score["failures"])
 
+
+    def ready_output(self, draft: str) -> str:
+        return (
+            "This is ready to send.\n\n"
+            "### Copy/paste\n"
+            "```markdown\n"
+            f"{draft}\n"
+            "```"
+        )
+
+    def test_indirect_whether_list_in_draft_fails(self) -> None:
+        score = self.score(
+            expectation("ready", draft="required", max_question_turns=3),
+            output=self.ready_output(
+                "Please restore the verified traffic for demo-site-a.\n\n"
+                "Please confirm:\n\n"
+                "1. Whether each request reached the edge.\n"
+                "2. Which component returned the response.\n"
+                "3. Whether example-control-a or example-control-b was involved."
+            ),
+        )
+
+        self.assertFalse(score["passed"])
+        self.assertEqual(3, score["draft_questions"])
+        self.assertIn("recipient questions", " ".join(score["failures"]))
+
+    def test_lead_in_list_items_count_as_questions(self) -> None:
+        score = self.score(
+            expectation("ready", draft="required", max_question_turns=3),
+            output=self.ready_output(
+                "Please share the following for demo-site-a:\n"
+                "- The matched rule and policy name.\n"
+                "- The recorded request ID."
+            ),
+        )
+
+        self.assertEqual(2, score["draft_questions"])
+        self.assertFalse(score["passed"])
+
+    def test_one_justified_question_and_access_limit_pass(self) -> None:
+        score = self.score(
+            expectation("ready", draft="required", max_question_turns=3),
+            output=self.ready_output(
+                "Managed job demo-job-a failed with example-input-rejected.\n\n"
+                "What we checked:\n"
+                "- Which inputs were sent, against the public contract.\n"
+                "- The visible job status.\n\n"
+                "The reporter cannot see which field was rejected. Can you share "
+                "the rejected field and reason so the reporter can correct it?\n\n"
+                "```text\n"
+                "Why did this fail? Whether retried: no\n"
+                "```"
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+        self.assertEqual(1, score["draft_questions"])
+
+    def test_draft_question_limit_can_be_zero(self) -> None:
+        score = self.score(
+            expectation(
+                "ready",
+                draft="required",
+                max_question_turns=3,
+                max_draft_questions=0,
+            ),
+            output=self.ready_output(
+                "Please complete the failed deployment for demo-site-a. "
+                "Could you confirm whether the lock was released?"
+            ),
+        )
+
+        self.assertFalse(score["passed"])
+        self.assertEqual(1, score["draft_questions"])
 
 if __name__ == "__main__":
     unittest.main()

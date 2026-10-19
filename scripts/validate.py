@@ -179,13 +179,15 @@ def _expectation_errors(expect: Any, label: str) -> list[str]:
         )
 
     messages = expect.get("messages")
-    if not isinstance(messages, dict) or set(messages) != {
-        "include",
-        "exclude",
-        "max_question_turns",
-    }:
+    if (
+        not isinstance(messages, dict)
+        or not {"include", "exclude", "max_question_turns"} <= set(messages)
+        or set(messages)
+        - {"include", "exclude", "max_question_turns", "max_draft_questions"}
+    ):
         errors.append(
-            f"{label}.expect.messages must contain include, exclude, and max_question_turns"
+            f"{label}.expect.messages must contain include, exclude, and "
+            "max_question_turns, plus optional max_draft_questions"
         )
         messages = {}
     for key in ("include", "exclude"):
@@ -200,6 +202,16 @@ def _expectation_errors(expect: Any, label: str) -> list[str]:
         errors.append(
             f"{label}.expect.messages.max_question_turns must be between zero and three"
         )
+    if "max_draft_questions" in messages:
+        max_draft_questions = messages["max_draft_questions"]
+        if (
+            not isinstance(max_draft_questions, int)
+            or isinstance(max_draft_questions, bool)
+            or not 0 <= max_draft_questions <= 1
+        ):
+            errors.append(
+                f"{label}.expect.messages.max_draft_questions must be zero or one"
+            )
 
     max_narrative_words = expect.get("max_narrative_words")
     if max_narrative_words is not None and (
