@@ -262,6 +262,9 @@
           "exclude": [
             "Reporter action required"
           ],
+          "draft_exclude": [
+            "<public-docs-link>"
+          ],
           "max_question_turns": 2
         },
         "references": {

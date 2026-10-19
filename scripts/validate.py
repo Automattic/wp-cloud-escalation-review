@@ -183,14 +183,23 @@ def _expectation_errors(expect: Any, label: str) -> list[str]:
         not isinstance(messages, dict)
         or not {"include", "exclude", "max_question_turns"} <= set(messages)
         or set(messages)
-        - {"include", "exclude", "max_question_turns", "max_draft_questions"}
+        - {
+            "include",
+            "exclude",
+            "draft_exclude",
+            "max_question_turns",
+            "max_draft_questions",
+        }
     ):
         errors.append(
             f"{label}.expect.messages must contain include, exclude, and "
-            "max_question_turns, plus optional max_draft_questions"
+            "max_question_turns, plus optional draft_exclude and "
+            "max_draft_questions"
         )
         messages = {}
-    for key in ("include", "exclude"):
+    for key in ("include", "exclude", "draft_exclude"):
+        if key == "draft_exclude" and key not in messages:
+            continue
         values = messages.get(key)
         if (
             not isinstance(values, list)

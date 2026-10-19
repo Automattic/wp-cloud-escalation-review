@@ -419,6 +419,9 @@ def score_case(case: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
     for forbidden in message_expectation["exclude"]:
         if forbidden.casefold() in lowered:
             failures.append(f"contained forbidden text: {forbidden!r}")
+    for forbidden in message_expectation.get("draft_exclude", []):
+        if forbidden.casefold() in draft_body.casefold():
+            failures.append(f"draft contained forbidden text: {forbidden!r}")
     for forbidden in WORKFLOW_JARGON:
         if forbidden in lowered:
             failures.append(f"contained workflow jargon: {forbidden!r}")
