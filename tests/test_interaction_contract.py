@@ -310,6 +310,9 @@ class SemanticScoringTests(unittest.TestCase):
             "The full cause remains unconfirmed.",
             "The control completed without reproducing the failure.",
             "The remaining evidence is available only to WP Cloud.",
+            "The decisive transaction records are accessible only to WP Cloud.",
+            "The detail is available only in WP Cloud's job record.",
+            "The answer requires WP Cloud's transaction records.",
         ):
             with self.subTest(wording=wording):
                 output = (

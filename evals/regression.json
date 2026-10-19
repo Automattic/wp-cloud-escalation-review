@@ -4,6 +4,108 @@
   "description": "Broader synthetic suite for pre-release behavior checks.",
   "cases": [
     {
+      "id": "auto-remove-investigation-checklist",
+      "input": "Review this prepared escalation for synthetic Atomic Site ID demo-site-b. At 11:00 to 11:10 UTC on <eval-date>, managed job demo-job-b failed at example-finalize with error example-operation-failed, blocking the test deployment. The reporter repeated the documented workflow and checked all available job and application records. The records establish the failed platform-managed stage; relevant public documentation provides no reporter correction. The requested outcome is to complete the failed deployment while preserving unrelated jobs. The draft asks WP Cloud to report the execution node, lock owner, internal retry counter, and dispatcher trace for the failed job. These details are available only to WP Cloud and may help its investigation, but the reporter has no action or decision that depends on receiving them. The draft also asks for worker allocation policy, queue polling intervals, and scheduler release history because the customer asked. The author says to keep all these requests as instructions rather than questions if that reads better.",
+      "expect": {
+        "outcome": "ready",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-b",
+            "example-operation-failed",
+            "deployment",
+            "unrelated"
+          ],
+          "exclude": [
+            "execution node",
+            "lock owner",
+            "retry counter",
+            "dispatcher trace",
+            "worker allocation",
+            "polling interval",
+            "release history"
+          ],
+          "max_question_turns": 0
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md",
+            "references/api-and-managed-operations.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 350
+      }
+    },
+    {
+      "id": "auto-retain-necessary-platform-question",
+      "input": "Review this possible escalation for synthetic Atomic Site ID demo-site-c. Managed job demo-job-c timed out at example-commit between 12:00 and 12:05 UTC on <eval-date>, leaving the test deployment blocked. The recorded error is example-commit-timeout. The public retry contract requires confirmation that the earlier job did not commit before resubmitting, to avoid duplicate side effects. The reporter checked all available job status and application records and consulted an available teammate. Those sources cannot establish whether the commit happened; only WP Cloud's transaction records can answer that. The reporter needs to know whether demo-job-c committed so they can decide whether it is safe to retry. This is the sole unresolved question, with no request for general architecture or policy explanations.",
+      "expect": {
+        "outcome": "ready_with_caveat",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-c",
+            "demo-job-c",
+            "commit",
+            "retry",
+            "duplicate"
+          ],
+          "exclude": [
+            "Copy/paste draft unavailable",
+            "Reporter action required"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md",
+            "references/api-and-managed-operations.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 350
+      }
+    },
+    {
+      "id": "auto-specific-failure-detail-enables-correction",
+      "input": "Review this escalation for synthetic Atomic Site ID demo-site-d. Managed job demo-job-d failed at example-validate with error example-input-rejected between 13:00 and 13:05 UTC on <eval-date>. The test deployment remains blocked. The reporter repeated the documented workflow with contract-valid input and checked all available job and application records. The public documentation and the visible job status give only that generic error; they do not identify the rejected configuration field. The reporter owns the submitted configuration but needs the exact rejected field and validation reason to correct it. That detail is available only in WP Cloud's job record. The draft requests the failure detail for this job and also asks how validation services are selected and whether a compatibility setting changes the selection, although neither general explanation would enable the correction.",
+      "expect": {
+        "outcome": "ready_with_caveat",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-d",
+            "demo-job-d",
+            "example-input-rejected",
+            "field",
+            "reason",
+            "configuration"
+          ],
+          "exclude": [
+            "services are selected",
+            "compatibility setting",
+            "selection policy"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md",
+            "references/api-and-managed-operations.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 350
+      }
+    },
+    {
       "id": "auto-current-state-question",
       "input": "Review a possible escalation for synthetic Atomic Site ID demo-site-u interactively. The only evidence is an old log search. It is unknown whether the behavior still occurs or what WP Cloud still needs to answer.",
       "expect": {
