@@ -63,8 +63,11 @@ Finding: <answer, correction, narrowing, or limitation>
 ```
 
 Every selected technical case with remaining WP Cloud work gets this
-applicability check. If relevant documentation is unavailable, say so and ask
-for the smallest current source that could change scope, ownership, or action.
+applicability check. When the reporter states a specific documentation finding
+and you cannot open the page, record `unavailable`, attribute the finding to
+the reporter, and keep any link given. It does not block an otherwise ready
+escalation. Ask for the smallest current source only when no finding was
+supplied and the documentation could change scope, ownership, or action.
 
 ## WP Cloud Atomic API documentation
 

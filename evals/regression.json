@@ -249,6 +249,32 @@
       }
     },
     {
+      "id": "auto-reported-docs-finding",
+      "input": "Review this possible escalation in one pass. For synthetic Atomic Site ID demo-site-ag, managed jobs demo-job-ag1 and demo-job-ag2 failed at stage example-finalize with error example-operation-failed between 14:00 and 14:10 UTC on <eval-date>, blocking a test deployment. The reporter repeated the documented workflow with the same result. The reporter says the managed-operations section of the public WP Cloud documentation at <public-docs-link> states that an accepted operation of this type should complete without reporter action. Ask WP Cloud to inspect and complete the failed managed operation while preserving unrelated jobs.",
+      "expect": {
+        "outcome": "ready",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "demo-site-ag",
+            "example-operation-failed"
+          ],
+          "exclude": [
+            "Reporter action required"
+          ],
+          "max_question_turns": 2
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md",
+            "references/challenge.md",
+            "references/api-and-managed-operations.md"
+          ],
+          "forbidden": []
+        }
+      }
+    },
+    {
       "id": "auto-safe-receiver-change",
       "input": "Review this request in one pass. For synthetic Atomic Site ID demo-site-b, all three ExampleWebhook/1.0 POST requests to /wp-json/example/v1/callback returned HTTP 429 from 11:00 to 11:04 UTC on <eval-date>. The matching WP Cloud record reports example-rate-limit for that request class. The reporter verified the callbacks are expected and that the failures block test-order updates. Ask WP Cloud to review a narrow receiver-owned adjustment for this verified request class while preserving protection for unrelated traffic.",
       "expect": {

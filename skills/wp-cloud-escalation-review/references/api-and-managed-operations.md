@@ -131,7 +131,8 @@ objects.
 ## When access is limited
 
 Record unavailable documentation or tooling honestly. Ask only for the
-smallest item the reporter can obtain.
+smallest item the reporter can obtain. Attribute a reporter-stated
+documentation finding instead of asking for its page again.
 
 When platform logs are unavailable to the reporter, preserve site, job or
 request ID, UTC time, stage or endpoint, and result. This can support a narrow
