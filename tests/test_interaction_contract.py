@@ -30,6 +30,7 @@ def expectation(
     required_references: list[str] | None = None,
     forbidden_references: list[str] | None = None,
     max_draft_questions: int | None = None,
+    draft_exclude: list[str] | None = None,
 ) -> dict:
     messages = {
         "include": include or [],
@@ -38,6 +39,8 @@ def expectation(
     }
     if max_draft_questions is not None:
         messages["max_draft_questions"] = max_draft_questions
+    if draft_exclude is not None:
+        messages["draft_exclude"] = draft_exclude
     return {
         "outcome": outcome,
         "draft": draft,
@@ -699,6 +702,34 @@ class SemanticScoringTests(unittest.TestCase):
 
         self.assertFalse(score["passed"])
         self.assertEqual(1, score["draft_questions"])
+
+    def test_draft_exclude_checks_only_the_draft(self) -> None:
+        expected = expectation(
+            "ready",
+            draft="required",
+            draft_exclude=["<public-docs-link>"],
+        )
+        clean = self.score(
+            expected,
+            output=(
+                "Ready to send; check the cited section at <public-docs-link> "
+                "and add the link only if it confirms the claim.\n\n"
+                "### Copy/paste\n"
+                "```markdown\n"
+                "Please complete the failed job for demo-site-a.\n"
+                "```"
+            ),
+        )
+        leaked = self.score(
+            expected,
+            output=self.ready_output(
+                "Please complete the failed job for demo-site-a, as described "
+                "at <public-docs-link>."
+            ),
+        )
+
+        self.assertTrue(clean["passed"], clean["failures"])
+        self.assertFalse(leaked["passed"])
 
 if __name__ == "__main__":
     unittest.main()

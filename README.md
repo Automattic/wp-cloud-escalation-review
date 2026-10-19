@@ -51,7 +51,8 @@ than as a question per missing field. Exclusive platform access does not make
 every diagnostic finding a useful question. Leave exploratory question lists,
 cause menus, and investigation checklists out of the handoff. Use the published
 [WP Cloud documentation](https://wp.cloud/docs/) to find relevant procedures
-and answers before escalating.
+and answers before escalating. A post cites documentation only after the agent
+or the reporter confirms the cited section.
 
 ## Install and use
 

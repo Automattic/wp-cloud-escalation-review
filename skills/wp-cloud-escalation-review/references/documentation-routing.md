@@ -63,8 +63,37 @@ Finding: <answer, correction, narrowing, or limitation>
 ```
 
 Every selected technical case with remaining WP Cloud work gets this
-applicability check. If relevant documentation is unavailable, say so and ask
-for the smallest current source that could change scope, ownership, or action.
+applicability check. If relevant documentation is unavailable and no finding
+was supplied, say so and ask for the smallest current source only when it could
+change scope, ownership, or action.
+
+### Reporter-cited findings
+
+When the reporter cites a documentation finding, try to read the cited section
+before giving up: the given link; the published page through
+[WP Cloud documentation](https://wp.cloud/docs/) navigation or search; any
+Markdown or machine-readable version the page offers; then the
+[public source repository](https://github.com/Automattic/wp-cloud-docs),
+including raw file views. Read only the cited section; do not preload the
+corpus.
+
+- If you confirm it, record `checked`. Add the link and heading to the post
+  only when the receiver needs them.
+- If you cannot access it, ask the reporter to open that section and confirm
+  it says what the draft claims. Group this with any other reporter questions
+  in one focused turn.
+
+Include a documentation reference in the post only when you or the reporter
+confirmed it. Never carry an unconfirmed documentation claim into the post,
+even labeled as reported.
+
+When the request does not depend on the finding, such as when it only supports
+the expected result, an unconfirmed finding does not block. State the expected
+result directly without the reference. In the sentence before the copy block,
+tell the reporter to check that section and add the link only if it confirms
+the claim. When the finding decides the request, such as a contract the
+reporter says WP Cloud is breaking, the escalation is not ready until you or
+the reporter confirm it.
 
 ## WP Cloud Atomic API documentation
 
