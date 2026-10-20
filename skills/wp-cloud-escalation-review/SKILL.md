@@ -30,8 +30,11 @@ gate.
 3. Validate the applicable evidence and troubleshooting. Do not demand
    irrelevant fields or a perfect proof chain.
 4. Resolve or narrow contradictory identifiers, scope, certainty, and asks.
-5. Load documentation only when it can change the result and no more than one
-   matching technical reference after the boundary is clear.
+5. Check documentation when it can change the result or help the reporter
+   resolve or understand the issue. Use it to challenge the request and point
+   the reporter to the relevant section. A documented step the reporter cannot
+   complete does not block; name it in the post. Load no more than one matching
+   technical reference after the boundary is clear.
 6. Stop, solve, reroute, or ask the reporter all known material questions
    together when the issue is not ready. Resolve these before drafting; do not
    carry the review's question list into the post.
@@ -243,7 +246,10 @@ decision remains, stop.
 
 Use [documentation routing](references/documentation-routing.md) only after
 currentness and the remaining WP Cloud action are clear. Do not research
-general documentation to decorate a resolved result. Start with the published
+general documentation to decorate a resolved result. When the docs cover the
+issue, use them to challenge the request and to show the reporter the section
+that explains it or the step to try, even when the reporter cannot complete
+that step alone. Start with the published
 [WP Cloud documentation](https://wp.cloud/docs/) for relevant procedures,
 troubleshooting, and terminology; use the separate Atomic API reference for
 endpoint contracts.
@@ -309,7 +315,9 @@ Keep one internal outcome:
 Ready and ready-with-caveat results require the private challenge. Provide one
 short practical decision and one pasteable block in this exact shape. Before
 the block, use one sentence with only the ready decision and any material
-caveat. Do not summarize the evidence or why the draft passed.
+caveat. When a documentation section explains the issue and the reporter did
+not already cite it, add one sentence that links it and says what it means for
+this case. Do not summarize the evidence or why the draft passed.
 
 ````text
 ### Copy/paste

@@ -173,6 +173,37 @@
       }
     },
     {
+      "id": "auto-docs-step-reporter-cannot-complete",
+      "input": "Review this prepared escalation for synthetic Atomic Site ID demo-site-ah and domain label demo-domain-ah. Since <eval-date>, adding demo-domain-ah fails with error example-domain-in-use. The reporter pasted this excerpt from the published WP Cloud domain troubleshooting page: 'If a domain is still attached to a previous site, remove it from that site and retry. If you no longer control the previous site, contact WP Cloud support to release it after ownership is verified.' The reporter does not control the previous site and cannot see which site holds the domain. They verified ownership with the documented TXT record, which resolves publicly, and retried. The customer launch is blocked. Ask WP Cloud to release demo-domain-ah from the previous site so it can be added to demo-site-ah.",
+      "expect": {
+        "outcome": "ready",
+        "draft": "required",
+        "messages": {
+          "include": [
+            "Copy/paste",
+            "demo-site-ah",
+            "demo-domain-ah",
+            "example-domain-in-use",
+            "TXT"
+          ],
+          "exclude": [
+            "Reporter action required"
+          ],
+          "max_question_turns": 1,
+          "max_draft_questions": 0
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md",
+            "references/domains-network-and-protocol-access.md",
+            "references/challenge.md"
+          ],
+          "forbidden": []
+        },
+        "max_narrative_words": 350
+      }
+    },
+    {
       "id": "auto-current-state-question",
       "input": "Review a possible escalation for synthetic Atomic Site ID demo-site-u interactively. The only evidence is an old log search. It is unknown whether the behavior still occurs or what WP Cloud still needs to answer.",
       "expect": {
