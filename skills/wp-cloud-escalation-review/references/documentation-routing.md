@@ -11,6 +11,34 @@ mechanism, but it cannot prove that a specific request followed that mechanism.
 Do not use a general failover page to replace direct event evidence or to
 relabel an event-specific retry.
 
+## Inform and challenge
+
+Documentation review is not only proof for the post. Use it to help the
+reporter resolve the issue, understand it, or handle it next time.
+
+- **Challenge the request.** When the docs describe the behavior as expected
+  or a published limit, say so and point to the section. Escalate only what
+  the docs do not answer.
+- **Show the next step.** When a documented procedure applies and the reporter
+  can reasonably follow it, link the section and name the step that fits this
+  case. Suggest trying it before escalating.
+- **Explain when they cannot act.** Some reporters cannot complete a
+  documented step because of access, skills, or a platform action it needs.
+  That is not a blocker. Link the section, say in one or two plain sentences
+  what it means for this case, and continue with the escalation. The post
+  names the documented step that was tried or could not be completed.
+
+A documented procedure never blocks an escalation by itself. When the reporter
+has tried it, cannot follow it, or says it does not fit, record that and
+continue.
+
+Write these pointers to the reporter, not into the post: page title, link,
+relevant heading, and what it means for their case. Do not paste the page,
+list unrelated sections, or lecture. Point to the docs as a colleague would,
+without blame for having missed them. Only what the receiver needs goes into
+the post, under the confirmation rule in
+[reporter-cited findings](#reporter-cited-findings).
+
 ## Public documentation
 
 Start with the published [WP Cloud documentation](https://wp.cloud/docs/)

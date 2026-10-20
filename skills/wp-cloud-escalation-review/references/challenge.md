@@ -13,6 +13,11 @@ objections, non-blocking caveats, or pass.
 - Is it within WP Cloud's support boundary?
 - Could applicable documentation, prior cases, accessible code, logs, or
   standard tools answer it first?
+- Do the docs describe this behavior as expected or a published limit? If so,
+  challenge the request and point the reporter to that section.
+- If a documented step applies, has the reporter been shown it? When they
+  cannot complete it, does the post name that step instead of the step
+  blocking readiness?
 - Does another known owner control the correction?
 - Has reasonable reporter work been exhausted when access is limited?
 

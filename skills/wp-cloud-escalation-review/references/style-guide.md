@@ -18,6 +18,10 @@ Lead with what the reporter should do or what WP Cloud needs to decide. Use
 direct verbs, familiar words, and clear subjects. Explain a material gap
 without blame.
 
+When documentation applies, name the page and section, link it, and say in
+plain words what it means for this case or what to try. Nudge toward the docs
+without lecturing or blaming the reporter for missing them.
+
 Use one stable term for each thing and prefer a short familiar word when it
 keeps the exact technical meaning. Use active voice when the actor is known;
 use passive voice rather than inventing an actor. Keep complete subjects and
