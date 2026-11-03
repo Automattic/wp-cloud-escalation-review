@@ -40,6 +40,11 @@ Use only facts that can change the decision:
   duration, success measure, review point, and rollback condition. A bounded
   diagnostic test may instead state why its step is safe and what result would
   distinguish.
+- For a requested capacity change, such as more PHP workers or a larger quota:
+  the final approved value, target Atomic Site ID, production or staging, the
+  date it is needed by, and for a temporary change, its end date and who
+  reverses it. A change still awaiting customer approval or a final value is
+  not ready; it stays with the host until confirmed.
 
 A small repeatable test that contradicts configured platform behavior can be
 enough. Do not demand a ceremonial checklist after the decisive fact is known.
@@ -64,6 +69,9 @@ controls. Impact alone does not justify the requested setting.
 - Check queries and external calls when they could explain the measured delay.
 - Reproduce the workflow or run a controlled comparison when safe.
 - Record each performed check and what it showed.
+- Make any capacity change the host can make through its own API or dashboard,
+  including reversing a temporary increase, instead of escalating it.
+- Request planned changes before the event or launch that needs them.
 - Narrow the report to the smallest unresolved WP Cloud boundary.
 
 A healthy site with a general optimization request remains with the host or

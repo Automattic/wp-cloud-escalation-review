@@ -57,7 +57,19 @@ in a 500-request sample from 6,000 total requests.”
 A current event, full User-Agent, method, path, verified workflow, and matching
 platform reason can support narrow review without IP, headers, body, or vendor
 ID. Require extras only for correlation, provenance, legitimacy, or risky
-scope. Do not require registry or vendor-list research when the event suffices.
+scope. For review of one request, do not require registry or vendor-list
+research when the event suffices.
+
+A request to let a third-party service through a challenge or limit is an
+exception request, not a review of one event. It needs every full User-Agent
+the service sends and its complete source IP ranges, ideally a link to the
+provider's published list. If the provider publishes no list, say so once. A
+User-Agent alone can be spoofed. When the service sends a generic or
+browser-like User-Agent, recommend that the reporter ask the customer and the
+provider to set one that names the service. Payment providers, webhooks, and
+other essential services are worth reporting whatever triggered the challenge.
+Their User-Agents, IP ranges, the affected URL or path, and the response they
+received are enough. Do not ask for order, payment, or transaction details.
 
 For rate-limit or protection results, include one matching blocked nginx or
 equivalent traffic request record when accessible, with its available time,
@@ -68,6 +80,11 @@ that reason and the remaining lookup tuple are sufficient. If missing request
 fields prevent configuration matching, ask for the existing record or saved
 view rather than broader research. Include when the behavior started if that
 could help locate a configuration change.
+
+Find the matching request in the edge logs available to the reporter, and save
+the record or its fields when found. Edge logs keep raw requests for about 24
+hours. If the escalation may be sent later, the saved record is what lets WP
+Cloud locate the event.
 
 Once that record identifies the affected path and protection reason, omit
 fingerprint comparisons, release histories, nearby platform-change theories,
@@ -90,6 +107,12 @@ scope.
   change the route, owner, or action.
 - Inspect the response and application logs before assigning a generic status
   to the platform edge.
+- For a 403 or block page, rule out a site security or firewall plugin first:
+  check the renderer, whether origin logs show the request, and a safe plugin
+  test.
+- When the user's request cannot be found, have the user load a unique URL,
+  such as the page with an added query string. Record the time, their IP, and
+  the exact status or message shown.
 - Check site tools, proxies, and CDNs only when they could produce the result.
 - Separate status codes, interactive requests, crawlers, webhooks, monitors,
   and builds unless evidence connects them.
