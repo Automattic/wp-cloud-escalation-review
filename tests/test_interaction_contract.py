@@ -278,6 +278,27 @@ class SemanticScoringTests(unittest.TestCase):
 
         self.assertTrue(score["passed"], score["failures"])
 
+    def test_no_action_remains_wording_maps_to_no_post(self) -> None:
+        for wording in (
+            "The issue no longer occurs. No WP Cloud action remains.",
+            "The fix is deployed. Close this as resolved without escalation.",
+            "No WP Cloud work remains. Close the review without an escalation.",
+        ):
+            with self.subTest(wording=wording):
+                score = self.score(expectation("no_post"), output=wording)
+                self.assertTrue(score["passed"], score["failures"])
+
+    def test_hold_wording_maps_to_reporter_action(self) -> None:
+        score = self.score(
+            expectation("needs_reporter_check"),
+            output=(
+                "Hold the change request. The customer has not approved the "
+                "final worker count."
+            ),
+        )
+
+        self.assertTrue(score["passed"], score["failures"])
+
     def test_do_not_escalate_with_nothing_left_maps_to_no_post(self) -> None:
         score = self.score(
             expectation("no_post", include=["do not escalate"]),
@@ -320,6 +341,7 @@ class SemanticScoringTests(unittest.TestCase):
             "The decisive transaction records are accessible only to WP Cloud.",
             "The detail is available only in WP Cloud's job record.",
             "The answer requires WP Cloud's transaction records.",
+            "The cause of the closure remains unverified.",
         ):
             with self.subTest(wording=wording):
                 output = (

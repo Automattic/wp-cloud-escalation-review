@@ -1016,6 +1016,82 @@
         },
         "max_narrative_words": 140
       }
+    },
+    {
+      "id": "auto-host-site-id-not-atomic",
+      "input": "Review this possible escalation in one pass. The draft identifies the affected site only by the host's own site ID host-site-123 and domain label demo-domain-h. The current failure, impact, bounded UTC range, a relevant log record, and the requested WP Cloud action are supplied, but the Atomic Site ID is missing.",
+      "expect": {
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": [
+            "Atomic Site ID"
+          ],
+          "exclude": [
+            "Copy/paste"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
+        }
+      }
+    },
+    {
+      "id": "auto-service-exception-needs-identity",
+      "input": "Review this possible escalation in one pass. For synthetic Atomic Site ID demo-site-s and domain label demo-domain-s, an example payment provider's webhook POSTs to /example-webhook received HTTP 403 challenge responses from 09:00 to 09:30 UTC on <eval-date>. The reporter found one matching edge log record with User-Agent ExampleClient/2.1 and a recorded challenge reason. The draft asks WP Cloud to let the provider's webhooks through the challenge. It does not list the provider's source IP ranges or say whether ExampleClient/2.1 is the only User-Agent it sends, and the provider publishes an IP list the reporter has not checked.",
+      "expect": {
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": [
+            "IP"
+          ],
+          "exclude": [
+            "Copy/paste"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md",
+            "references/http-and-automation.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
+        }
+      }
+    },
+    {
+      "id": "auto-capacity-change-pending-approval",
+      "input": "Review this draft in one pass. It asks WP Cloud to raise PHP workers for synthetic Atomic Site ID demo-site-w on production before a sale on <eval-date>. Metrics from the last sale show every worker busy and requests queued for a bounded UTC window. The draft says the customer has not yet approved the plan change and the final worker count may be 20 or 30.",
+      "expect": {
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": [
+            "approv"
+          ],
+          "exclude": [
+            "Copy/paste"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
+        }
+      }
     }
   ]
 }

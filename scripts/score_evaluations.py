@@ -98,6 +98,7 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
         return "split"
     if (
         "belongs in the public documentation issue tracker" in lowered
+        or "through the public documentation issue tracker" in lowered
         or "public wp cloud documentation issue tracker" in lowered
         or "route this through the public wp cloud documentation issue tracker"
         in lowered
@@ -129,6 +130,7 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             or "pending receiver telemetry" in lowered
             or "could not identify where the response originated" in lowered
             or "remain unverified" in lowered
+            or "remains unverified" in lowered
             or "remains unconfirmed" in lowered
             or "remains unknown" in lowered
             or "cause remains unknown" in lowered
@@ -197,6 +199,8 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "please confirm",
             "confirm whether",
             "please provide",
+            "please describe",
+            "hold the",
             "can you check",
             "need to check",
             "please verify",
@@ -265,6 +269,10 @@ def classify_outcome(output: str, *, has_draft: bool) -> str | None:
             "close the wp cloud escalation",
             "close this escalation",
             "close this without escalating",
+            "without escalation",
+            "without an escalation",
+            "no wp cloud action remains",
+            "no wp cloud work remains",
             "resolved during validation",
             "no escalation draft is needed",
             "the review can stop here",

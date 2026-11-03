@@ -132,8 +132,9 @@ current state, observed and expected results, impact, strongest evidence,
 important uncertainty or access limit, and one primary WP Cloud outcome. Draft
 from that record, not source order.
 
-Always include the Atomic Site ID for every affected site. A domain, hostname,
-or site name does not replace it.
+Always include the Atomic Site ID for every affected site and use it as the
+primary reference. A domain, hostname, site name, or the host's own site ID
+does not replace it.
 
 Lead with the verified problem, measured scope, impact, and request. Every
 sentence must help with evidence, certainty, ownership, safety, lookup, or
