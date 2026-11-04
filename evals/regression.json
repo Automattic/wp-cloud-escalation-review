@@ -1092,6 +1092,31 @@
           ]
         }
       }
+    },
+    {
+      "id": "auto-method-request-missing-end-goal",
+      "input": "Review this draft in one pass. For synthetic Atomic Site ID demo-site-x, it asks WP Cloud for the correct WP-CLI syntax to purge the edge cache for an additional domain on the site that is not its primary domain. It lists four purge commands the reporter tried and says a file URL on that domain still returns a cache HIT. It ends: if no command exists, please purge it for us. It does not say what the URL returns now or what it should return after the purge.",
+      "expect": {
+        "outcome": "needs_reporter_check",
+        "draft": "forbidden",
+        "messages": {
+          "include": [
+            "should"
+          ],
+          "exclude": [
+            "Copy/paste"
+          ],
+          "max_question_turns": 1
+        },
+        "references": {
+          "required": [
+            "references/style-guide.md"
+          ],
+          "forbidden": [
+            "references/challenge.md"
+          ]
+        }
+      }
     }
   ]
 }

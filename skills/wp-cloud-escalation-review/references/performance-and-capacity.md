@@ -72,6 +72,8 @@ controls. Impact alone does not justify the requested setting.
 - Make any capacity change the host can make through its own API or dashboard,
   including reversing a temporary increase, instead of escalating it.
 - Request planned changes before the event or launch that needs them.
+- Purge a stale edge cache entry through the WP Cloud Atomic API edge cache
+  endpoint, for the whole domain or specific URLs, before escalating it.
 - Narrow the report to the smallest unresolved WP Cloud boundary.
 
 A healthy site with a general optimization request remains with the host or

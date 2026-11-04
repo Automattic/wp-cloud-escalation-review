@@ -24,7 +24,7 @@ an edit or rewrite request, “one pass,” or the client in use cannot skip a
 gate.
 
 1. Identify the issue or justified bundle, Atomic Site ID for every affected
-   site, current state, impact, and desired WP Cloud outcome.
+   site, current state, impact, end goal, and desired WP Cloud outcome.
 2. Check WP Cloud support scope, whether escalation is still needed, and
    whether another owner controls the next action.
 3. Validate the applicable evidence and troubleshooting. Do not demand
@@ -111,6 +111,13 @@ Before improving prose, determine:
 Prefer solving, narrowing, or rerouting over escalation. If no WP Cloud action
 remains, stop before documentation research, a technical reference, challenge,
 or drafting.
+
+A request for a method, such as a command's syntax, a cache purge, or a
+setting change, needs its end goal: what the customer should see once the work
+succeeds, next to what they see now for the same URL or workflow. When the
+goal is missing, ask for it. The goal decides whether the method can work,
+whether a better path exists, and how to confirm success. In the post, lead
+with the goal and current result, then the method tried.
 
 A present-tense blocked goal with the latest failed result can establish the
 current state. Do not ask the reporter to confirm it again without a conflict
